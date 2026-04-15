@@ -15,41 +15,39 @@ import {
   Legend,
   ReferenceLine,
 } from 'recharts';
+import { 
+  BarChart3, 
+  FileText, 
+  ShieldCheck, 
+  TrendingUp, 
+  Users, 
+  MapPin, 
+  Activity,
+  Download,
+  Search,
+  ChevronRight,
+  Info
+} from 'lucide-react';
 
 import type { ElectionRecord, RegionalRecord } from '../types/election';
 
 interface Props {
   electionData: ElectionRecord[];
   regionalData: Record<string, RegionalRecord>;
+  recountData?: any[];
+  reports: {
+    analysis: string;
+    excelAudit: string;
+    presentationAudit: string;
+  };
 }
 
-interface CandidateDatum {
-  name: string;
-  party: string;
-  votes: number;
-  pct: number;
-  color: string;
-}
+type View = 'insight' | 'report' | 'audit' | 'recount';
 
-interface RegionDatum {
-  region: string;
-  Conservative: number;
-  Democratic: number;
-}
+const CONSERVATIVE = '#f43f5e'; // Rose 500
+const DEMOCRATIC = '#3b82f6';    // Blue 500
 
-interface CandidateTooltipPayload {
-  payload: CandidateDatum;
-}
-
-interface RegionTooltipPayload {
-  name: string;
-  value: number;
-  color: string;
-}
-
-const CONSERVATIVE = '#ef4444';
-const DEMOCRATIC = '#3b82f6';
-
+// Helper functions
 function getPartyColor(name: string): string {
   if (
     name.includes('새누리당') ||
@@ -69,7 +67,7 @@ function getPartyColor(name: string): string {
   }
   if (name.includes('국민의당') || name.includes('개혁신당')) return '#a855f7';
   if (name.includes('정의당')) return '#eab308';
-  return '#6b7280';
+  return '#64748b';
 }
 
 function parseCandidate(key: string): { name: string; party: string } {
@@ -84,27 +82,6 @@ function parseCandidate(key: string): { name: string; party: string } {
   return { name: key, party: '' };
 }
 
-function shortRegion(region: string): string {
-  return region
-    .replace('특별자치시', '')
-    .replace('특별자치도', '')
-    .replace('광역시', '')
-    .replace('특별시', '')
-    .replace('도', '');
-}
-
-function getWinner(candidates: Record<string, number>): string {
-  let max = 0;
-  let winner = '';
-  for (const [key, votes] of Object.entries(candidates)) {
-    if (votes > max) {
-      max = votes;
-      winner = key;
-    }
-  }
-  return winner;
-}
-
 const ELECTION_LABELS: Record<string, string> = {
   '18th': '18대 (2012)',
   '19th': '19대 (2017)',
@@ -114,94 +91,17 @@ const ELECTION_LABELS: Record<string, string> = {
 
 const ELECTIONS = ['18th', '19th', '20th', '21st'] as const;
 
-function toPct(value: number, total: number): number {
-  if (total === 0) return 0;
-  return (value / total) * 100;
-}
+export default function ElectionDashboard({ electionData, regionalData, reports, recountData }: Props) {
+  const [view, setView] = useState<View>('insight');
+  const [selectedElection, setSelectedElection] = useState<(typeof ELECTIONS)[number]>('21st');
 
-function formatSignedPct(value: number): string {
-  return `${value > 0 ? '+' : ''}${value.toFixed(1)}%p`;
-}
-
-function getStrongestRegion(
-  regions: RegionDatum[],
-  key: 'Conservative' | 'Democratic',
-): RegionDatum | null {
-  if (regions.length === 0) return null;
-  return regions.reduce((best, current) => (current[key] > best[key] ? current : best));
-}
-
-function CustomTooltipVotes({
-  active,
-  payload,
-}: {
-  active?: boolean;
-  payload?: CandidateTooltipPayload[];
-}) {
-  if (active && payload && payload.length) {
-    const d = payload[0].payload;
-    return (
-      <div className="rounded-lg border border-slate-600 bg-slate-800/95 px-3 py-2 text-sm shadow-xl">
-        <p className="font-semibold text-white">{d.name || '후보'}</p>
-        <p className="text-xs text-slate-300">{d.party || '소속 정보 없음'}</p>
-        <p style={{ color: d.color }} className="mt-1 font-bold">
-          {d.votes.toLocaleString('ko-KR')}표
-        </p>
-        <p className="text-xs text-slate-400">{d.pct.toFixed(1)}%</p>
-      </div>
-    );
-  }
-  return null;
-}
-
-function CustomTooltipRegion({
-  active,
-  payload,
-  label,
-}: {
-  active?: boolean;
-  payload?: RegionTooltipPayload[];
-  label?: string;
-}) {
-  if (active && payload && payload.length) {
-    return (
-      <div className="rounded-lg border border-slate-600 bg-slate-800/95 px-3 py-2 text-sm shadow-xl">
-        <p className="mb-1 font-semibold text-white">{label}</p>
-        {payload.map((p) => (
-          <p key={p.name} style={{ color: p.color }}>
-            {p.name === 'Conservative' ? '보수' : '진보'}: {p.value}%
-          </p>
-        ))}
-      </div>
-    );
-  }
-  return null;
-}
-
-export default function ElectionDashboard({ electionData, regionalData }: Props) {
-  const [selected, setSelected] = useState<(typeof ELECTIONS)[number]>('21st');
-
-  const current = electionData.find((d) => d.Election === selected) ?? electionData[0];
-  if (!current) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-slate-100">
-        선거 데이터를 불러올 수 없습니다.
-      </div>
-    );
-  }
-
-  const currentIndex = ELECTIONS.indexOf(current.Election as (typeof ELECTIONS)[number]);
-  const previousElection = currentIndex > 0 ? ELECTIONS[currentIndex - 1] : null;
-  const previous = previousElection
-    ? electionData.find((d) => d.Election === previousElection)
-    : undefined;
-
-  const turnoutRate = toPct(current.Turnout, current.Voters);
-  const turnoutDelta = previous ? turnoutRate - toPct(previous.Turnout, previous.Voters) : null;
+  const current = electionData.find((d) => d.Election === selectedElection) ?? electionData[0];
+  
+  // Data processing for Insight View
+  const turnoutRate = (current.Turnout / current.Voters) * 100;
   const totalVotes = current['Total Votes'];
-  const winnerKey = getWinner(current.Candidates);
-
-  const sortedCandidates: CandidateDatum[] = Object.entries(current.Candidates)
+  
+  const sortedCandidates = Object.entries(current.Candidates)
     .sort((a, b) => b[1] - a[1])
     .map(([key, votes]) => {
       const info = parseCandidate(key);
@@ -209,401 +109,322 @@ export default function ElectionDashboard({ electionData, regionalData }: Props)
         name: info.name,
         party: info.party,
         votes,
-        pct: toPct(votes, totalVotes),
+        pct: (votes / totalVotes) * 100,
         color: getPartyColor(key),
       };
     });
 
-  const candidateData = sortedCandidates.slice(0, 8);
-  const winner = sortedCandidates[0];
-  const runnerUp = sortedCandidates[1];
-  const topThree = sortedCandidates.slice(0, 3);
-  const topTwoShare = (winner?.pct ?? 0) + (runnerUp?.pct ?? 0);
-  const minorPartyShare = Math.max(0, 100 - topTwoShare);
-  const marginVotes = winner && runnerUp ? winner.votes - runnerUp.votes : 0;
-  const marginPct = winner && runnerUp ? winner.pct - runnerUp.pct : 0;
-
-  const regions = regionalData[selected] ?? {};
-  const regionalChartData: RegionDatum[] = Object.entries(regions)
+  const regions = regionalData[selectedElection] ?? {};
+  const regionalChartData = Object.entries(regions)
     .map(([region, data]) => ({
-      region: shortRegion(region),
+      region: region.replace(/특별자치시|특별자치도|광역시|특별시|도/g, ''),
       Conservative: Math.round(data.Conservative * 1000) / 10,
       Democratic: Math.round(data.Democratic * 1000) / 10,
     }))
     .sort((a, b) => b.Democratic - a.Democratic);
 
-  const strongestConservative = getStrongestRegion(regionalChartData, 'Conservative');
-  const strongestDemocratic = getStrongestRegion(regionalChartData, 'Democratic');
-
-  const turnoutTrend = electionData.map((d) => ({
-    election: ELECTION_LABELS[d.Election],
-    turnout: parseFloat(toPct(d.Turnout, d.Voters).toFixed(1)),
-  }));
-
-  const turnoutValues = turnoutTrend.map((d) => d.turnout);
-  const turnoutMin =
-    turnoutValues.length > 0 ? Math.max(0, Math.floor(Math.min(...turnoutValues) - 2)) : 0;
-  const turnoutMax =
-    turnoutValues.length > 0 ? Math.min(100, Math.ceil(Math.max(...turnoutValues) + 2)) : 100;
-
-  const partyTrend = electionData.map((d) => {
-    let con = 0;
-    let dem = 0;
-    const total = d['Total Votes'];
-
-    for (const [key, votes] of Object.entries(d.Candidates)) {
-      const color = getPartyColor(key);
-      if (color === CONSERVATIVE) con += votes;
-      else if (color === DEMOCRATIC) dem += votes;
-    }
-
-    return {
-      election: ELECTION_LABELS[d.Election],
-      보수: parseFloat(toPct(con, total).toFixed(1)),
-      진보: parseFloat(toPct(dem, total).toFixed(1)),
-    };
-  });
+  // Markdown processing for reports
+  const processMarkdown = (md: string) => {
+    return md
+      .replace(/!\[Voter Turnout Rate\].*?\)/, '![Voter Turnout Rate](/images/voter_turnout.png)')
+      .replace(/!\[Major Party Vote Share\].*?\)/, '![Major Party Vote Share](/images/major_party_vote_share.png)')
+      .replace(/!\[Regional Party Strength - 21st Election\].*?\)/, '![Regional Party Strength](/images/regional_strength_21st.png)');
+  };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-blue-500/10 to-transparent" />
+    <div className="min-h-screen bg-[#020617] text-slate-200 selection:bg-blue-500/30">
+      {/* Dynamic Background */}
+      <div className="pointer-events-none fixed inset-0 z-0">
+        <div className="absolute top-[-10%] left-[-10%] h-[40%] w-[40%] rounded-full bg-blue-600/10 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] h-[40%] w-[40%] rounded-full bg-rose-600/10 blur-[120px]" />
+      </div>
 
-      <header className="sticky top-0 z-20 border-b border-white/10 bg-slate-950/85 px-4 py-4 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl leading-none">🗳️</span>
+      {/* Main Header */}
+      <header className="sticky top-0 z-40 border-b border-white/5 bg-[#020617]/80 px-6 py-4 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 md:flex-row">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 ring-1 ring-white/10">
+              <Activity className="h-6 w-6 text-blue-400" />
+            </div>
             <div>
-              <h1 className="text-lg font-bold text-white sm:text-xl">
-                한국 대통령 선거 인사이트 대시보드
+              <h1 className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-xl font-bold tracking-tight text-transparent">
+                Electoral Insights Hub
               </h1>
-              <p className="text-xs text-slate-400 sm:text-sm">
-                Korean Presidential Election Results · 18th–21st (2012–2025)
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-widest">
+                Analytics · Reports · Audits
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {ELECTIONS.map((e) => (
-              <button
-                key={e}
-                onClick={() => setSelected(e)}
-                aria-pressed={selected === e}
-                className={`rounded-full px-4 py-2 text-xs font-semibold transition-all sm:text-sm ${
-                  selected === e
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-950/70 ring-1 ring-blue-300/40'
-                    : 'bg-white/5 text-slate-300 ring-1 ring-white/10 hover:bg-white/10'
-                }`}
-              >
-                {ELECTION_LABELS[e]}
-              </button>
-            ))}
-          </div>
+          <nav className="flex items-center rounded-xl bg-white/5 p-1 ring-1 ring-white/10">
+            <button
+              onClick={() => setView('insight')}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+                view === 'insight' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <BarChart3 className="h-4 w-4" /> Insight
+            </button>
+            <button
+              onClick={() => setView('report')}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+                view === 'report' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <FileText className="h-4 w-4" /> Reports
+            </button>
+            <button
+              onClick={() => setView('audit')}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+                view === 'audit' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <ShieldCheck className="h-4 w-4" /> Audits
+            </button>
+            <button
+              onClick={() => setView('recount')}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+                view === 'recount' ? 'bg-rose-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Search className="h-4 w-4" /> 재확인표분석
+            </button>
+          </nav>
         </div>
       </header>
 
-      <main className="relative mx-auto w-full max-w-7xl space-y-6 px-4 py-6">
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <p className="mb-1 text-xs text-slate-400">유권자 수</p>
-            <p className="text-lg font-bold text-white">{current.Voters.toLocaleString('ko-KR')}</p>
-            <p className="text-xs text-slate-500">Eligible voters</p>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <p className="mb-1 text-xs text-slate-400">투표 참여</p>
-            <p className="text-lg font-bold text-white">{current.Turnout.toLocaleString('ko-KR')}</p>
-            <p className="text-xs text-slate-500">Ballots cast</p>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <p className="mb-1 text-xs text-slate-400">투표율</p>
-            <p className="text-2xl font-bold text-emerald-400">{turnoutRate.toFixed(1)}%</p>
-            <p className="text-xs text-slate-500">
-              {turnoutDelta === null ? '첫 비교 대상 선거' : `직전 대비 ${formatSignedPct(turnoutDelta)}`}
-            </p>
-          </div>
-
-          <div
-            className="rounded-2xl border p-4"
-            style={{
-              backgroundColor: `${winner?.color ?? getPartyColor(winnerKey)}18`,
-              borderColor: `${winner?.color ?? getPartyColor(winnerKey)}66`,
-            }}
-          >
-            <p className="mb-1 text-xs text-slate-300">당선자</p>
-            <p className="text-lg font-bold" style={{ color: winner?.color ?? getPartyColor(winnerKey) }}>
-              {winner?.name ?? parseCandidate(winnerKey).name}
-            </p>
-            <p className="truncate text-xs text-slate-300">
-              {winner?.party ?? parseCandidate(winnerKey).party}
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <p className="mb-1 text-xs text-slate-400">승리 격차</p>
-            <p className="text-lg font-bold text-amber-300">
-              {marginVotes > 0 ? marginVotes.toLocaleString('ko-KR') : '-'}
-            </p>
-            <p className="text-xs text-slate-500">
-              {runnerUp ? `${marginPct.toFixed(2)}%p (${winner?.name} vs ${runnerUp.name})` : '비교 후보 없음'}
-            </p>
-          </div>
-        </section>
-
-        <section className="grid gap-6 xl:grid-cols-[1.85fr_1fr]">
-          <article className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl shadow-slate-950/60">
-            <div className="mb-4 flex items-end justify-between gap-4">
-              <div>
-                <h2 className="text-base font-semibold">후보별 득표수</h2>
-                <p className="text-xs text-slate-500">Candidate vote counts (Top 8)</p>
-              </div>
-              <p className="text-right text-xs text-slate-400">
-                총 유효투표수
-                <br />
-                <span className="font-semibold text-slate-200">
-                  {totalVotes.toLocaleString('ko-KR')}표
-                </span>
-              </p>
+      <main className="relative z-10 mx-auto max-w-7xl px-6 py-8">
+        {/* Insight View */}
+        {view === 'insight' && (
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {/* Election Selectors */}
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {ELECTIONS.map((e) => (
+                <button
+                  key={e}
+                  onClick={() => setSelectedElection(e)}
+                  className={`group relative overflow-hidden rounded-2xl px-6 py-3 transition-all ${
+                    selectedElection === e 
+                      ? 'bg-white/10 text-white ring-2 ring-blue-500/50' 
+                      : 'bg-white/5 text-slate-500 ring-1 ring-white/5 hover:bg-white/10 hover:text-slate-300'
+                  }`}
+                >
+                  <span className="relative z-10 text-sm font-bold uppercase tracking-wide">
+                    {ELECTION_LABELS[e].split(' ')[0]}
+                  </span>
+                  <div className={`absolute bottom-0 left-0 h-1 w-full bg-blue-500 transition-transform duration-500 ${
+                    selectedElection === e ? 'scale-x-100' : 'scale-x-0'
+                  }`} />
+                </button>
+              ))}
             </div>
 
-            <ResponsiveContainer width="100%" height={340}>
-              <BarChart
-                data={candidateData}
-                layout="vertical"
-                margin={{ top: 0, right: 35, left: 0, bottom: 0 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" horizontal={false} />
-                <XAxis
-                  type="number"
-                  tickFormatter={(v) => `${(v / 1_000_000).toFixed(1)}M`}
-                  tick={{ fill: '#94a3b8', fontSize: 11 }}
-                  axisLine={{ stroke: '#334155' }}
-                  tickLine={false}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="name"
-                  width={88}
-                  tick={{ fill: '#e2e8f0', fontSize: 12 }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <Tooltip content={<CustomTooltipVotes />} cursor={{ fill: '#ffffff0c' }} />
-                <Bar dataKey="votes" radius={[0, 5, 5, 0]} maxBarSize={30}>
-                  {candidateData.map((entry, index) => (
-                    <Cell key={`${entry.party}-${entry.name}-${index}`} fill={entry.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </article>
-
-          <article className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl shadow-slate-950/60">
-            <h2 className="text-base font-semibold">핵심 경쟁 구도</h2>
-            <p className="mb-4 text-xs text-slate-500">Top candidates & race intensity</p>
-
-            <div className="space-y-3">
-              {topThree.map((candidate, index) => (
-                <div
-                  key={`${candidate.party}-${candidate.name}-${index}`}
-                  className="rounded-xl border border-white/10 bg-white/[0.03] p-3"
-                >
-                  <p className="mb-1 text-xs text-slate-400">{index + 1}위 후보</p>
-                  <p className="font-semibold text-white">{candidate.name}</p>
-                  <div className="mt-1 flex items-center justify-between gap-3 text-sm">
-                    <span className="truncate text-slate-300">{candidate.party || '무소속/기타'}</span>
-                    <span className="font-semibold" style={{ color: candidate.color }}>
-                      {candidate.pct.toFixed(1)}%
-                    </span>
-                  </div>
+            {/* Quick Stats Grid */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { label: 'Total Votes', value: totalVotes.toLocaleString(), icon: Users, color: 'text-blue-400', bg: 'bg-blue-400/10' },
+                { label: 'Turnout Rate', value: `${turnoutRate.toFixed(1)}%`, icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+                { label: 'Winner', value: sortedCandidates[0].name, icon: Search, color: 'text-rose-400', bg: 'bg-rose-400/10' },
+                { label: 'Margin', value: (sortedCandidates[0].votes - sortedCandidates[1].votes).toLocaleString(), icon: Info, color: 'text-amber-400', bg: 'bg-amber-400/10' },
+              ].map((stat, i) => (
+                <div key={i} className="group relative overflow-hidden rounded-3xl border border-white/5 bg-slate-900/40 p-6 transition-all hover:bg-slate-900/60">
+                   <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${stat.bg} ${stat.color}`}>
+                     <stat.icon className="h-5 w-5" />
+                   </div>
+                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{stat.label}</p>
+                   <p className="mt-1 text-2xl font-bold text-white">{stat.value}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-4 space-y-2 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">양강 후보 합계</span>
-                <span className="font-semibold text-slate-100">{topTwoShare.toFixed(1)}%</span>
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              {/* Vote Count Bar Chart */}
+              <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
+                <div className="mb-6 flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-white">Candidate Performance</h2>
+                  <div className="h-1.5 w-12 rounded-full bg-blue-500/20" />
+                </div>
+                <div className="h-[300px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={sortedCandidates} layout="vertical" margin={{ left: 20 }}>
+                      <XAxis type="number" hide />
+                      <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={12} width={80} axisLine={false} tickLine={false} />
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px' }}
+                        cursor={{ fill: 'transparent' }} 
+                      />
+                      <Bar dataKey="votes" radius={[0, 8, 8, 0]} barSize={24}>
+                        {sortedCandidates.map((c, i) => <Cell key={i} fill={c.color} />)}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">기타 후보 득표율</span>
-                <span className="font-semibold text-slate-100">{minorPartyShare.toFixed(1)}%</span>
+
+              {/* Regional Chart */}
+              <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
+                <div className="mb-6 flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-white">Regional Support</h2>
+                  <div className="h-1.5 w-12 rounded-full bg-rose-500/20" />
+                </div>
+                <div className="h-[300px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={regionalChartData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                      <XAxis dataKey="region" stroke="#94a3b8" fontSize={10} axisLine={false} tickLine={false} />
+                      <YAxis stroke="#94a3b8" fontSize={10} axisLine={false} tickLine={false} />
+                      <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px' }} />
+                      <Legend />
+                      <Bar dataKey="Conservative" fill={CONSERVATIVE} radius={[4, 4, 0, 0]} stackId="a" />
+                      <Bar dataKey="Democratic" fill={DEMOCRATIC} radius={[4, 4, 0, 0]} stackId="a" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-slate-400">1·2위 표 차이</span>
-                <span className="font-semibold text-amber-300">
-                  {runnerUp ? marginVotes.toLocaleString('ko-KR') : '-'}
-                </span>
+            </div>
+          </div>
+        )}
+
+        {/* Report View */}
+        {view === 'report' && (
+          <div className="mx-auto max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="rounded-[40px] border border-white/5 bg-slate-900/40 p-8 shadow-2xl md:p-12">
+              <div className="prose prose-invert prose-slate max-w-none">
+                <div 
+                  className="space-y-8 [&>h1]:text-4xl [&>h1]:font-black [&>h1]:tracking-tight [&>h1]:text-white 
+                             [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-blue-400 [&>p]:text-slate-400 [&>p]:leading-relaxed
+                             [&>img]:rounded-3xl [&>img]:border [&>img]:border-white/10 [&>img]:shadow-2xl"
+                  dangerouslySetInnerHTML={{ 
+                    __html: processMarkdown(reports.analysis)
+                      .replace(/# (.*)\n/, '<h1 class="mb-4">$1</h1>')
+                      .replace(/## (.*)\n/g, '<h2 class="mt-12 mb-6 border-b border-white/5 pb-2">$2</h2>')
+                      .replace(/### (.*)\n/g, '<h3 class="mt-8 mb-4 text-xl font-semibold text-slate-200">$1</h3>')
+                      .replace(/\n\n/g, '</p><p>')
+                      .replace(/^(.+)/gm, (match) => match.startsWith('<h') || match.startsWith('<p') || match.startsWith('![') ? match : `<p>${match}</p>`)
+                      .replace(/!\[(.*?)\]\((.*?)\)/g, '<div class="my-10"><img src="$2" alt="$1" style="width: 100%; height: auto;" /><p class="mt-4 text-center text-xs italic text-slate-500">$1</p></div>')
+                  }} 
+                />
               </div>
             </div>
-          </article>
-        </section>
+          </div>
+        )}
 
-        <section className="grid gap-6 xl:grid-cols-2">
-          <article className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl shadow-slate-950/60">
-            <h2 className="text-base font-semibold">지역별 정당 지지율</h2>
-            <p className="text-xs text-slate-500">Regional party support (%)</p>
+        {/* Audit View */}
+        {view === 'audit' && (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
+             {/* Excel Audit */}
+             <div className="group relative overflow-hidden rounded-[32px] border border-white/5 bg-slate-900/40 p-8 shadow-xl">
+                <div className="mb-6 flex items-center gap-3">
+                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
+                      <Download className="h-5 w-5" />
+                   </div>
+                   <h2 className="text-xl font-bold text-white">Excel System Audit</h2>
+                </div>
+                <div className="space-y-4 text-sm text-slate-400">
+                   <pre className="whitespace-pre-wrap font-sans leading-relaxed">
+                     {reports.excelAudit}
+                   </pre>
+                </div>
+                <div className="mt-8 flex items-center justify-between border-t border-white/5 pt-6">
+                   <span className="flex items-center gap-2 text-xs font-bold text-emerald-400 uppercase">
+                     <ChevronRight className="h-3 w-3" /> Integrity Verified
+                   </span>
+                   <button className="text-xs font-semibold text-slate-500 hover:text-white transition-colors">View Source Data</button>
+                </div>
+             </div>
 
-            <div className="my-4 flex flex-wrap gap-2">
-              {strongestConservative && (
-                <span className="rounded-full border border-red-400/30 bg-red-500/10 px-3 py-1 text-xs text-red-200">
-                  보수 강세: {strongestConservative.region} {strongestConservative.Conservative.toFixed(1)}%
-                </span>
-              )}
-              {strongestDemocratic && (
-                <span className="rounded-full border border-blue-400/30 bg-blue-500/10 px-3 py-1 text-xs text-blue-200">
-                  진보 강세: {strongestDemocratic.region} {strongestDemocratic.Democratic.toFixed(1)}%
-                </span>
-              )}
+             {/* Presentation Audit */}
+             <div className="group relative overflow-hidden rounded-[32px] border border-white/5 bg-slate-900/40 p-8 shadow-xl">
+                <div className="mb-6 flex items-center gap-3">
+                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20 text-blue-400">
+                      <FileText className="h-5 w-5" />
+                   </div>
+                   <h2 className="text-xl font-bold text-white">Documentation Audit</h2>
+                </div>
+                <div className="space-y-4 text-sm text-slate-400">
+                   <pre className="whitespace-pre-wrap font-sans leading-relaxed">
+                     {reports.presentationAudit}
+                   </pre>
+                </div>
+                <div className="mt-8 flex items-center justify-between border-t border-white/5 pt-6">
+                   <span className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase">
+                     <ChevronRight className="h-3 w-3" /> Visual Compliance
+                   </span>
+                   <button className="text-xs font-semibold text-slate-500 hover:text-white transition-colors">Open Presentation</button>
+                </div>
+             </div>
+          </div>
+        )}
+
+        {/* Recount View */}
+        {view === 'recount' && (
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur shadow-2xl">
+              <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-white">21대 대선 재확인표 K값 (관내/관외) 분석</h2>
+                  <p className="text-sm text-slate-400">Analysis of the K-value (R2/R1) for statistical anomalies in absentee vs local voting.</p>
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-500/20">
+                  <Search className="h-5 w-5 text-rose-400" />
+                </div>
+              </div>
+
+              {/* Data Table for K-values */}
+              <div className="relative overflow-x-auto rounded-xl border border-white/10 bg-[#020617]/50 shadow-inner max-h-[600px] overflow-y-auto custom-scrollbar">
+                <table className="w-full text-left text-sm text-slate-300">
+                  <thead className="sticky top-0 bg-slate-800/90 text-xs uppercase text-slate-400 backdrop-blur">
+                    <tr>
+                      <th className="px-4 py-3 font-semibold">시도명 (Region)</th>
+                      <th className="px-4 py-3 font-semibold">구시군명 (District)</th>
+                      <th className="px-4 py-3 text-right font-semibold">R1 (관내득표율)</th>
+                      <th className="px-4 py-3 text-right font-semibold">R2 (관외득표율)</th>
+                      <th className="px-4 py-3 text-right font-bold text-rose-300">K-Value (R2/R1)</th>
+                      <th className="px-4 py-3 text-right font-semibold">잔차 (Residual)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {recountData?.map((d: any, i: number) => (
+                      <tr key={i} className="hover:bg-white/[0.03] transition-colors">
+                        <td className="px-4 py-3 font-medium text-white">{d.province}</td>
+                        <td className="px-4 py-3">{d.district}</td>
+                        <td className="px-4 py-3 text-right">{(d.r1 * 100).toFixed(2)}%</td>
+                        <td className="px-4 py-3 text-right">{(d.r2 * 100).toFixed(2)}%</td>
+                        <td className={`px-4 py-3 text-right font-bold ${d.k_value >= 1.5 ? 'text-rose-400' : d.k_value > 1 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                          {d.k_value.toFixed(4)}
+                        </td>
+                        <td className="px-4 py-3 text-right font-mono text-xs">{d.residual.toFixed(4)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              
+              <div className="mt-6 rounded-xl border border-rose-500/20 bg-rose-500/10 p-4">
+                 <h3 className="mb-2 text-sm font-bold text-rose-300">💡 K-Value 인사이트 (K값 분석)</h3>
+                 <p className="text-xs leading-relaxed text-slate-400">
+                   K값은 특정 후보의 관외사전투표 득표율(R2)을 관내당일투표 득표율(R1)로 나눈 통계적 지표입니다. 이론적으로 대수의 법칙에 의해 정상적인 선거 환경에서는 관내와 관외의 표본 크기가 충분히 클 때 K값은 1에 수렴해야 합니다. K값이 1을 크게 벗어날 경우(예: 1.5 이상) 통계적 비정상성을 의심하거나 추가적인 재확인표 검증 및 로그 데이터 분석이 요구될 수 있습니다.
+                 </p>
+              </div>
             </div>
-
-            <ResponsiveContainer width="100%" height={360}>
-              <BarChart
-                data={regionalChartData}
-                margin={{ top: 0, right: 10, left: -10, bottom: 0 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                <ReferenceLine y={50} stroke="#475569" strokeDasharray="4 4" />
-                <XAxis
-                  dataKey="region"
-                  tick={{ fill: '#94a3b8', fontSize: 10 }}
-                  axisLine={{ stroke: '#334155' }}
-                  tickLine={false}
-                  angle={-30}
-                  textAnchor="end"
-                  height={52}
-                />
-                <YAxis
-                  tick={{ fill: '#94a3b8', fontSize: 11 }}
-                  axisLine={false}
-                  tickLine={false}
-                  domain={[0, 100]}
-                  tickFormatter={(v) => `${v}%`}
-                />
-                <Tooltip content={<CustomTooltipRegion />} cursor={{ fill: '#ffffff0c' }} />
-                <Legend
-                  formatter={(value) =>
-                    value === 'Conservative' ? (
-                      <span className="text-xs text-red-300">보수 (Conservative)</span>
-                    ) : (
-                      <span className="text-xs text-blue-300">진보 (Democratic)</span>
-                    )
-                  }
-                />
-                <Bar dataKey="Conservative" fill={CONSERVATIVE} radius={[3, 3, 0, 0]} maxBarSize={16} />
-                <Bar dataKey="Democratic" fill={DEMOCRATIC} radius={[3, 3, 0, 0]} maxBarSize={16} />
-              </BarChart>
-            </ResponsiveContainer>
-          </article>
-
-          <article className="space-y-6 rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl shadow-slate-950/60">
-            <div>
-              <h2 className="text-base font-semibold">역대 투표율 추이</h2>
-              <p className="mb-4 text-xs text-slate-500">Historical voter turnout (%)</p>
-              <ResponsiveContainer width="100%" height={165}>
-                <LineChart data={turnoutTrend} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis
-                    dataKey="election"
-                    tick={{ fill: '#94a3b8', fontSize: 10 }}
-                    axisLine={{ stroke: '#334155' }}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    domain={[turnoutMin, turnoutMax]}
-                    tick={{ fill: '#94a3b8', fontSize: 11 }}
-                    axisLine={false}
-                    tickLine={false}
-                    tickFormatter={(v) => `${v}%`}
-                  />
-                  <Tooltip
-                    formatter={(v) => [`${v}%`, '투표율']}
-                    contentStyle={{
-                      backgroundColor: '#1e293b',
-                      border: '1px solid #334155',
-                      borderRadius: '8px',
-                    }}
-                    labelStyle={{ color: '#fff' }}
-                    itemStyle={{ color: '#34d399' }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="turnout"
-                    stroke="#34d399"
-                    strokeWidth={2.5}
-                    dot={{ fill: '#34d399', r: 4 }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div>
-              <h2 className="text-base font-semibold">양당 득표율 추이</h2>
-              <p className="mb-4 text-xs text-slate-500">
-                Conservative vs progressive vote share (%)
-              </p>
-              <ResponsiveContainer width="100%" height={170}>
-                <LineChart data={partyTrend} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis
-                    dataKey="election"
-                    tick={{ fill: '#94a3b8', fontSize: 10 }}
-                    axisLine={{ stroke: '#334155' }}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    tick={{ fill: '#94a3b8', fontSize: 11 }}
-                    axisLine={false}
-                    tickLine={false}
-                    tickFormatter={(v) => `${v}%`}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1e293b',
-                      border: '1px solid #334155',
-                      borderRadius: '8px',
-                    }}
-                    labelStyle={{ color: '#fff' }}
-                    formatter={(v, name) => [
-                      `${v}%`,
-                      name === '보수' ? '보수 (Conservative)' : '진보 (Progressive)',
-                    ]}
-                  />
-                  <Legend
-                    formatter={(value) => (
-                      <span style={{ color: value === '보수' ? CONSERVATIVE : DEMOCRATIC, fontSize: '12px' }}>
-                        {value === '보수' ? '보수 (Conservative)' : '진보 (Progressive)'}
-                      </span>
-                    )}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="보수"
-                    stroke={CONSERVATIVE}
-                    strokeWidth={2.5}
-                    dot={{ fill: CONSERVATIVE, r: 4 }}
-                    activeDot={{ r: 6 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="진보"
-                    stroke={DEMOCRATIC}
-                    strokeWidth={2.5}
-                    dot={{ fill: DEMOCRATIC, r: 4 }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </article>
-        </section>
-
-        <p className="pb-2 text-center text-xs text-slate-500">
-          Data source: National Election Commission of Korea · 지역별 데이터는 보수/진보 양당 기준이며,
-          19대처럼 다당 경쟁이 강한 선거에서는 두 값의 합이 100%와 다를 수 있습니다.
-        </p>
+          </div>
+        )}
       </main>
+
+      {/* Footer */}
+      <footer className="mx-auto max-w-7xl px-6 py-12">
+        <div className="flex flex-col items-center justify-between border-t border-white/5 pt-8 md:flex-row">
+          <p className="text-xs text-slate-500">
+            © 2026 Korean Election Analysis Dashboard · Consolidation of 18th–21st datasets
+          </p>
+          <div className="mt-4 flex gap-6 md:mt-0">
+             <span className="text-xs text-slate-600 hover:text-slate-400 cursor-help">Data Validation API</span>
+             <span className="text-xs text-slate-600 hover:text-slate-400 cursor-help">Analysis Pipeline</span>
+             <span className="text-xs text-slate-600 hover:text-slate-400 cursor-help">Report PDF</span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
