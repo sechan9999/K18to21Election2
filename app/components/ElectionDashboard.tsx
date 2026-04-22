@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -40,6 +40,10 @@ import MethodologyPanel from './MethodologyPanel';
 import SwingAnalysis from './SwingAnalysis';
 import CounterfactualWidget from './CounterfactualWidget';
 import AnomalyFlags from './AnomalyFlags';
+import NarrativePanel from './NarrativePanel';
+import QualityScorecard from './QualityScorecard';
+import ShareBar from './ShareBar';
+import { LanguageToggle, useLanguage } from './LanguageProvider';
 import { LAST_PIPELINE_RUN, METRIC_PROVENANCE, sourceById } from '../lib/methodology';
 
 interface RecountSummary {
@@ -169,9 +173,35 @@ const ELECTION_LABELS: Record<string, string> = {
 const ELECTIONS = ['18th', '19th', '20th', '21st'] as const;
 
 export default function ElectionDashboard({ electionData, regionalData, reports, recountData, recountSummary, electionReports }: Props) {
+  const { t } = useLanguage();
   const [view, setView] = useState<View>('insight');
   const [selectedElection, setSelectedElection] = useState<(typeof ELECTIONS)[number]>('21st');
   const [reportElection, setReportElection] = useState<(typeof ELECTIONS)[number]>('21st');
+
+  // Hydrate from URL params (deep-link + share-URL round-trip).
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const p = new URL(window.location.href).searchParams;
+    const v = p.get('view');
+    if (v && ['insight', 'report', 'audit', 'recount', 'methodology'].includes(v)) {
+      setView(v as View);
+    }
+    const e = p.get('election');
+    if (e && (ELECTIONS as readonly string[]).includes(e)) {
+      const ee = e as (typeof ELECTIONS)[number];
+      setSelectedElection(ee);
+      setReportElection(ee);
+    }
+  }, []);
+
+  // Reflect current view/election in the URL without adding history entries.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    url.searchParams.set('view', view);
+    url.searchParams.set('election', selectedElection);
+    window.history.replaceState({}, '', url.toString());
+  }, [view, selectedElection]);
 
   const current = electionData.find((d) => d.Election === selectedElection) ?? electionData[0];
   
@@ -219,64 +249,34 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
 
       {/* Main Header */}
       <header className="sticky top-0 z-40 border-b border-white/5 bg-[#020617]/80 px-6 py-4 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 md:flex-row">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 md:flex-row">
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 ring-1 ring-white/10">
               <Activity className="h-6 w-6 text-blue-400" />
             </div>
             <div>
               <h1 className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-xl font-bold tracking-tight text-transparent">
-                Electoral Insights Hub
+                {t('app.title')}
               </h1>
               <p className="text-xs font-medium text-slate-500 uppercase tracking-widest">
-                Analytics · Reports · Audits
+                {t('app.subtitle')}
               </p>
             </div>
           </div>
 
-          <nav className="flex items-center rounded-xl bg-white/5 p-1 ring-1 ring-white/10">
-            <button
-              onClick={() => setView('insight')}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
-                view === 'insight' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'
-              }`}
+          <div className="flex flex-wrap items-center gap-3">
+            <nav
+              className="flex items-center rounded-xl bg-white/5 p-1 ring-1 ring-white/10"
+              aria-label={t('app.title')}
             >
-              <BarChart3 className="h-4 w-4" /> Insight
-            </button>
-            <button
-              onClick={() => setView('report')}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
-                view === 'report' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <FileText className="h-4 w-4" /> Reports
-            </button>
-            <button
-              onClick={() => setView('audit')}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
-                view === 'audit' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <ShieldCheck className="h-4 w-4" /> Audits
-            </button>
-            <button
-              onClick={() => setView('recount')}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
-                view === 'recount' ? 'bg-rose-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              <Search className="h-4 w-4" /> 재확인표분석
-            </button>
-            <button
-              onClick={() => setView('methodology')}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
-                view === 'methodology' ? 'bg-emerald-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'
-              }`}
-              aria-label="Open methodology panel"
-            >
-              <BookOpen className="h-4 w-4" /> Methodology
-            </button>
-          </nav>
+              <NavBtn icon={BarChart3} label={t('nav.insight')} active={view === 'insight'} onClick={() => setView('insight')} tone="blue" />
+              <NavBtn icon={FileText} label={t('nav.report')} active={view === 'report'} onClick={() => setView('report')} tone="blue" />
+              <NavBtn icon={ShieldCheck} label={t('nav.audit')} active={view === 'audit'} onClick={() => setView('audit')} tone="blue" />
+              <NavBtn icon={Search} label={t('nav.recount')} active={view === 'recount'} onClick={() => setView('recount')} tone="rose" />
+              <NavBtn icon={BookOpen} label={t('nav.methodology')} active={view === 'methodology'} onClick={() => setView('methodology')} tone="emerald" />
+            </nav>
+            <LanguageToggle />
+          </div>
         </div>
       </header>
 
@@ -285,6 +285,19 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
         {view === 'insight' && (
           <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <RefreshBanner onOpenMethodology={() => setView('methodology')} />
+
+            <ShareBar
+              view={view}
+              selectedElection={selectedElection}
+              electionData={electionData}
+              regional={regionalData}
+            />
+
+            <NarrativePanel
+              electionData={electionData}
+              regional={regionalData}
+              currentCycle={selectedElection}
+            />
 
             {/* Election Selectors */}
             <div className="flex flex-wrap items-center justify-center gap-2">
@@ -311,10 +324,10 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
             {/* Quick Stats Grid (KPIs with provenance tooltips) */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {[
-                { label: 'Total Votes', value: totalVotes.toLocaleString(), icon: Users, color: 'text-blue-400', bg: 'bg-blue-400/10', metricId: 'totalVotes', defHref: '#metric-margin' },
-                { label: 'Turnout Rate', value: `${turnoutRate.toFixed(1)}%`, icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-400/10', metricId: 'turnout', defHref: '#metric-turnout' },
-                { label: 'Winner', value: sortedCandidates[0].name, icon: Search, color: 'text-rose-400', bg: 'bg-rose-400/10', metricId: 'winner', defHref: '#metric-margin' },
-                { label: 'Margin (votes)', value: (sortedCandidates[0].votes - sortedCandidates[1].votes).toLocaleString(), icon: Info, color: 'text-amber-400', bg: 'bg-amber-400/10', metricId: 'margin', defHref: '#metric-margin' },
+                { label: t('kpi.totalVotes'), value: totalVotes.toLocaleString(), icon: Users, color: 'text-blue-400', bg: 'bg-blue-400/10', metricId: 'totalVotes', defHref: '#metric-margin' },
+                { label: t('kpi.turnout'), value: `${turnoutRate.toFixed(1)}%`, icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-400/10', metricId: 'turnout', defHref: '#metric-turnout' },
+                { label: t('kpi.winner'), value: sortedCandidates[0].name, icon: Search, color: 'text-rose-400', bg: 'bg-rose-400/10', metricId: 'winner', defHref: '#metric-margin' },
+                { label: t('kpi.marginVotes'), value: (sortedCandidates[0].votes - sortedCandidates[1].votes).toLocaleString(), icon: Info, color: 'text-amber-400', bg: 'bg-amber-400/10', metricId: 'margin', defHref: '#metric-margin' },
               ].map((stat, i) => (
                 <KpiCard
                   key={i}
@@ -326,6 +339,8 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                   metricId={stat.metricId}
                   defHref={stat.defHref}
                   onOpenMethodology={() => setView('methodology')}
+                  howLabel={t('kpi.howComputed')}
+                  sourceLabel={t('kpi.sourceDatasets')}
                 />
               ))}
             </div>
@@ -333,8 +348,8 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
             {/* Charts Section */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <ChartContainer
-                title="Candidate Performance"
-                description={`Vote totals for each candidate in the ${ELECTION_LABELS[selectedElection]} election, sorted by votes received.`}
+                title={t('chart.candidatePerf')}
+                description={`${t('chart.candidatePerf.desc')} · ${ELECTION_LABELS[selectedElection]}`}
                 data={sortedCandidates.map((c) => ({
                   name: c.name,
                   party: c.party,
@@ -373,8 +388,8 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
               </ChartContainer>
 
               <ChartContainer
-                title="Regional Support"
-                description="Conservative vs Democratic two-block vote shares by region (17 시도), stacked. Values in percent."
+                title={t('chart.regionalSupport')}
+                description={t('chart.regionalSupport.desc')}
                 data={regionalChartData.map((r) => ({
                   region: r.region,
                   conservative_pct: r.Conservative,
@@ -450,7 +465,13 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
 
         {/* Audit View */}
         {view === 'audit' && (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <QualityScorecard
+              electionData={electionData}
+              regional={regionalData}
+              recountData={recountData as any}
+            />
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
              {/* Excel Audit */}
              <div className="group relative overflow-hidden rounded-[32px] border border-white/5 bg-slate-900/40 p-8 shadow-xl">
                 <div className="mb-6 flex items-center gap-3">
@@ -492,6 +513,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                    <button className="text-xs font-semibold text-slate-500 hover:text-white transition-colors">Open Presentation</button>
                 </div>
              </div>
+            </div>
           </div>
         )}
 
@@ -747,13 +769,11 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
       {/* Footer */}
       <footer className="mx-auto max-w-7xl px-6 py-12">
         <div className="flex flex-col items-center justify-between border-t border-white/5 pt-8 md:flex-row">
-          <p className="text-xs text-slate-500">
-            © 2026 Korean Election Analysis Dashboard · Consolidation of 18th–21st datasets
-          </p>
+          <p className="text-xs text-slate-500">{t('footer.copyright')}</p>
           <div className="mt-4 flex gap-6 md:mt-0">
-             <span className="text-xs text-slate-600 hover:text-slate-400 cursor-help">Data Validation API</span>
-             <span className="text-xs text-slate-600 hover:text-slate-400 cursor-help">Analysis Pipeline</span>
-             <span className="text-xs text-slate-600 hover:text-slate-400 cursor-help">Report PDF</span>
+             <span className="text-xs text-slate-600 hover:text-slate-400 cursor-help">{t('footer.docs')}</span>
+             <span className="text-xs text-slate-600 hover:text-slate-400 cursor-help">{t('footer.pipeline')}</span>
+             <span className="text-xs text-slate-600 hover:text-slate-400 cursor-help">{t('footer.reportPdf')}</span>
           </div>
         </div>
       </footer>
@@ -761,7 +781,36 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
   );
 }
 
+function NavBtn({
+  icon: Icon,
+  label,
+  active,
+  onClick,
+  tone,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  tone: 'blue' | 'rose' | 'emerald';
+}) {
+  const activeBg = tone === 'rose' ? 'bg-rose-600' : tone === 'emerald' ? 'bg-emerald-600' : 'bg-blue-600';
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+        active ? `${activeBg} text-white shadow-lg` : 'text-slate-400 hover:text-white'
+      }`}
+    >
+      <Icon className="h-4 w-4" /> <span>{label}</span>
+    </button>
+  );
+}
+
 function RefreshBanner({ onOpenMethodology }: { onOpenMethodology: () => void }) {
+  const { t } = useLanguage();
   const run = LAST_PIPELINE_RUN;
   const ts = new Date(run.completedAt).toISOString().replace('T', ' ').slice(0, 19);
   return (
@@ -776,11 +825,11 @@ function RefreshBanner({ onOpenMethodology }: { onOpenMethodology: () => void })
         </span>
         <div>
           <p className="font-semibold text-slate-300">
-            Last refresh <span className="font-mono text-white">{ts} UTC</span>
+            {t('refresh.lastRefresh')} <span className="font-mono text-white">{ts} UTC</span>
           </p>
           <p className="text-slate-500">
-            Pipeline run ID <span className="font-mono">{run.runId}</span> · dedup dropped{' '}
-            {run.dedupDroppedRows.toLocaleString()} rows
+            {t('refresh.runId')} <span className="font-mono">{run.runId}</span> · {t('refresh.dedup')}{' '}
+            {run.dedupDroppedRows.toLocaleString()}
           </p>
         </div>
       </div>
@@ -790,7 +839,7 @@ function RefreshBanner({ onOpenMethodology }: { onOpenMethodology: () => void })
         className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 font-semibold text-slate-300 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400"
       >
         <BookOpen className="h-3.5 w-3.5" aria-hidden />
-        How metrics are computed
+        {t('refresh.howComputed')}
       </button>
     </div>
   );
@@ -805,6 +854,8 @@ function KpiCard({
   metricId,
   defHref,
   onOpenMethodology,
+  howLabel = 'How?',
+  sourceLabel = 'Source',
 }: {
   label: string;
   value: string;
@@ -814,6 +865,8 @@ function KpiCard({
   metricId: string;
   defHref: string;
   onOpenMethodology: () => void;
+  howLabel?: string;
+  sourceLabel?: string;
 }) {
   const sources = (METRIC_PROVENANCE[metricId] ?? []).map(sourceById).filter(Boolean);
   const provTitle = sources
@@ -831,9 +884,9 @@ function KpiCard({
         <span
           className="cursor-help font-mono"
           title={provTitle || 'No source recorded'}
-          aria-label={`Source: ${provTitle}`}
+          aria-label={`${sourceLabel}: ${provTitle}`}
         >
-          Source: {sources.length} dataset{sources.length === 1 ? '' : 's'}
+          {sourceLabel}: {sources.length}
         </span>
         <button
           type="button"
@@ -845,9 +898,9 @@ function KpiCard({
             }, 50);
           }}
           className="text-slate-400 hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
-          aria-label={`How ${label} is computed`}
+          aria-label={`${howLabel} · ${label}`}
         >
-          How?
+          {howLabel}
         </button>
       </div>
     </div>
