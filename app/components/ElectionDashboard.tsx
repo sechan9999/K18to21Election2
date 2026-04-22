@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -29,7 +29,8 @@ import {
   Download,
   Search,
   ChevronRight,
-  Info
+  Info,
+  Languages
 } from 'lucide-react';
 
 import type { ElectionRecord, RegionalRecord } from '../types/election';
@@ -164,6 +165,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
   const [view, setView] = useState<View>('insight');
   const [selectedElection, setSelectedElection] = useState<(typeof ELECTIONS)[number]>('21st');
   const [reportElection, setReportElection] = useState<(typeof ELECTIONS)[number]>('21st');
+  const [language, setLanguage] = useState<'ko' | 'en'>('en');
 
   const current = electionData.find((d) => d.Election === selectedElection) ?? electionData[0];
   
@@ -193,6 +195,72 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
     }))
     .sort((a, b) => b.Democratic - a.Democratic);
 
+  const selectedIndex = ELECTIONS.indexOf(selectedElection);
+  const previousElection = selectedIndex > 0 ? ELECTIONS[selectedIndex - 1] : null;
+
+  const swingData = useMemo(() => {
+    if (!previousElection) return [];
+    const currentRegions = regionalData[selectedElection] ?? {};
+    const previousRegions = regionalData[previousElection] ?? {};
+
+    return Object.keys(currentRegions)
+      .map((region) => {
+        const currentVal = currentRegions[region];
+        const previousVal = previousRegions[region];
+        if (!currentVal || !previousVal) return null;
+
+        const democraticSwing = (currentVal.Democratic - previousVal.Democratic) * 100;
+        const conservativeSwing = (currentVal.Conservative - previousVal.Conservative) * 100;
+
+        return {
+          region: region.replace(/특별자치시|특별자치도|광역시|특별시|도/g, ''),
+          democraticSwing: Math.round(democraticSwing * 100) / 100,
+          conservativeSwing: Math.round(conservativeSwing * 100) / 100,
+          netSwing: Math.round((democraticSwing - conservativeSwing) * 100) / 100,
+        };
+      })
+      .filter((v): v is { region: string; democraticSwing: number; conservativeSwing: number; netSwing: number } => Boolean(v))
+      .sort((a, b) => Math.abs(b.netSwing) - Math.abs(a.netSwing));
+  }, [previousElection, regionalData, selectedElection]);
+
+  const labels = language === 'ko'
+    ? {
+        title: '대한민국 대선 분석 허브',
+        subtitle: '분석 · 보고서 · 감리',
+        export: 'CSV 내보내기',
+        method: '방법론 & 데이터 출처',
+        methodBody: '마진은 1·2위 득표수 차이입니다. 투표율은 (투표수 / 선거인수)×100 기준입니다. 지역 득표율은 양대 진영 득표 비중이며 소수점 반올림이 포함됩니다.',
+      }
+    : {
+        title: 'Korean Presidential Analytics Hub',
+        subtitle: 'Analytics · Reports · Audits',
+        export: 'Export CSV',
+        method: 'Methodology & Data Provenance',
+        methodBody: 'Margin is defined as votes gap between #1 and #2 candidates. Turnout is calculated as (Turnout / Voters) × 100. Regional shares are two-bloc vote shares with rounding.',
+      };
+
+  const downloadCurrentSnapshot = () => {
+    const rows = [
+      ['election', selectedElection],
+      ['total_votes', String(totalVotes)],
+      ['turnout_rate', turnoutRate.toFixed(3)],
+      ['winner', sortedCandidates[0]?.name ?? '-'],
+      ['margin_votes', String((sortedCandidates[0]?.votes ?? 0) - (sortedCandidates[1]?.votes ?? 0))],
+      [],
+      ['candidate', 'party', 'votes', 'pct'],
+      ...sortedCandidates.map((c) => [c.name, c.party, String(c.votes), c.pct.toFixed(4)]),
+    ];
+
+    const csv = rows.map((r) => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `korean-election-${selectedElection}-snapshot.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   // Markdown processing for reports
   const processMarkdown = (md: string) => {
     return md
@@ -218,14 +286,29 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
             </div>
             <div>
               <h1 className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-xl font-bold tracking-tight text-transparent">
-                Electoral Insights Hub
+                {labels.title}
               </h1>
               <p className="text-xs font-medium text-slate-500 uppercase tracking-widest">
-                Analytics · Reports · Audits
+                {labels.subtitle}
               </p>
             </div>
           </div>
 
+          <div className="flex flex-wrap items-center justify-end gap-2">
+          <button
+            onClick={() => setLanguage((prev) => (prev === 'en' ? 'ko' : 'en'))}
+            className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-xs font-semibold text-slate-300 ring-1 ring-white/10 hover:bg-white/10"
+          >
+            <Languages className="h-4 w-4" />
+            {language === 'en' ? 'KO' : 'EN'}
+          </button>
+          <button
+            onClick={downloadCurrentSnapshot}
+            className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-2 text-xs font-semibold text-slate-300 ring-1 ring-white/10 hover:bg-white/10"
+          >
+            <Download className="h-4 w-4" />
+            {labels.export}
+          </button>
           <nav className="flex items-center rounded-xl bg-white/5 p-1 ring-1 ring-white/10">
             <button
               onClick={() => setView('insight')}
@@ -260,6 +343,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
               <Search className="h-4 w-4" /> 재확인표분석
             </button>
           </nav>
+          </div>
         </div>
       </header>
 
@@ -307,6 +391,14 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
               ))}
             </div>
 
+            <section className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
+              <h2 className="text-base font-bold text-blue-300">{labels.method}</h2>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">{labels.methodBody}</p>
+              <p className="mt-3 text-xs text-slate-500">
+                Last refresh: 2026-04-22 · Source files: summaries/election_summary.json, summaries/regional_summary.json
+              </p>
+            </section>
+
             {/* Charts Section */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {/* Vote Count Bar Chart */}
@@ -330,6 +422,26 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
+                <div className="mt-4 overflow-x-auto rounded-xl border border-white/10 bg-[#020617]/40">
+                  <table className="w-full text-xs text-slate-300">
+                    <thead className="bg-slate-800/70 text-slate-400">
+                      <tr>
+                        <th className="px-3 py-2 text-left">Candidate</th>
+                        <th className="px-3 py-2 text-right">Votes</th>
+                        <th className="px-3 py-2 text-right">Share</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {sortedCandidates.map((c) => (
+                        <tr key={c.name}>
+                          <td className="px-3 py-2">{c.name}</td>
+                          <td className="px-3 py-2 text-right font-mono">{c.votes.toLocaleString()}</td>
+                          <td className="px-3 py-2 text-right font-mono">{c.pct.toFixed(2)}%</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
               {/* Regional Chart */}
@@ -351,8 +463,53 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
+                <div className="mt-4 overflow-x-auto rounded-xl border border-white/10 bg-[#020617]/40">
+                  <table className="w-full text-xs text-slate-300">
+                    <thead className="bg-slate-800/70 text-slate-400">
+                      <tr>
+                        <th className="px-3 py-2 text-left">Region</th>
+                        <th className="px-3 py-2 text-right">Conservative</th>
+                        <th className="px-3 py-2 text-right">Democratic</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {regionalChartData.slice(0, 8).map((r) => (
+                        <tr key={r.region}>
+                          <td className="px-3 py-2">{r.region}</td>
+                          <td className="px-3 py-2 text-right font-mono">{r.Conservative.toFixed(1)}%</td>
+                          <td className="px-3 py-2 text-right font-mono">{r.Democratic.toFixed(1)}%</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
+
+            {previousElection && swingData.length > 0 && (
+              <section className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-white">Regional swing vs {ELECTION_LABELS[previousElection]}</h2>
+                  <span className="text-xs text-slate-500">Net swing = Democratic swing - Conservative swing (percentage points)</span>
+                </div>
+                <div className="h-[280px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={swingData.slice(0, 10)}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                      <XAxis dataKey="region" stroke="#94a3b8" fontSize={10} axisLine={false} tickLine={false} />
+                      <YAxis stroke="#94a3b8" fontSize={10} axisLine={false} tickLine={false} />
+                      <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px' }} />
+                      <ReferenceLine y={0} stroke="#64748b" />
+                      <Bar dataKey="netSwing" radius={[4, 4, 0, 0]}>
+                        {swingData.slice(0, 10).map((d, i) => (
+                          <Cell key={i} fill={d.netSwing >= 0 ? '#3b82f6' : '#f43f5e'} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
+            )}
           </div>
         )}
 
