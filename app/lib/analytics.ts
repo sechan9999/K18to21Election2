@@ -220,30 +220,28 @@ export function detectAnomalies(
 }
 
 // CSV helpers for per-chart download.
+// Uses CRLF line endings (Excel convention) so cells don't bleed across rows
+// when the file is opened on Windows.
 export function toCsv(rows: Array<Record<string, unknown>>, columns?: string[]): string {
   if (!rows.length) return '';
   const cols = columns ?? Object.keys(rows[0]);
-  const header = cols.join(',');
-  const body = rows
-    .map((r) =>
-      cols
-        .map((c) => {
-          const v = r[c];
-          if (v === null || v === undefined) return '';
-          const s = typeof v === 'number' ? String(v) : String(v);
-          return s.includes(',') || s.includes('"') || s.includes('\n')
-            ? `"${s.replace(/"/g, '""')}"`
-            : s;
-        })
-        .join(','),
-    )
-    .join('\n');
-  return `${header}\n${body}\n`;
+  const escape = (v: unknown): string => {
+    if (v === null || v === undefined) return '';
+    const s = String(v);
+    // Any field containing comma, quote, CR, or LF must be quoted.
+    return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const header = cols.map(escape).join(',');
+  const body = rows.map((r) => cols.map((c) => escape(r[c])).join(',')).join('\r\n');
+  return `${header}\r\n${body}\r\n`;
 }
 
 export function downloadCsv(filename: string, rows: Array<Record<string, unknown>>, columns?: string[]) {
   const csv = toCsv(rows, columns);
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  // Prepend UTF-8 BOM so Excel on Windows (Korean/Japanese locales) detects
+  // the encoding instead of falling back to the system codepage — otherwise
+  // Hangul and other non-ASCII characters render as mojibake (e.g. ëŒ€êµ¬).
+  const blob = new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
