@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import {
   BarChart,
   Bar,
@@ -10,8 +11,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
-  LineChart,
-  Line,
   Legend,
   ReferenceLine,
   ScatterChart,
@@ -37,14 +36,20 @@ import {
 import type { ElectionRecord, RegionalRecord } from '../types/election';
 import ChartContainer from './ChartContainer';
 import MethodologyPanel from './MethodologyPanel';
-import SwingAnalysis from './SwingAnalysis';
-import CounterfactualWidget from './CounterfactualWidget';
-import AnomalyFlags from './AnomalyFlags';
 import NarrativePanel from './NarrativePanel';
 import QualityScorecard from './QualityScorecard';
 import ShareBar from './ShareBar';
 import { LanguageToggle, useLanguage } from './LanguageProvider';
 import { LAST_PIPELINE_RUN, METRIC_PROVENANCE, sourceById } from '../lib/methodology';
+
+// Code-split heavy analytics widgets — they're only needed on the Insight view
+// after first paint, so we load them lazily (no SSR needed, they use Recharts).
+const SwingAnalysis = dynamic(() => import('./SwingAnalysis'), { ssr: false });
+const CounterfactualWidget = dynamic(() => import('./CounterfactualWidget'), { ssr: false });
+
+// AnomalyFlags + recount scatter are only shown in the Recount view.
+// Lazy-load both so the 253-row JSON stays out of the initial payload.
+const AnomalyFlags = dynamic(() => import('./AnomalyFlags'), { ssr: false });
 
 interface RecountSummary {
   candidateRatios: { name: string; party: string; r1: number; r2: number; k: number }[];
