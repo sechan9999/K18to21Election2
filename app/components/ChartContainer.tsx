@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useId, useState } from 'react';
+import { KeyboardEvent, ReactNode, useId, useRef, useState } from 'react';
 import { Download, Table2, Info } from 'lucide-react';
 import { downloadCsv } from '../lib/analytics';
 import { sourceById } from '../lib/methodology';
@@ -46,9 +46,11 @@ export default function ChartContainer({
   children,
 }: ChartContainerProps) {
   const [showTable, setShowTable] = useState(false);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const headingId = useId();
   const descId = useId();
   const regionId = useId();
+  const liveId = useId();
 
   const onDownload = () => {
     const cols = columns.map((c) => c.key);
@@ -58,6 +60,43 @@ export default function ChartContainer({
       cols,
     );
   };
+
+  // Build a readable label for the currently focused datapoint.
+  function activeLabel(idx: number): string {
+    if (idx < 0 || idx >= data.length) return '';
+    const row = data[idx];
+    const parts = columns.map((c) => {
+      const v = row[c.key];
+      const text = c.format ? c.format(v) : v == null ? '' : String(v);
+      return `${c.label}: ${text}`;
+    });
+    return `Point ${idx + 1} of ${data.length} — ${parts.join(', ')}`;
+  }
+
+  function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    if (data.length === 0) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveIndex((prev) => {
+        const next = prev === null ? 0 : Math.min(prev + 1, data.length - 1);
+        return next;
+      });
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveIndex((prev) => {
+        const next = prev === null ? data.length - 1 : Math.max(prev - 1, 0);
+        return next;
+      });
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      setActiveIndex(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      setActiveIndex(data.length - 1);
+    } else if (e.key === 'Escape') {
+      setActiveIndex(null);
+    }
+  }
 
   return (
     <section
@@ -107,12 +146,25 @@ export default function ChartContainer({
         </div>
       </header>
 
+      {/* aria-live region — announces the focused datapoint to screen readers */}
+      <div
+        id={liveId}
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {activeIndex !== null ? activeLabel(activeIndex) : ''}
+      </div>
+
       <div
         role="img"
         aria-labelledby={headingId}
         aria-describedby={descId}
         tabIndex={0}
+        onKeyDown={handleKeyDown}
+        onBlur={() => setActiveIndex(null)}
         className="focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-xl"
+        title="Use Arrow keys to navigate datapoints"
       >
         {children}
       </div>
