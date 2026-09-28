@@ -144,7 +144,17 @@ export const DATA_SOURCES: DataSource[] = [
     lastModified: '2026-04-15',
     origin: 'Derived from nec_21st via build_recount_summary.py',
     rowCount: 253,
-    notes: 'Prediction intervals are from an OLS regression of R2 on R1 across all 253 districts.',
+    notes: 'Prediction intervals are from an OLS regression of R2 on R1 across all 253 districts. K here is 관외사전 share ÷ 관내 share (이재명), not classified vs recheck.',
+  },
+  {
+    id: 'classified_recheck_21st',
+    name: '21대 분류/재확인 투표지 (개표상황표 판독)',
+    file: 'summaries/k21_classified_recheck.json',
+    version: 'build 2026-09-28 (17개 시도, 18,847행)',
+    lastModified: '2026-09-28',
+    origin: '개표상황표 PDF OCR + 수동 확인, 공개 최종득표와 검산',
+    rowCount: 18847,
+    notes: 'R1/R2 = 김문수/(이재명+김문수), 분류표/재확인대상. 투표구 CSV: corrected_data/k21_precinct_classified_recheck.csv',
   },
 ];
 
