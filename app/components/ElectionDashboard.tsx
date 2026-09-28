@@ -40,6 +40,7 @@ import NarrativePanel from './NarrativePanel';
 import QualityScorecard from './QualityScorecard';
 import ShareBar from './ShareBar';
 import { LanguageToggle, useLanguage } from './LanguageProvider';
+import type { ClassifiedRecheckData } from './ClassifiedRecheckView';
 import { LAST_PIPELINE_RUN, METRIC_PROVENANCE, sourceById } from '../lib/methodology';
 
 // Code-split heavy analytics widgets — they're only needed on the Insight view
@@ -50,6 +51,8 @@ const CounterfactualWidget = dynamic(() => import('./CounterfactualWidget'), { s
 // AnomalyFlags + recount scatter are only shown in the Recount view.
 // Lazy-load both so the 253-row JSON stays out of the initial payload.
 const AnomalyFlags = dynamic(() => import('./AnomalyFlags'), { ssr: false });
+// 21대 분류/재확인(개표상황표 판독) 분석 화면
+const ClassifiedRecheckView = dynamic(() => import('./ClassifiedRecheckView'), { ssr: false });
 
 interface RecountSummary {
   candidateRatios: { name: string; party: string; r1: number; r2: number; k: number }[];
@@ -107,7 +110,9 @@ interface Props {
   recountData?: any[];
   recountSummary?: RecountSummary;
   electionReports?: Record<string, ElectionReport>;
+  classifiedRecheck?: ClassifiedRecheckData;
   reports: {
+    classifiedRecheck?: string;
     analysis: string;
     excelAudit: string;
     presentationAudit: string;
@@ -128,7 +133,7 @@ function kColor(k: number): string {
   return '#10b981';
 }
 
-type View = 'insight' | 'report' | 'audit' | 'recount' | 'methodology';
+type View = 'insight' | 'report' | 'audit' | 'recount' | 'classified' | 'methodology';
 
 const CONSERVATIVE = '#f43f5e'; // Rose 500
 const DEMOCRATIC = '#3b82f6';    // Blue 500
@@ -177,7 +182,7 @@ const ELECTION_LABELS: Record<string, string> = {
 
 const ELECTIONS = ['18th', '19th', '20th', '21st'] as const;
 
-export default function ElectionDashboard({ electionData, regionalData, reports, recountData, recountSummary, electionReports }: Props) {
+export default function ElectionDashboard({ electionData, regionalData, reports, recountData, recountSummary, electionReports, classifiedRecheck }: Props) {
   const { t } = useLanguage();
   const [view, setView] = useState<View>('insight');
   const [selectedElection, setSelectedElection] = useState<(typeof ELECTIONS)[number]>('21st');
@@ -188,7 +193,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
     if (typeof window === 'undefined') return;
     const p = new URL(window.location.href).searchParams;
     const v = p.get('view');
-    if (v && ['insight', 'report', 'audit', 'recount', 'methodology'].includes(v)) {
+    if (v && ['insight', 'report', 'audit', 'recount', 'classified', 'methodology'].includes(v)) {
       setView(v as View);
     }
     const e = p.get('election');
@@ -278,6 +283,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
               <NavBtn icon={FileText} label={t('nav.report')} active={view === 'report'} onClick={() => setView('report')} tone="blue" />
               <NavBtn icon={ShieldCheck} label={t('nav.audit')} active={view === 'audit'} onClick={() => setView('audit')} tone="blue" />
               <NavBtn icon={Search} label={t('nav.recount')} active={view === 'recount'} onClick={() => setView('recount')} tone="rose" />
+              <NavBtn icon={Activity} label={t('nav.classified')} active={view === 'classified'} onClick={() => setView('classified')} tone="rose" />
               <NavBtn icon={BookOpen} label={t('nav.methodology')} active={view === 'methodology'} onClick={() => setView('methodology')} tone="emerald" />
             </nav>
             <LanguageToggle />
@@ -522,6 +528,13 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
           </div>
         )}
 
+        {/* Classified vs Recheck View (개표상황표 판독) */}
+        {view === 'classified' && classifiedRecheck && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <ClassifiedRecheckView data={classifiedRecheck} report={reports.classifiedRecheck} />
+          </div>
+        )}
+
         {/* Methodology View */}
         {view === 'methodology' && <MethodologyPanel />}
 
@@ -722,7 +735,8 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
             <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur shadow-2xl">
               <div className="mb-6 flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold text-white">21대 대선 재확인표 K값 (관내/관외) 분석</h2>
+                  <h2 className="text-xl font-bold text-white">21대 대선 관외사전/관내 K값 분석 (이재명 기준)</h2>
+                  <p className="text-xs text-amber-300/80">이 화면의 K는 관외사전 득표율 ÷ 관내 득표율입니다. 분류된 투표지 대 재확인대상 비교는 &lsquo;분류·재확인 분석&rsquo; 탭을 보세요.</p>
                   <p className="text-sm text-slate-400">Analysis of the K-value (R2/R1) for statistical anomalies in absentee vs local voting.</p>
                 </div>
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-500/20">

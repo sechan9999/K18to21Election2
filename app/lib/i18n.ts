@@ -15,6 +15,7 @@ type Key =
   | 'nav.report'
   | 'nav.audit'
   | 'nav.recount'
+  | 'nav.classified'
   | 'nav.methodology'
   | 'kpi.totalVotes'
   | 'kpi.turnout'
@@ -157,7 +158,8 @@ export const DICT: Record<Key, Dict> = {
   'nav.insight': { ko: '인사이트', en: 'Insight' },
   'nav.report': { ko: '보고서', en: 'Reports' },
   'nav.audit': { ko: '감사', en: 'Audits' },
-  'nav.recount': { ko: '재확인표 분석', en: 'Recount' },
+  'nav.recount': { ko: '관외/관내 K', en: 'Absentee K' },
+  'nav.classified': { ko: '분류·재확인 분석', en: 'Classified vs Recheck' },
   'nav.methodology': { ko: '방법론', en: 'Methodology' },
 
   'kpi.totalVotes': { ko: '총 투표수', en: 'Total Votes' },
