@@ -41,6 +41,7 @@ import QualityScorecard from './QualityScorecard';
 import ShareBar from './ShareBar';
 import { LanguageToggle, useLanguage } from './LanguageProvider';
 import type { ClassifiedRecheckData } from './ClassifiedRecheckView';
+import type { ComparisonData } from './CompareElectionsView';
 import { LAST_PIPELINE_RUN, METRIC_PROVENANCE, sourceById } from '../lib/methodology';
 
 // Code-split heavy analytics widgets — they're only needed on the Insight view
@@ -53,6 +54,8 @@ const CounterfactualWidget = dynamic(() => import('./CounterfactualWidget'), { s
 const AnomalyFlags = dynamic(() => import('./AnomalyFlags'), { ssr: false });
 // 21대 분류/재확인(개표상황표 판독) 분석 화면
 const ClassifiedRecheckView = dynamic(() => import('./ClassifiedRecheckView'), { ssr: false });
+// 18–21대 분류/미분류 비교 화면 (보수 후보 분자)
+const CompareElectionsView = dynamic(() => import('./CompareElectionsView'), { ssr: false });
 
 interface RecountSummary {
   candidateRatios: { name: string; party: string; r1: number; r2: number; k: number }[];
@@ -111,8 +114,10 @@ interface Props {
   recountSummary?: RecountSummary;
   electionReports?: Record<string, ElectionReport>;
   classifiedRecheck?: ClassifiedRecheckData;
+  comparison?: ComparisonData;
   reports: {
     classifiedRecheck?: string;
+    comparison?: string;
     analysis: string;
     excelAudit: string;
     presentationAudit: string;
@@ -133,7 +138,7 @@ function kColor(k: number): string {
   return '#10b981';
 }
 
-type View = 'insight' | 'report' | 'audit' | 'recount' | 'classified' | 'methodology';
+type View = 'insight' | 'report' | 'audit' | 'recount' | 'classified' | 'compare' | 'methodology';
 
 const CONSERVATIVE = '#f43f5e'; // Rose 500
 const DEMOCRATIC = '#3b82f6';    // Blue 500
@@ -182,7 +187,7 @@ const ELECTION_LABELS: Record<string, string> = {
 
 const ELECTIONS = ['18th', '19th', '20th', '21st'] as const;
 
-export default function ElectionDashboard({ electionData, regionalData, reports, recountData, recountSummary, electionReports, classifiedRecheck }: Props) {
+export default function ElectionDashboard({ electionData, regionalData, reports, recountData, recountSummary, electionReports, classifiedRecheck, comparison }: Props) {
   const { t } = useLanguage();
   const [view, setView] = useState<View>('insight');
   const [selectedElection, setSelectedElection] = useState<(typeof ELECTIONS)[number]>('21st');
@@ -193,7 +198,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
     if (typeof window === 'undefined') return;
     const p = new URL(window.location.href).searchParams;
     const v = p.get('view');
-    if (v && ['insight', 'report', 'audit', 'recount', 'classified', 'methodology'].includes(v)) {
+    if (v && ['insight', 'report', 'audit', 'recount', 'classified', 'compare', 'methodology'].includes(v)) {
       setView(v as View);
     }
     const e = p.get('election');
@@ -284,6 +289,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
               <NavBtn icon={ShieldCheck} label={t('nav.audit')} active={view === 'audit'} onClick={() => setView('audit')} tone="blue" />
               <NavBtn icon={Search} label={t('nav.recount')} active={view === 'recount'} onClick={() => setView('recount')} tone="rose" />
               <NavBtn icon={Activity} label={t('nav.classified')} active={view === 'classified'} onClick={() => setView('classified')} tone="rose" />
+              <NavBtn icon={TrendingUp} label={t('nav.compare')} active={view === 'compare'} onClick={() => setView('compare')} tone="emerald" />
               <NavBtn icon={BookOpen} label={t('nav.methodology')} active={view === 'methodology'} onClick={() => setView('methodology')} tone="emerald" />
             </nav>
             <LanguageToggle />
@@ -532,6 +538,13 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
         {view === 'classified' && classifiedRecheck && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
             <ClassifiedRecheckView data={classifiedRecheck} report={reports.classifiedRecheck} />
+          </div>
+        )}
+
+        {/* 18–21대 비교 View */}
+        {view === 'compare' && comparison && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <CompareElectionsView data={comparison} report={reports.comparison} />
           </div>
         )}
 
