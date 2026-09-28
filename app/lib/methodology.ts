@@ -156,6 +156,16 @@ export const DATA_SOURCES: DataSource[] = [
     rowCount: 18847,
     notes: 'R1/R2 = 김문수/(이재명+김문수), 분류표/재확인대상. 투표구 CSV: corrected_data/k21_precinct_classified_recheck.csv',
   },
+  {
+    id: 'classified_18_21',
+    name: '18–21대 분류/미분류 비교 (보수 후보 분자)',
+    file: 'summaries/k18_21_comparison.json',
+    version: 'build 2026-09-28 (19대 pe19res 249곳, 20대 pe20res 보정 248곳, 21대 판독 252곳)',
+    lastModified: '2026-09-28',
+    origin: 'pe19res.xlsx, pe20res.xlsx (구·시·군 분류/미분류), 21대 개표상황표 판독. 18대는 SAS 결과 요약만',
+    rowCount: 749,
+    notes: '19대 이름 5곳 보정, 공개 최종득표 대조 235곳 2% 미만. 보정본: corrected_data/pe19res_corrected.csv',
+  },
 ];
 
 // This would be overwritten by the pipeline at build time; the value committed
