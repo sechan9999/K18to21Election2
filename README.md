@@ -74,3 +74,15 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Cloud Run 배포
+
+Vercel 대신 Cloud Run에서 돌릴 수 있습니다(`next.config.ts`의 `output: 'standalone'` + 루트 `Dockerfile`).
+
+- **콘솔:** Cloud Run → Create service → *Continuously deploy from a repository* → 이 레포, 브랜치 `^main$`, Build type **Dockerfile** (`/Dockerfile`) → Allow public access, 포트 `8080`.
+- **CLI:**
+  ```bash
+  gcloud run deploy ehub-staging --source . --region us-central1 --allow-unauthenticated --port 8080
+  ```
+- **빌드 시 BigQuery 동기화(선택):** `SYNC_FROM_BIGQUERY=1`이면 prebuild 훅(`scripts/prebuild.mjs`)이 `scripts/sync-summaries.ts`로 `summaries/*.json`을 BigQuery `electoral_hub`에서 다시 만듭니다. 기본값(0)은 커밋된 JSON을 그대로 씁니다. 헤더의 run ID는 `summaries/_run.json`에서 옵니다.
+- BigQuery 스키마·백필·대조: `bigquery/schema.sql`, `scripts/backfill_bigquery.py`, `npm run check:parity`. 전체 순서는 [docs/MIGRATION_CHECKLIST.md](docs/MIGRATION_CHECKLIST.md).

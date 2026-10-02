@@ -1,3 +1,5 @@
+import lastRun from '../../summaries/_run.json';
+
 // Methodology, provenance, and pipeline metadata for the Electoral Insights Hub.
 // This file is the single source of truth for "how metrics are computed" and
 // "where the data came from" — referenced by the Methodology panel and by
@@ -168,21 +170,17 @@ export const DATA_SOURCES: DataSource[] = [
   },
 ];
 
-// This would be overwritten by the pipeline at build time; the value committed
-// here reflects the most recent documented run.
-export const LAST_PIPELINE_RUN: PipelineRun = {
-  runId: 'pr-2026-04-22-01',
-  startedAt: '2026-04-22T09:21:00+09:00',
-  completedAt: '2026-04-22T09:24:00+09:00',
+export const LAST_PIPELINE_RUN: PipelineRun & { dataHash: string; sourceDesc: string } = {
+  runId: lastRun.runId,
+  startedAt: lastRun.completedAt, // BigQuery runs table records completion time only
+  completedAt: lastRun.completedAt,
   gitSha: 'repo@main',
-  builders: [
-    'build_election_reports.py',
-    'build_recount_summary.py',
-    'extract_recount.py',
-  ],
+  builders: ['bigquery:electoral_hub', 'scripts/sync-summaries.ts'],
   rowsIn: 262_441,
   rowsOut: 261_893,
-  dedupDroppedRows: 548,
+  dedupDroppedRows: lastRun.dedupDroppedRows,
+  dataHash: lastRun.dataHash,
+  sourceDesc: lastRun.sourceDesc,
 };
 
 // Which data source(s) back each displayed metric. Used to render a tiny
