@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react';
 import { Beaker, TrendingUp, TrendingDown } from 'lucide-react';
 import type { ElectionRecord, RegionalRecord } from '../types/election';
 import { runCounterfactual, pctPoint } from '../lib/analytics';
+import { fill } from '../lib/i18n';
+import { useT } from './LanguageProvider';
 
 interface Props {
   election: ElectionRecord;
@@ -12,6 +14,7 @@ interface Props {
 }
 
 export default function CounterfactualWidget({ election, regional, electionKey }: Props) {
+  const t = useT();
   const regions = Object.keys(regional[electionKey] ?? {});
   const [region, setRegion] = useState<string>(regions[0] ?? '');
   const [turnoutBump, setTurnoutBump] = useState<number>(1.5);
@@ -33,20 +36,15 @@ export default function CounterfactualWidget({ election, regional, electionKey }
         </div>
         <div>
           <h2 id="counterfactual-heading" className="text-lg font-bold text-white">
-            Counterfactual: turnout &amp; composition
+            {t('counterfactual.title')}
           </h2>
-          <p className="mt-1 text-xs text-slate-400 max-w-3xl">
-            Explore a simple what-if: if turnout rose by a given amount in one region, with a specified
-            split of the incremental voters between the Democratic and Conservative blocks, how does the
-            national two-block margin shift? This is a transparent linear model — see the assumptions
-            printed below and consult the methodology panel for caveats.
-          </p>
+          <p className="mt-1 text-xs text-slate-400 max-w-3xl">{t('counterfactual.description')}</p>
         </div>
       </header>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <label className="flex flex-col gap-1 text-xs text-slate-400">
-          <span className="uppercase tracking-wider text-slate-500">Target region</span>
+          <span className="uppercase tracking-wider text-slate-500">{t('counterfactual.targetRegion')}</span>
           <select
             value={region}
             onChange={(e) => setRegion(e.target.value)}
@@ -62,7 +60,7 @@ export default function CounterfactualWidget({ election, regional, electionKey }
 
         <label className="flex flex-col gap-1 text-xs text-slate-400">
           <span className="uppercase tracking-wider text-slate-500">
-            Turnout bump: {turnoutBump.toFixed(1)} pp
+            {t('counterfactual.turnoutBump')}: {turnoutBump.toFixed(1)} pp
           </span>
           <input
             type="range"
@@ -74,14 +72,14 @@ export default function CounterfactualWidget({ election, regional, electionKey }
             aria-valuemin={-5}
             aria-valuemax={5}
             aria-valuenow={turnoutBump}
-            aria-label="Turnout bump in percentage points"
+            aria-label={t('counterfactual.turnoutAria')}
             className="accent-blue-500"
           />
         </label>
 
         <label className="flex flex-col gap-1 text-xs text-slate-400">
           <span className="uppercase tracking-wider text-slate-500">
-            New-voter Dem share: {(newVoterDemShare * 100).toFixed(0)}%
+            {t('counterfactual.newVoterDemShare')}: {(newVoterDemShare * 100).toFixed(0)}%
           </span>
           <input
             type="range"
@@ -93,7 +91,7 @@ export default function CounterfactualWidget({ election, regional, electionKey }
             aria-valuemin={0}
             aria-valuemax={1}
             aria-valuenow={newVoterDemShare}
-            aria-label="Share of new voters going to the Democratic block"
+            aria-label={t('counterfactual.shareAria')}
             className="accent-blue-500"
           />
         </label>
@@ -101,34 +99,34 @@ export default function CounterfactualWidget({ election, regional, electionKey }
 
       {result && (
         <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-4">
-          <Stat label="Baseline Dem" value={`${result.baselineDemNational.toFixed(2)}%`} />
-          <Stat label="Baseline Con" value={`${result.baselineConNational.toFixed(2)}%`} />
+          <Stat label={t('counterfactual.baselineDem')} value={`${result.baselineDemNational.toFixed(2)}%`} />
+          <Stat label={t('counterfactual.baselineCon')} value={`${result.baselineConNational.toFixed(2)}%`} />
           <Stat
-            label="Baseline margin"
+            label={t('counterfactual.baselineMargin')}
             value={pctPoint(result.baselineMargin)}
             tone={result.baselineMargin >= 0 ? 'dem' : 'con'}
           />
           <Stat
-            label="Shift"
+            label={t('counterfactual.shift')}
             value={pctPoint(result.marginShift)}
             icon={result.marginShift >= 0 ? 'up' : 'down'}
             tone={result.marginShift >= 0 ? 'dem' : 'con'}
           />
 
-          <Stat label="Adjusted Dem" value={`${result.adjustedDemNational.toFixed(2)}%`} />
-          <Stat label="Adjusted Con" value={`${result.adjustedConNational.toFixed(2)}%`} />
+          <Stat label={t('counterfactual.adjustedDem')} value={`${result.adjustedDemNational.toFixed(2)}%`} />
+          <Stat label={t('counterfactual.adjustedCon')} value={`${result.adjustedConNational.toFixed(2)}%`} />
           <Stat
-            label="Adjusted margin"
+            label={t('counterfactual.adjustedMargin')}
             value={pctPoint(result.adjustedMargin)}
             tone={result.adjustedMargin >= 0 ? 'dem' : 'con'}
           />
           <Stat
-            label="Outcome implied"
+            label={t('counterfactual.outcome')}
             value={
               (result.baselineMargin < 0 && result.adjustedMargin >= 0) ||
               (result.baselineMargin > 0 && result.adjustedMargin <= 0)
-                ? 'Flip'
-                : 'No flip'
+                ? t('counterfactual.flip')
+                : t('counterfactual.noFlip')
             }
             tone={
               (result.baselineMargin < 0 && result.adjustedMargin >= 0) ||
@@ -142,7 +140,12 @@ export default function CounterfactualWidget({ election, regional, electionKey }
 
       {result && (
         <p className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-[11px] leading-relaxed text-slate-400">
-          <span className="font-bold text-amber-300">Assumptions:</span> {result.assumptions}
+          <span className="font-bold text-amber-300">{t('counterfactual.assumptions')}:</span>{' '}
+          {fill(t('counterfactual.assumptionsText'), {
+            n: regions.length,
+            dem: (newVoterDemShare * 100).toFixed(0),
+            con: ((1 - newVoterDemShare) * 100).toFixed(0),
+          })}
         </p>
       )}
     </section>

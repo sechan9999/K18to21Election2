@@ -4,6 +4,8 @@ import { KeyboardEvent, ReactNode, useId, useRef, useState } from 'react';
 import { Download, Table2, Info } from 'lucide-react';
 import { downloadCsv } from '../lib/analytics';
 import { sourceById } from '../lib/methodology';
+import { fill } from '../lib/i18n';
+import { useT } from './LanguageProvider';
 
 // Accessibility + auditability wrapper for any chart.
 //
@@ -45,6 +47,7 @@ export default function ChartContainer({
   extraMeta,
   children,
 }: ChartContainerProps) {
+  const t = useT();
   const [showTable, setShowTable] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const headingId = useId();
@@ -113,7 +116,7 @@ export default function ChartContainer({
             {description}
           </p>
         </div>
-        <div className="flex shrink-0 items-center gap-2" role="toolbar" aria-label={`${title} actions`}>
+        <div className="flex shrink-0 items-center gap-2" role="toolbar" aria-label={`${title} · ${t('chart.actions')}`}>
           <button
             type="button"
             onClick={() => setShowTable((s) => !s)}
@@ -122,13 +125,13 @@ export default function ChartContainer({
             className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-slate-300 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <Table2 className="h-3.5 w-3.5" aria-hidden />
-            {showTable ? 'Hide data' : 'Show data'}
+            {showTable ? t('chart.hideData') : t('chart.showData')}
           </button>
           <button
             type="button"
             onClick={onDownload}
             className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-slate-300 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            aria-label={`Download ${title} data as CSV`}
+            aria-label={fill(t('chart.downloadCsvAria'), { title })}
           >
             <Download className="h-3.5 w-3.5" aria-hidden />
             CSV
@@ -137,10 +140,10 @@ export default function ChartContainer({
             <a
               href={metricDefHref}
               className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-slate-300 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              aria-label={`Open methodology definition for ${title}`}
+              aria-label={fill(t('chart.openMethodAria'), { title })}
             >
               <Info className="h-3.5 w-3.5" aria-hidden />
-              Method
+              {t('chart.openMethod')}
             </a>
           )}
         </div>

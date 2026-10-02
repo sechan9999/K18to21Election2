@@ -43,6 +43,7 @@ import { LanguageToggle, useLanguage } from './LanguageProvider';
 import type { ClassifiedRecheckData } from './ClassifiedRecheckView';
 import type { ComparisonData } from './CompareElectionsView';
 import { LAST_PIPELINE_RUN, METRIC_PROVENANCE, sourceById } from '../lib/methodology';
+import { shortRegion } from '../lib/analytics';
 
 // Code-split heavy analytics widgets — they're only needed on the Insight view
 // after first paint, so we load them lazily (no SSR needed, they use Recharts).
@@ -240,7 +241,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
   const regions = regionalData[selectedElection] ?? {};
   const regionalChartData = Object.entries(regions)
     .map(([region, data]) => ({
-      region: region.replace(/특별자치시|특별자치도|광역시|특별시|도/g, ''),
+      region: shortRegion(region),
       Conservative: Math.round(data.Conservative * 1000) / 10,
       Democratic: Math.round(data.Democratic * 1000) / 10,
     }))
@@ -374,10 +375,10 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                   pct: c.pct.toFixed(2),
                 }))}
                 columns={[
-                  { key: 'name', label: 'Candidate' },
-                  { key: 'party', label: 'Party' },
-                  { key: 'votes', label: 'Votes', format: (v) => Number(v).toLocaleString() },
-                  { key: 'pct', label: 'Share %' },
+                  { key: 'name', label: t('table.candidate') },
+                  { key: 'party', label: t('table.party') },
+                  { key: 'votes', label: t('table.votes'), format: (v) => Number(v).toLocaleString() },
+                  { key: 'pct', label: t('table.share') },
                 ]}
                 provenanceIds={METRIC_PROVENANCE.totalVotes?.filter((s) => s.endsWith(selectedElection.replace(/[a-z]/g, '')) || s === `nec_${selectedElection}`) ?? [`nec_${selectedElection}`]}
                 metricDefHref="#metric-margin"
@@ -413,9 +414,9 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                   democratic_pct: r.Democratic,
                 }))}
                 columns={[
-                  { key: 'region', label: 'Region' },
-                  { key: 'conservative_pct', label: 'Conservative %', format: (v) => Number(v).toFixed(2) },
-                  { key: 'democratic_pct', label: 'Democratic %', format: (v) => Number(v).toFixed(2) },
+                  { key: 'region', label: t('common.region') },
+                  { key: 'conservative_pct', label: t('table.conservativePct'), format: (v) => Number(v).toFixed(2) },
+                  { key: 'democratic_pct', label: t('table.democraticPct'), format: (v) => Number(v).toFixed(2) },
                 ]}
                 provenanceIds={[`nec_${selectedElection}`]}
                 metricDefHref="#metric-swing"
@@ -431,9 +432,9 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                         contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px' }}
                         formatter={((v: any, n: any) => [`${Number(v).toFixed(2)}%`, n]) as any}
                       />
-                      <Legend />
-                      <Bar dataKey="Conservative" fill={CONSERVATIVE} radius={[4, 4, 0, 0]} stackId="a" />
-                      <Bar dataKey="Democratic" fill={DEMOCRATIC} radius={[4, 4, 0, 0]} stackId="a" />
+                      <Legend itemSorter="dataKey" />
+                      <Bar dataKey="Conservative" name={t('bloc.conservative')} fill={CONSERVATIVE} radius={[4, 4, 0, 0]} stackId="a" />
+                      <Bar dataKey="Democratic" name={t('bloc.democratic')} fill={DEMOCRATIC} radius={[4, 4, 0, 0]} stackId="a" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -802,7 +803,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
       <footer className="mx-auto max-w-7xl px-6 py-12">
         <div className="flex flex-col items-center justify-between border-t border-white/5 pt-8 md:flex-row">
           <p className="text-xs text-slate-500">{t('footer.copyright')}</p>
-          <div className="mt-4 flex gap-6 md:mt-0">
+          <div className="mt-4 flex flex-wrap justify-center gap-x-6 gap-y-2 md:mt-0">
              <span className="text-xs text-slate-600 hover:text-slate-400 cursor-help">{t('footer.docs')}</span>
              <span className="text-xs text-slate-600 hover:text-slate-400 cursor-help">{t('footer.pipeline')}</span>
              <span className="text-xs text-slate-600 hover:text-slate-400 cursor-help">{t('footer.reportPdf')}</span>

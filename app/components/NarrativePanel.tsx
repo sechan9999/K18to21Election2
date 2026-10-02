@@ -4,7 +4,8 @@ import { useMemo } from 'react';
 import { Sparkles, ArrowUpRight, ArrowDownRight, Activity } from 'lucide-react';
 import type { ElectionRecord, RegionalRecord } from '../types/election';
 import { buildNarrative } from '../lib/narrative';
-import { useT } from './LanguageProvider';
+import { cycleLabel } from '../lib/i18n';
+import { useLanguage } from './LanguageProvider';
 
 interface Props {
   electionData: ElectionRecord[];
@@ -13,7 +14,7 @@ interface Props {
 }
 
 export default function NarrativePanel({ electionData, regional, currentCycle }: Props) {
-  const t = useT();
+  const { locale, t } = useLanguage();
   const pack = useMemo(
     () => buildNarrative(electionData, regional, currentCycle),
     [electionData, regional, currentCycle],
@@ -53,9 +54,9 @@ export default function NarrativePanel({ electionData, regional, currentCycle }:
         </div>
         <span
           className="shrink-0 rounded-full bg-white/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400"
-          aria-label={`${t('narrative.sinceLastCycle')} ${pack.previousCycle} → ${pack.currentCycle}`}
+          aria-label={`${t('narrative.sinceLastCycle')} ${cycleLabel(pack.previousCycle, locale)} → ${cycleLabel(pack.currentCycle, locale)}`}
         >
-          {pack.previousCycle} → {pack.currentCycle}
+          {cycleLabel(pack.previousCycle, locale)} → {cycleLabel(pack.currentCycle, locale)}
         </span>
       </header>
 
