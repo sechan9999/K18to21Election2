@@ -15,20 +15,18 @@ import {
 import type { RegionalRecord } from '../types/election';
 import { computeSwing, shortRegion, pctPoint } from '../lib/analytics';
 import ChartContainer from './ChartContainer';
+import { cycleLabel, fill } from '../lib/i18n';
+import { useLanguage } from './LanguageProvider';
 
 interface Props {
   regional: Record<string, RegionalRecord>;
 }
 
 const CYCLES = ['18th', '19th', '20th', '21st'] as const;
-const LABEL: Record<string, string> = {
-  '18th': '18대 (2012)',
-  '19th': '19대 (2017)',
-  '20th': '20대 (2022)',
-  '21st': '21대 (2025)',
-};
 
 export default function SwingAnalysis({ regional }: Props) {
+  const { locale, t } = useLanguage();
+  const label = (c: string) => cycleLabel(c, locale, true);
   const [from, setFrom] = useState<string>('20th');
   const [to, setTo] = useState<string>('21st');
 
@@ -47,30 +45,25 @@ export default function SwingAnalysis({ regional }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
-        <CycleSelect label="From" value={from} onChange={setFrom} exclude={to} />
+        <CycleSelect label={t('swing.from')} value={from} onChange={setFrom} exclude={to} format={label} ariaTemplate={t('swing.cycleAria')} />
         <span aria-hidden className="text-slate-500">→</span>
-        <CycleSelect label="To" value={to} onChange={setTo} exclude={from} />
+        <CycleSelect label={t('swing.to')} value={to} onChange={setTo} exclude={from} format={label} ariaTemplate={t('swing.cycleAria')} />
       </div>
 
       <ChartContainer
-        title={`Swing by region · ${LABEL[from]} → ${LABEL[to]}`}
-        description={`Percentage-point change in two-block (Democratic − Conservative) vote share, by region. Positive values are Democratic swings; negative are Conservative swings.`}
+        title={`${t('swing.title')} · ${label(from)} → ${label(to)}`}
+        description={t('swing.description')}
         data={chartData}
         columns={[
-          { key: 'fullRegion', label: 'Region' },
-          { key: 'democraticSwing', label: 'Dem Δ (pp)', format: (v) => (v as number).toFixed(2) },
-          { key: 'conservativeSwing', label: 'Con Δ (pp)', format: (v) => (v as number).toFixed(2) },
-          { key: 'netSwing', label: 'Net (Dem−Con) Δ (pp)', format: (v) => (v as number).toFixed(2) },
+          { key: 'fullRegion', label: t('common.region') },
+          { key: 'democraticSwing', label: t('swing.colDem'), format: (v) => (v as number).toFixed(2) },
+          { key: 'conservativeSwing', label: t('swing.colCon'), format: (v) => (v as number).toFixed(2) },
+          { key: 'netSwing', label: t('swing.colNet'), format: (v) => (v as number).toFixed(2) },
         ]}
         provenanceIds={[sourceFor(from), sourceFor(to)]}
         metricDefHref="#metric-swing"
         csvFilename={`swing_${from}_to_${to}.csv`}
-        extraMeta={
-          <span>
-            Positive bars = Democratic swing; negative = Conservative swing.
-            Values in percentage points; two-block aggregation (see methodology).
-          </span>
-        }
+        extraMeta={<span>{t('swing.legend')}</span>}
       >
         <div className="h-[360px] w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -90,7 +83,7 @@ export default function SwingAnalysis({ regional }: Props) {
                 fontSize={10}
                 unit="pp"
                 label={{
-                  value: 'Net swing (Dem − Con), pp',
+                  value: t('swing.yAxis'),
                   angle: -90,
                   position: 'insideLeft',
                   fill: '#64748b',
@@ -107,7 +100,7 @@ export default function SwingAnalysis({ regional }: Props) {
                 }}
                 formatter={((v: any, name: any) => {
                   const num = Number(v);
-                  if (name === 'netSwing') return [pctPoint(num), 'Net (Dem−Con)'];
+                  if (name === 'netSwing') return [pctPoint(num), t('swing.colNet')];
                   return [pctPoint(num), String(name)];
                 }) as any}
                 labelFormatter={(label, payload) => {
@@ -136,11 +129,15 @@ function CycleSelect({
   value,
   onChange,
   exclude,
+  format,
+  ariaTemplate,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   exclude: string;
+  format: (cycle: string) => string;
+  ariaTemplate: string;
 }) {
   return (
     <label className="flex items-center gap-2 text-xs text-slate-400">
@@ -149,11 +146,11 @@ function CycleSelect({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="rounded-lg border border-white/10 bg-slate-900 px-2 py-1 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-        aria-label={`${label} cycle`}
+        aria-label={fill(ariaTemplate, { label })}
       >
         {CYCLES.filter((c) => c !== exclude).map((c) => (
           <option key={c} value={c}>
-            {LABEL[c]}
+            {format(c)}
           </option>
         ))}
       </select>

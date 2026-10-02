@@ -39,6 +39,25 @@ type Key =
   | 'swing.from'
   | 'swing.to'
   | 'swing.legend'
+  | 'bloc.conservative'
+  | 'bloc.democratic'
+  | 'table.candidate'
+  | 'table.party'
+  | 'table.votes'
+  | 'table.share'
+  | 'table.conservativePct'
+  | 'table.democraticPct'
+  | 'chart.downloadCsvAria'
+  | 'chart.openMethodAria'
+  | 'swing.description'
+  | 'swing.yAxis'
+  | 'swing.colDem'
+  | 'swing.colCon'
+  | 'swing.colNet'
+  | 'swing.cycleAria'
+  | 'counterfactual.assumptionsText'
+  | 'counterfactual.turnoutAria'
+  | 'counterfactual.shareAria'
   | 'counterfactual.title'
   | 'counterfactual.description'
   | 'counterfactual.targetRegion'
@@ -192,6 +211,16 @@ export const DICT: Record<Key, Dict> = {
   },
   'chart.source': { ko: '출처', en: 'Source' },
 
+  'table.candidate': { ko: '후보', en: 'Candidate' },
+  'table.party': { ko: '정당', en: 'Party' },
+  'table.votes': { ko: '득표수', en: 'Votes' },
+  'table.share': { ko: '득표율 %', en: 'Share %' },
+  'table.conservativePct': { ko: '보수 %', en: 'Conservative %' },
+  'table.democraticPct': { ko: '민주 %', en: 'Democratic %' },
+
+  'bloc.conservative': { ko: '보수', en: 'Conservative' },
+  'bloc.democratic': { ko: '민주', en: 'Democratic' },
+
   'swing.title': { ko: '지역별 스윙', en: 'Swing by region' },
   'swing.from': { ko: '이전', en: 'From' },
   'swing.to': { ko: '이후', en: 'To' },
@@ -199,6 +228,24 @@ export const DICT: Record<Key, Dict> = {
     ko: '양수 = 민주 진영 스윙(pp), 음수 = 보수 진영 스윙(pp). 방법론 참고.',
     en: 'Positive bars = Democratic swing (pp); negative = Conservative swing (pp). See methodology.',
   },
+
+  'chart.downloadCsvAria': { ko: '{title} 데이터 CSV 내려받기', en: 'Download {title} data as CSV' },
+  'chart.openMethodAria': { ko: '{title} 방법론 정의 열기', en: 'Open methodology definition for {title}' },
+  'swing.description': {
+    ko: '지역별 양대 진영(민주 − 보수) 득표율 변화(%p). 양수는 민주 진영, 음수는 보수 진영 쪽 스윙입니다.',
+    en: 'Percentage-point change in two-block (Democratic − Conservative) vote share, by region. Positive values are Democratic swings; negative are Conservative swings.',
+  },
+  'swing.yAxis': { ko: '순 스윙 (민주 − 보수), %p', en: 'Net swing (Dem − Con), pp' },
+  'swing.colDem': { ko: '민주 Δ (%p)', en: 'Dem Δ (pp)' },
+  'swing.colCon': { ko: '보수 Δ (%p)', en: 'Con Δ (pp)' },
+  'swing.colNet': { ko: '순 (민주−보수) Δ (%p)', en: 'Net (Dem−Con) Δ (pp)' },
+  'swing.cycleAria': { ko: '{label} 선거', en: '{label} cycle' },
+  'counterfactual.assumptionsText': {
+    ko: '지역별 선거인 비중은 {n}개 지역 동일 가중으로 근사(요약 데이터에 지역별 선거인수 없음). 추가 투표자는 민주 {dem}% / 보수 {con}%로 나뉜다고 가정.',
+    en: 'Regional electorate weight approximated as equal across {n} regions (no per-region Voters in summary). Incremental voters assumed to split {dem}% Dem / {con}% Con.',
+  },
+  'counterfactual.turnoutAria': { ko: '투표율 증가폭(%p)', en: 'Turnout bump in percentage points' },
+  'counterfactual.shareAria': { ko: '추가 투표자 중 민주 진영 비중', en: 'Share of new voters going to the Democratic block' },
 
   'counterfactual.title': { ko: '반사실(What-If) 시뮬레이션', en: 'Counterfactual: turnout & composition' },
   'counterfactual.description': {
@@ -361,4 +408,17 @@ export type TranslationKey = Key;
 
 export function translate(key: Key, locale: Locale): string {
   return DICT[key]?.[locale] ?? key;
+}
+
+/** Fill {name} placeholders in a translated string. */
+export function fill(text: string, vars: Record<string, string | number>): string {
+  return text.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? `{${k}}`));
+}
+
+const CYCLE_YEAR: Record<string, number> = { '18th': 2012, '19th': 2017, '20th': 2022, '21st': 2025 };
+
+/** '20th' → '20대' / '20th', optionally with the election year: '20대 (2022)'. */
+export function cycleLabel(cycle: string, locale: Locale, withYear = false): string {
+  const base = locale === 'ko' ? `${cycle.replace(/\D/g, '')}대` : cycle;
+  return withYear && CYCLE_YEAR[cycle] ? `${base} (${CYCLE_YEAR[cycle]})` : base;
 }

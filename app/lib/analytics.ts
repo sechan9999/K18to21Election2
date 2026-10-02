@@ -40,8 +40,24 @@ export function computeSwing(
 }
 
 // Short region label (strip 특별시/광역시/도 suffixes).
+// Standard two-character province names. Stripping the suffix alone would turn
+// 전라남도 into 전라남, so the 도 provinces map explicitly.
+const SHORT_PROVINCE: Record<string, string> = {
+  경기도: '경기',
+  강원도: '강원',
+  강원특별자치도: '강원',
+  충청북도: '충북',
+  충청남도: '충남',
+  전라북도: '전북',
+  전북특별자치도: '전북',
+  전라남도: '전남',
+  경상북도: '경북',
+  경상남도: '경남',
+  제주특별자치도: '제주',
+};
+
 export function shortRegion(region: string): string {
-  return region.replace(/특별자치시|특별자치도|광역시|특별시|도$/g, '') || region;
+  return SHORT_PROVINCE[region] ?? (region.replace(/특별자치시|광역시|특별시$/g, '') || region);
 }
 
 // Turnout decomposition: for the selected election, split each region's share

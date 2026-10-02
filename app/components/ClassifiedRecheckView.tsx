@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { shortRegion } from '../lib/analytics';
 
 // 21대 분류/재확인 투표지 분석 (개표상황표 판독) 화면.
 // 데이터: summaries/k21_classified_recheck.json, 보고서: reports/k21_classified_recheck_report.md
@@ -26,7 +27,7 @@ export type ClassifiedRecheckData = {
   figures: { file: string; title: string }[];
 };
 
-const short = (s: string) => s.replace(/특별자치시|특별자치도|광역시|특별시|도$/g, '');
+const short = shortRegion;
 const f3 = (v?: number) => (v == null ? '–' : v.toFixed(3));
 const orColor = (v: number) => {
   const d = Math.abs(Math.log(v));
