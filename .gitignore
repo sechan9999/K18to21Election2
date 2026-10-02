@@ -44,3 +44,6 @@ docs/.pdca-status.json
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# BigQuery backfill CSV output
+bq_backfill/
