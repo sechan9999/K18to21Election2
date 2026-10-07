@@ -91,7 +91,8 @@ const JSON_LD = {
     "Total votes",
     "Turnout rate",
     "Two-block vote share",
-    "K-value (R2/R1)",
+    "K statistic: (P2/M2)/(P1/M1), odds ratio of machine rejection",
+    "Absentee-to-in-precinct share ratio",
     "Regional swing",
   ],
 };

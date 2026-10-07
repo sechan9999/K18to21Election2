@@ -75,8 +75,8 @@ export default function AnomalyFlags({ recountRows }: Props) {
             </h2>
             <p className="mt-1 max-w-2xl text-xs text-slate-400">
               Precinct-level screening heuristics. A flag is not a finding — it marks districts worth
-              manual review, combining K-value extremes, residual magnitude, and falling outside the
-              95% prediction band from the OLS fit of R2 on R1.
+              manual review, combining extremes of the absentee-to-in-precinct ratio, residual magnitude, and falling outside the
+              95% prediction band from the OLS fit of the absentee share on the in-precinct share.
             </p>
           </div>
         </div>
@@ -134,7 +134,7 @@ export default function AnomalyFlags({ recountRows }: Props) {
               <th scope="col" className="px-3 py-2 text-right">R1</th>
               <th scope="col" className="px-3 py-2 text-right">R2</th>
               <th scope="col" className="px-3 py-2 text-right">95% PI</th>
-              <th scope="col" className="px-3 py-2 text-right">K</th>
+              <th scope="col" className="px-3 py-2 text-right">Absentee ratio</th>
               <th scope="col" className="px-3 py-2 text-right">Residual</th>
               <th scope="col" className="px-3 py-2">Reasons</th>
             </tr>

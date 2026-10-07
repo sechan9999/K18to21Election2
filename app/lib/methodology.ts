@@ -95,21 +95,21 @@ export const METRICS: MetricDefinition[] = [
   {
     id: 'absentee_ratio',
     label: 'Absentee-to-in-precinct share ratio (관외사전/관내 득표율 비, R2/R1) — not the paper’s K',
-    formula: 'ratio = R2 / R1   where R1 = 관내 득표율, R2 = 관외사전 득표율',
+    formula: 'ratio = 관외사전 득표율 ÷ 관내 득표율   (same candidate, same district)',
     description:
-      'Ratio of a candidate’s absentee-sort share (R2) to their in-precinct share (R1) within the same district. It is shown on the 21st-election recount tab (labelled "K값 (관외사전/관내)") and drives the OLS-based anomaly flags. This is NOT the K statistic defined above: it compares two voting methods, not machine-classified with hand-confirmed ballots. The classified/unclassified K appears on the Classified and Compare tabs.',
+      'Ratio of a candidate’s absentee-sort vote share to their in-precinct vote share within the same district. It is shown on the 21st-election absentee-ratio tab and drives the OLS-based anomaly flags. This is NOT the K statistic defined above: it compares two voting methods, not machine-classified with hand-confirmed ballots. The classified/unclassified K appears on the Classified and Compare tabs.',
     units: 'ratio (unitless)',
     caveats: [
-      'Small absentee pools produce naturally high variance. We report 95% prediction intervals from an OLS fit of R2 on R1 across districts.',
+      'Small absentee pools produce naturally high variance. We report 95% prediction intervals from an OLS fit of the absentee share on the in-precinct share across districts.',
       'A screening heuristic, not a test statistic. Use anomaly flags in conjunction with residual magnitude and sample size.',
     ],
     ko: {
       label: '관외사전/관내 득표율 비 (R2/R1) — 논문의 K와 다름',
       description:
-        '같은 선거구에서 후보의 관외사전 득표율(R2)을 관내 득표율(R1)로 나눈 값이다. 21대 재확인 탭에 “K값 (관외사전/관내)”로 표시되며 OLS 기반 이상 플래그에 쓰인다. 위에서 정의한 K 통계량이 아니다. 이 값은 두 투표 방식을 비교하는 것이며, 기계가 분류한 투표지와 수작업으로 확인한 투표지를 비교하는 것이 아니다. 분류/미분류 K는 분류·비교 탭에 표시된다.',
+        '같은 선거구에서 후보의 관외사전 득표율을 관내 득표율로 나눈 값이다. 21대 관외/관내 비 탭에 표시되며 OLS 기반 이상 플래그에 쓰인다. 위에서 정의한 K 통계량이 아니다. 이 값은 두 투표 방식을 비교하는 것이며, 기계가 분류한 투표지와 수작업으로 확인한 투표지를 비교하는 것이 아니다. 분류/미분류 K는 분류·비교 탭에 표시된다.',
       units: '비율(단위 없음)',
       caveats: [
-        '관외사전 표본이 작으면 변동이 자연히 크다. 선거구 전체에서 R2를 R1에 OLS로 적합한 95% 예측구간을 보고한다.',
+        '관외사전 표본이 작으면 변동이 자연히 크다. 선거구 전체에서 관외사전 득표율을 관내 득표율에 OLS로 적합한 95% 예측구간을 보고한다.',
         '선별용 휴리스틱이지 검정 통계량이 아니다. 이상 플래그는 잔차 크기와 표본 크기와 함께 해석해야 한다.',
       ],
     },

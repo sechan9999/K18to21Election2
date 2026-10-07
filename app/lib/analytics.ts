@@ -192,13 +192,13 @@ export function detectAnomalies(
     let severity: AnomalyRow['severity'] = 'info';
 
     if (d.k_value >= 1.5) {
-      reasons.push('K ≥ 1.5 (high ratio — absentee pool materially overperforms in-precinct)');
+      reasons.push('Absentee/in-precinct ratio ≥ 1.5 (absentee pool materially overperforms in-precinct)');
       severity = 'critical';
     } else if (d.k_value >= 1.2) {
-      reasons.push('K ≥ 1.2 (elevated)');
+      reasons.push('Absentee/in-precinct ratio ≥ 1.2 (elevated)');
       if (severity === 'info') severity = 'review';
     } else if (d.k_value <= 0.5) {
-      reasons.push('K ≤ 0.5 (absentee pool materially underperforms in-precinct)');
+      reasons.push('Absentee/in-precinct ratio ≤ 0.5 (absentee pool materially underperforms in-precinct)');
       severity = 'critical';
     }
 
