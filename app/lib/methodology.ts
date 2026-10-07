@@ -12,6 +12,8 @@ export interface MetricDefinition {
   description: string;
   units: string;
   caveats?: string[];
+  /** Korean text shown when the UI language is Korean; fields fall back to English when absent. */
+  ko?: Partial<Pick<MetricDefinition, 'label' | 'formula' | 'description' | 'units' | 'caveats'>>;
 }
 
 export interface DataSource {
@@ -63,15 +65,54 @@ export const METRICS: MetricDefinition[] = [
   },
   {
     id: 'kvalue',
-    label: 'K-value (재확인표 비율)',
-    formula: 'K = R2 / R1   where R1 = 관내 득표율, R2 = 관외사전 득표율',
+    label: 'K-value (odds ratio of machine rejection: unclassified vs. classified)',
+    formula:
+      'K = (P2 / M2) / (P1 / M1)   where P = main conservative candidate, M = Democratic candidate; 1 = classified (machine-sorted) ballots, 2 = unclassified (hand-confirmed) ballots',
     description:
-      'Ratio of a candidate\'s absentee-sort share (R2) to their in-precinct share (R1) within the same district. Under the law of large numbers, K → 1 as the two sample pools grow, assuming no selection effect. Values far from 1 flag districts worth manual audit — they are not evidence of fraud on their own.',
+      'Ratio of the conservative-to-Democratic vote ratio among unclassified ballots (the ballots the sorting machine rejected and counting staff confirmed by hand) to the same ratio among classified ballots, computed within a counting unit (district) or from national sums (pooled K). K is an odds ratio of machine rejection: with u_c = P2/(P1 + P2) the share of a candidate’s ballots that the machine rejects, K = [u_c/(1 − u_c)] / [u_d/(1 − u_d)] ≈ u_c/u_d. If rejection is unrelated to vote choice, K ≈ 1; K > 1 means only that the numerator candidate’s ballots are rejected more often.',
     units: 'ratio (unitless)',
     caveats: [
-      'Small absentee pools produce naturally high K variance. We report 95% prediction intervals from an OLS fit of R2 on R1 across districts.',
-      'K is a screening heuristic, not a test statistic. Use anomaly flags in conjunction with residual magnitude and sample size.',
+      'The numerator is always the main conservative candidate (Park 2012, Hong 2017, Yoon 2022, Kim 2025). Putting the winner in the numerator, as the 2012 study did, turns K for 2017 and 2025 into its reciprocal; the apparent reversal is an artifact of that convention.',
+      'Pooled K (ratio of national sums), the district mean, and the district median differ when K varies across districts; always state which one is shown. The share ratio R2/R1 with R1 = P1/(P1 + M1) and R2 = P2/(P2 + M2) is a different quantity that is always closer to 1 than K.',
+      'The sampling variance of log K is approximately 1/P1 + 1/M1 + 1/P2 + 1/M2, so districts with few unclassified ballots are noisy.',
+      'K > 1 is not evidence of manipulation by itself. Older voters’ ballots are rejected more often, and a voter-age model calibrated per election reproduces K for the major candidates from the age composition of their electorates (Chun et al.). Treat K as a screening statistic.',
     ],
+    ko: {
+      label: 'K값 (K 통계량: 미분류/분류 오즈비)',
+      formula:
+        'K = (P2 / M2) / (P1 / M1)   (P = 주요 보수 후보, M = 민주당 후보; 1 = 분류표(기계 분류), 2 = 미분류표(수작업 확인))',
+      description:
+        'K는 같은 개표 단위(구·시·군) 안에서, 미분류표(분류기가 거부해 개표 요원이 수작업으로 확인한 투표지)의 보수 후보 대 민주당 후보 득표비를 분류표의 같은 득표비로 나눈 값이다. 전국 합계로 한 번 계산하면 통합 K이다. K는 기계 거부의 오즈비이다. u_c = P2/(P1 + P2)를 후보 c의 투표지 중 기계가 거부한 비율이라 하면 K = [u_c/(1 − u_c)] / [u_d/(1 − u_d)] ≈ u_c/u_d이다. 기계의 거부가 투표 선택과 무관하면 K ≈ 1이고, K > 1은 분자 후보의 투표지가 더 자주 거부된다는 뜻일 뿐이다.',
+      units: '비율(단위 없음)',
+      caveats: [
+        '분자는 항상 주요 보수 후보이다(2012년 박근혜, 2017년 홍준표, 2022년 윤석열, 2025년 김문수). 2012년 연구처럼 당선자를 분자에 두면 2017년과 2025년의 K는 역수가 되며, 겉보기 반전은 그 규칙이 만든 인위적 결과이다.',
+        'K가 선거구마다 다르면 통합 K(전국 합계의 비), 선거구 평균, 선거구 중앙값이 서로 달라진다. 어느 값인지 항상 밝혀야 한다. 점유율 비 R2/R1(R1 = P1/(P1 + M1), R2 = P2/(P2 + M2))은 다른 양이며 항상 K보다 1에 가깝다.',
+        'log K의 표집분산은 대략 1/P1 + 1/M1 + 1/P2 + 1/M2이므로 미분류표가 적은 선거구는 잡음이 크다.',
+        'K > 1만으로는 조작의 증거가 아니다. 고령 유권자의 투표지가 더 자주 거부되며, 선거별로 보정한 유권자 연령 모형이 지지층의 연령 구성만으로 주요 후보의 K를 재현한다(Chun et al.). K는 선별용 통계량으로 다뤄야 한다.',
+      ],
+    },
+  },
+  {
+    id: 'absentee_ratio',
+    label: 'Absentee-to-in-precinct share ratio (관외사전/관내 득표율 비, R2/R1) — not the paper’s K',
+    formula: 'ratio = R2 / R1   where R1 = 관내 득표율, R2 = 관외사전 득표율',
+    description:
+      'Ratio of a candidate’s absentee-sort share (R2) to their in-precinct share (R1) within the same district. It is shown on the 21st-election recount tab (labelled "K값 (관외사전/관내)") and drives the OLS-based anomaly flags. This is NOT the K statistic defined above: it compares two voting methods, not machine-classified with hand-confirmed ballots. The classified/unclassified K appears on the Classified and Compare tabs.',
+    units: 'ratio (unitless)',
+    caveats: [
+      'Small absentee pools produce naturally high variance. We report 95% prediction intervals from an OLS fit of R2 on R1 across districts.',
+      'A screening heuristic, not a test statistic. Use anomaly flags in conjunction with residual magnitude and sample size.',
+    ],
+    ko: {
+      label: '관외사전/관내 득표율 비 (R2/R1) — 논문의 K와 다름',
+      description:
+        '같은 선거구에서 후보의 관외사전 득표율(R2)을 관내 득표율(R1)로 나눈 값이다. 21대 재확인 탭에 “K값 (관외사전/관내)”로 표시되며 OLS 기반 이상 플래그에 쓰인다. 위에서 정의한 K 통계량이 아니다. 이 값은 두 투표 방식을 비교하는 것이며, 기계가 분류한 투표지와 수작업으로 확인한 투표지를 비교하는 것이 아니다. 분류/미분류 K는 분류·비교 탭에 표시된다.',
+      units: '비율(단위 없음)',
+      caveats: [
+        '관외사전 표본이 작으면 변동이 자연히 크다. 선거구 전체에서 R2를 R1에 OLS로 적합한 95% 예측구간을 보고한다.',
+        '선별용 휴리스틱이지 검정 통계량이 아니다. 이상 플래그는 잔차 크기와 표본 크기와 함께 해석해야 한다.',
+      ],
+    },
   },
   {
     id: 'swing',
@@ -140,13 +181,13 @@ export const DATA_SOURCES: DataSource[] = [
   },
   {
     id: 'recount_21st',
-    name: '21대 재확인표 K-value dataset',
+    name: '21대 관외사전/관내 득표율 비 (R2/R1) dataset',
     file: 'summaries/k21_recount.json',
     version: 'build 2026-04-15 (OLS fit, 95% PI)',
     lastModified: '2026-04-15',
     origin: 'Derived from nec_21st via build_recount_summary.py',
     rowCount: 253,
-    notes: 'Prediction intervals are from an OLS regression of R2 on R1 across all 253 districts. K here is 관외사전 share ÷ 관내 share (이재명), not classified vs recheck.',
+    notes: 'Prediction intervals are from an OLS regression of R2 on R1 across all 253 districts. The ratio here is 관외사전 share ÷ 관내 share (이재명), not the classified-vs-unclassified K defined in the Methodology panel.',
   },
   {
     id: 'classified_recheck_21st',
