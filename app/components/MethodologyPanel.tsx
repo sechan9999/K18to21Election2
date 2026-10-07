@@ -1,6 +1,7 @@
 'use client';
 
 import { BookOpen, Database, GitBranch, Clock } from 'lucide-react';
+import { useLanguage } from './LanguageProvider';
 import {
   METRICS,
   DATA_SOURCES,
@@ -8,7 +9,15 @@ import {
   type PipelineRun,
 } from '../lib/methodology';
 
+const CHROME = {
+  en: { metrics: 'Metric definitions', formula: 'Formula', units: 'Units', description: 'Description', caveats: 'Caveats' },
+  ko: { metrics: '지표 정의', formula: '공식', units: '단위', description: '설명', caveats: '유의사항' },
+} as const;
+
 export default function MethodologyPanel() {
+  const { locale } = useLanguage();
+  const c = CHROME[locale];
+  const metrics = METRICS.map((m) => (locale === 'ko' && m.ko ? { ...m, ...m.ko } : m));
   return (
     <section
       aria-labelledby="methodology-heading"
@@ -36,10 +45,10 @@ export default function MethodologyPanel() {
 
       <section aria-labelledby="metrics-heading" className="rounded-3xl border border-white/5 bg-slate-900/40 p-6">
         <h2 id="metrics-heading" className="mb-4 text-lg font-bold text-white">
-          Metric definitions
+          {c.metrics}
         </h2>
         <div className="space-y-4">
-          {METRICS.map((m) => (
+          {metrics.map((m) => (
             <article
               key={m.id}
               id={`metric-${m.id}`}
@@ -48,24 +57,24 @@ export default function MethodologyPanel() {
               <h3 className="text-base font-bold text-blue-300">{m.label}</h3>
               <dl className="mt-3 grid gap-3 md:grid-cols-[8rem_1fr]">
                 <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Formula
+                  {c.formula}
                 </dt>
                 <dd className="font-mono text-xs text-amber-200">{m.formula}</dd>
 
                 <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Units
+                  {c.units}
                 </dt>
                 <dd className="text-xs text-slate-300">{m.units}</dd>
 
                 <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Description
+                  {c.description}
                 </dt>
                 <dd className="text-sm leading-relaxed text-slate-300">{m.description}</dd>
 
                 {m.caveats && m.caveats.length > 0 && (
                   <>
                     <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      Caveats
+                      {c.caveats}
                     </dt>
                     <dd>
                       <ul className="list-disc space-y-1 pl-4 text-xs text-slate-400">

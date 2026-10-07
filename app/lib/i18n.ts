@@ -178,7 +178,7 @@ export const DICT: Record<Key, Dict> = {
   'nav.insight': { ko: '인사이트', en: 'Insight' },
   'nav.report': { ko: '보고서', en: 'Reports' },
   'nav.audit': { ko: '감사', en: 'Audits' },
-  'nav.recount': { ko: '관외/관내 K', en: 'Absentee K' },
+  'nav.recount': { ko: '관외/관내 비', en: 'Absentee ratio' },
   'nav.classified': { ko: '분류·재확인 분석', en: 'Classified vs Recheck' },
   'nav.compare': { ko: '18–21대 비교', en: '18th–21st Compare' },
   'nav.methodology': { ko: '방법론', en: 'Methodology' },
@@ -269,8 +269,8 @@ export const DICT: Record<Key, Dict> = {
 
   'anomaly.title': { ko: '이상치 플래그', en: 'Anomaly flags' },
   'anomaly.description': {
-    ko: '구시군별 스크리닝 휴리스틱입니다. 플래그는 결론이 아니라 재점검 대상입니다 — K값, 잔차 크기, 95% 예측구간 이탈 여부를 결합합니다.',
-    en: 'District-level screening heuristics. A flag is not a finding — it marks districts worth manual review, combining K-value extremes, residual magnitude, and 95% PI deviation.',
+    ko: '구시군별 스크리닝 휴리스틱입니다. 플래그는 결론이 아니라 재점검 대상입니다 — 관외사전/관내 비의 극단값, 잔차 크기, 95% 예측구간 이탈 여부를 결합합니다.',
+    en: 'District-level screening heuristics. A flag is not a finding — it marks districts worth manual review, combining extremes of the absentee-to-in-precinct ratio, residual magnitude, and 95% PI deviation.',
   },
   'anomaly.severity.info': { ko: '정상', en: 'OK' },
   'anomaly.severity.watch': { ko: '주시', en: 'Watch' },
@@ -286,7 +286,7 @@ export const DICT: Record<Key, Dict> = {
   'anomaly.col.r1': { ko: 'R1', en: 'R1' },
   'anomaly.col.r2': { ko: 'R2', en: 'R2' },
   'anomaly.col.pi95': { ko: '95% 구간', en: '95% PI' },
-  'anomaly.col.k': { ko: 'K', en: 'K' },
+  'anomaly.col.k': { ko: '관외/관내 비', en: 'Absentee ratio' },
   'anomaly.col.residual': { ko: '잔차', en: 'Residual' },
   'anomaly.col.reasons': { ko: '사유', en: 'Reasons' },
   'anomaly.showingTop': {
