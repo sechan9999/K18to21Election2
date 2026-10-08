@@ -7,6 +7,7 @@ import k21RecountSummary from '../summaries/k21_recount_summary.json';
 import electionReports from '../summaries/election_reports.json';
 import classifiedRecheck from '../summaries/k21_classified_recheck.json';
 import comparison from '../summaries/k18_21_comparison.json';
+import winnerK from '../summaries/k18_21_winner_k.json';
 import ElectionDashboard from './components/ElectionDashboard';
 import type { ElectionRecord, RegionalRecord } from './types/election';
 
@@ -28,6 +29,7 @@ export default async function Home() {
       electionReports={electionReports as any}
       classifiedRecheck={classifiedRecheck as any}
       comparison={comparison as any}
+      winnerK={winnerK as any}
       reports={{
         analysis: analysisReport,
         excelAudit: excelAudit,

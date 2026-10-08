@@ -42,6 +42,7 @@ import ShareBar from './ShareBar';
 import { LanguageToggle, useLanguage } from './LanguageProvider';
 import type { ClassifiedRecheckData } from './ClassifiedRecheckView';
 import type { ComparisonData } from './CompareElectionsView';
+import type { WinnerKData } from './WinnerKPanel';
 import { LAST_PIPELINE_RUN, METRIC_PROVENANCE, sourceById } from '../lib/methodology';
 import { shortRegion } from '../lib/analytics';
 
@@ -116,6 +117,7 @@ interface Props {
   electionReports?: Record<string, ElectionReport>;
   classifiedRecheck?: ClassifiedRecheckData;
   comparison?: ComparisonData;
+  winnerK?: WinnerKData;
   reports: {
     classifiedRecheck?: string;
     comparison?: string;
@@ -188,7 +190,7 @@ const ELECTION_LABELS: Record<string, string> = {
 
 const ELECTIONS = ['18th', '19th', '20th', '21st'] as const;
 
-export default function ElectionDashboard({ electionData, regionalData, reports, recountData, recountSummary, electionReports, classifiedRecheck, comparison }: Props) {
+export default function ElectionDashboard({ electionData, regionalData, reports, recountData, recountSummary, electionReports, classifiedRecheck, comparison, winnerK }: Props) {
   const { t } = useLanguage();
   const [view, setView] = useState<View>('insight');
   const [selectedElection, setSelectedElection] = useState<(typeof ELECTIONS)[number]>('21st');
@@ -545,7 +547,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
         {/* 18–21대 비교 View */}
         {view === 'compare' && comparison && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <CompareElectionsView data={comparison} report={reports.comparison} />
+            <CompareElectionsView data={comparison} report={reports.comparison} winnerK={winnerK} />
           </div>
         )}
 

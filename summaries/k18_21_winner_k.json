@@ -1,0 +1,152 @@
+{
+ "meta": {
+  "title": "두 번째 방법: 당선자를 분자로 둔 K / Second method: K with the winner in the numerator",
+  "built": "2026-10-08",
+  "method1": "K_P = (P2/M2)/(P1/M1), 보수 후보 분자 (기존 화면 전체) / conservative candidate in the numerator (rest of the dashboard)",
+  "method2": "K = 당선자 분자: 18·20대는 K_P, 19·21대는 1/K_P / winner in the numerator: K_P in the 18th and 20th, 1/K_P in the 19th and 21st",
+  "frames": "구·시·군 18대 249, 19대 249, 20대 248(제천 제외), 21대 252 / districts: 249, 249, 248 (Jecheon excluded), 252",
+  "accounting": "두 후보 득표 기준. K = 1 기준: 미분류표 수를 고정하고 분류표와 같은 비율로 나눔. 회계 기준이지 조작에 대한 주장이 아님. / Two leading candidates; K = 1 benchmark splits the unclassified ballots like the classified ones; an accounting benchmark, not a claim about manipulation."
+ },
+ "elections": [
+  {
+   "id": "18대",
+   "year": 2012,
+   "winner": "박근혜",
+   "runner_up": "문재인",
+   "winner_is_conservative": true,
+   "n": 249,
+   "K_winner": {
+    "pooled": 1.3806,
+    "lo": 1.3261,
+    "hi": 1.4372,
+    "mean": 1.4787,
+    "median": 1.4674,
+    "n_above1": 247
+   },
+   "K_conservative": {
+    "pooled": 1.3806,
+    "mean": 1.4787,
+    "median": 1.4674
+   },
+   "accounting": {
+    "two_candidate_votes": 29594526,
+    "unclassified_share_pct": 3.33,
+    "margin_classified": 953911,
+    "margin_unclassified": 189127,
+    "margin_total": 1143038,
+    "margin_total_pct": 3.86,
+    "margin_if_K1": 986724,
+    "margin_if_K1_pct": 3.33,
+    "change_due_to_K": 156314,
+    "winner_leads_classified": true,
+    "winner_leads_if_K1": true,
+    "K_at_zero_margin": 0.01459
+   }
+  },
+  {
+   "id": "19대",
+   "year": 2017,
+   "winner": "문재인",
+   "runner_up": "홍준표",
+   "winner_is_conservative": false,
+   "n": 249,
+   "K_winner": {
+    "pooled": 0.6225,
+    "lo": 0.6053,
+    "hi": 0.6403,
+    "mean": 0.6406,
+    "median": 0.6177,
+    "n_above1": 2
+   },
+   "K_conservative": {
+    "pooled": 1.6063,
+    "mean": 1.5997,
+    "median": 1.6189
+   },
+   "accounting": {
+    "two_candidate_votes": 21118173,
+    "unclassified_share_pct": 3.91,
+    "margin_classified": 5458748,
+    "margin_unclassified": 31999,
+    "margin_total": 5490747,
+    "margin_total_pct": 26.0,
+    "margin_if_K1": 5680690,
+    "margin_if_K1_pct": 26.9,
+    "change_due_to_K": -189943,
+    "winner_leads_classified": true,
+    "winner_leads_if_K1": true,
+    "K_at_zero_margin": null
+   }
+  },
+  {
+   "id": "20대",
+   "year": 2022,
+   "winner": "윤석열",
+   "runner_up": "이재명",
+   "winner_is_conservative": true,
+   "n": 248,
+   "K_winner": {
+    "pooled": 1.1978,
+    "lo": 1.1448,
+    "hi": 1.2533,
+    "mean": 1.2808,
+    "median": 1.2783,
+    "n_above1": 223
+   },
+   "K_conservative": {
+    "pooled": 1.1978,
+    "mean": 1.2808,
+    "median": 1.2783
+   },
+   "accounting": {
+    "two_candidate_votes": 32315333,
+    "unclassified_share_pct": 5.04,
+    "margin_classified": 77105,
+    "margin_unclassified": 150532,
+    "margin_total": 227637,
+    "margin_total_pct": 0.7,
+    "margin_if_K1": 81193,
+    "margin_if_K1_pct": 0.25,
+    "change_due_to_K": 146444,
+    "winner_leads_classified": true,
+    "winner_leads_if_K1": true,
+    "K_at_zero_margin": 0.90496
+   }
+  },
+  {
+   "id": "21대",
+   "year": 2025,
+   "winner": "이재명",
+   "runner_up": "김문수",
+   "winner_is_conservative": false,
+   "n": 252,
+   "K_winner": {
+    "pooled": 0.8127,
+    "lo": 0.789,
+    "hi": 0.8372,
+    "mean": 0.7831,
+    "median": 0.7489,
+    "n_above1": 20
+   },
+   "K_conservative": {
+    "pooled": 1.2304,
+    "mean": 1.3148,
+    "median": 1.3352
+   },
+   "accounting": {
+    "two_candidate_votes": 31061841,
+    "unclassified_share_pct": 2.35,
+    "margin_classified": 2651977,
+    "margin_unclassified": -11682,
+    "margin_total": 2640295,
+    "margin_total_pct": 8.5,
+    "margin_if_K1": 2715703,
+    "margin_if_K1_pct": 8.74,
+    "change_due_to_K": -75408,
+    "winner_leads_classified": true,
+    "winner_leads_if_K1": true,
+    "K_at_zero_margin": null
+   }
+  }
+ ]
+}
