@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { Markdown } from './ClassifiedRecheckView';
+import WinnerKPanel, { type WinnerKData } from './WinnerKPanel';
 
 // 18–21대 분류/미분류(재확인) 투표지 비교 화면. 분자는 보수 후보로 통일.
 // 데이터: summaries/k18_21_comparison.json, 보고서: reports/k18_21_comparison_report.md
@@ -69,8 +70,8 @@ function Card({ title, sub, children }: { title: string; sub?: string; children:
   );
 }
 
-export default function CompareElectionsView({ data, report }: { data: ComparisonData; report?: string }) {
-  const [tab, setTab] = useState<'overview' | 'provinces' | 'cand19' | 'normality' | 'figures' | 'report'>('overview');
+export default function CompareElectionsView({ data, report, winnerK }: { data: ComparisonData; report?: string; winnerK?: WinnerKData }) {
+  const [tab, setTab] = useState<'overview' | 'provinces' | 'cand19' | 'normality' | 'winner' | 'figures' | 'report'>('overview');
   const avail = data.elections.filter((e) => e.available);
   const [shown, setShown] = useState<Record<string, boolean>>(Object.fromEntries(avail.map((e) => [e.id, true])));
 
@@ -92,6 +93,7 @@ export default function CompareElectionsView({ data, report }: { data: Compariso
           분자: {data.meta.numerator}. R1 = {data.meta.definitions.R1} · R2 = {data.meta.definitions.R2} · K = {data.meta.definitions.K} · 비율의 비 = R2/R1. 단위: {data.meta.units}.
         </p>
         <p className="mt-2 text-xs text-teal-200/80">{data.meta.why_conservative}</p>
+        {winnerK && <p className="mt-2 text-xs text-teal-200/80">당선자를 분자로 둔 K와 승패 회계는 “방법 2” 탭에서 볼 수 있습니다. / The winner-numerator K and the margin accounting are on the “Method 2” tab.</p>}
       </div>
 
       {/* 선거별 카드 */}
@@ -125,7 +127,7 @@ export default function CompareElectionsView({ data, report }: { data: Compariso
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <TabBtn id="overview" label="적합선 비교" /><TabBtn id="provinces" label="시도별 OR" />{data.candidates19 && <TabBtn id="cand19" label="후보별 K" />}{data.normality && <TabBtn id="normality" label="K 정규성" />}<TabBtn id="figures" label="그림" /><TabBtn id="report" label="비교 보고서" />
+        <TabBtn id="overview" label="적합선 비교" /><TabBtn id="provinces" label="시도별 OR" />{data.candidates19 && <TabBtn id="cand19" label="후보별 K" />}{data.normality && <TabBtn id="normality" label="K 정규성" />}{winnerK && <TabBtn id="winner" label="방법 2: 당선자 분자 K / Method 2: winner K" />}<TabBtn id="figures" label="그림" /><TabBtn id="report" label="비교 보고서" />
       </div>
 
       <Card title="K 정의와 집계 방식" sub="같은 자료라도 정의(비의 비 / 비율의 비)와 집계(구·시·군 평균 / 전국 합산)에 따라 값이 달라집니다">
@@ -454,6 +456,8 @@ export default function CompareElectionsView({ data, report }: { data: Compariso
           </div>
         </Card>
       )}
+
+      {tab === 'winner' && winnerK && <WinnerKPanel data={winnerK} />}
 
       {tab === 'figures' && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
