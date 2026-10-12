@@ -964,6 +964,12 @@ function isFraction(v: any): boolean {
 }
 
 function ElectionReportView({ report }: { report: ElectionReport }) {
+  const { locale } = useLanguage();
+  const en = locale === 'en';
+  const L = (ko: string, eng: string) => (en ? eng : ko);
+  const pe = (o: any, k: string) => (en && o && o[k + '_en'] != null ? o[k + '_en'] : o[k]);
+  const PARTY: Record<string, string> = { '새누리당': 'Saenuri Party', '민주통합당': 'Democratic United Party', '더불어민주당': 'Democratic Party', '국민의힘': 'People Power Party', '자유한국당': 'Liberty Korea Party', '국민의당': "People's Party", '바른정당': 'Bareun Party', '정의당': 'Justice Party', '민주노동당': 'Democratic Labor Party', '개혁신당': 'Reform Party', '국가혁명당': 'National Revolutionary Party', '무소속': 'Independent', '각 정당': 'Each party' };
+  const party = (s: string) => (en ? (PARTY[s] ?? s) : s);
   const winner = report.candidates[0];
   const runnerUp = report.candidates[1];
   const chartData = report.candidates.map((c) => ({
@@ -978,27 +984,27 @@ function ElectionReportView({ report }: { report: ElectionReport }) {
       {/* Header card */}
       <div className="rounded-[32px] border border-white/5 bg-gradient-to-br from-slate-900/60 to-slate-900/30 p-8 shadow-2xl backdrop-blur">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-black tracking-tight text-white md:text-4xl">{report.title}</h1>
+          <h1 className="text-3xl font-black tracking-tight text-white md:text-4xl">{pe(report, 'title')}</h1>
           {report.subtitle && (
             <p className="text-sm font-medium text-slate-400">{report.subtitle}</p>
           )}
           {report.date && (
-            <p className="text-xs text-slate-500">{report.date}</p>
+            <p className="text-xs text-slate-500">{pe(report, 'date')}</p>
           )}
         </div>
       </div>
 
       {/* Overview KPIs */}
       <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
-        <h2 className="mb-4 text-lg font-bold text-blue-400">1. 선거 개요 (Election Overview)</h2>
+        <h2 className="mb-4 text-lg font-bold text-blue-400">{L('1. 선거 개요 (Election Overview)', '1. Election Overview')}</h2>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
           {report.overview.map((o, i) => (
             <div key={i} className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{o.label}</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{pe(o, 'label')}</p>
               <p className="mt-1 text-xl font-bold text-white">
                 {isFraction(o.value) ? fmtPct(o.value) : fmtNum(o.value)}
               </p>
-              {o.note && <p className="mt-1 text-[10px] text-slate-500 leading-tight">{String(o.note)}</p>}
+              {o.note && <p className="mt-1 text-[10px] text-slate-500 leading-tight">{String(pe(o, 'note'))}</p>}
             </div>
           ))}
         </div>
@@ -1006,17 +1012,17 @@ function ElectionReportView({ report }: { report: ElectionReport }) {
 
       {/* Candidates */}
       <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
-        <h2 className="mb-4 text-lg font-bold text-blue-400">2. 후보별 개표 결과 (Candidate Results)</h2>
+        <h2 className="mb-4 text-lg font-bold text-blue-400">{L('2. 후보별 개표 결과 (Candidate Results)', '2. Candidate Results')}</h2>
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="overflow-x-auto rounded-xl border border-white/10 bg-[#020617]/50">
             <table className="w-full text-left text-sm text-slate-300">
               <thead className="bg-slate-800/90 text-xs uppercase text-slate-400">
                 <tr>
-                  <th className="px-3 py-2">후보자</th>
-                  <th className="px-3 py-2">정당</th>
-                  <th className="px-3 py-2 text-right">득표수</th>
-                  <th className="px-3 py-2 text-right">득표율</th>
-                  <th className="px-3 py-2 text-center">결과</th>
+                  <th className="px-3 py-2">{L('후보자', 'Candidate')}</th>
+                  <th className="px-3 py-2">{L('정당', 'Party')}</th>
+                  <th className="px-3 py-2 text-right">{L('득표수', 'Votes')}</th>
+                  <th className="px-3 py-2 text-right">{L('득표율', 'Share')}</th>
+                  <th className="px-3 py-2 text-center">{L('결과', 'Result')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -1024,22 +1030,22 @@ function ElectionReportView({ report }: { report: ElectionReport }) {
                   const color = getPartyColor(`${c.name} (${c.party})`);
                   return (
                     <tr key={i} className="hover:bg-white/[0.03]">
-                      <td className="px-3 py-2 font-bold text-white">{c.name}</td>
-                      <td className="px-3 py-2" style={{ color }}>{c.party}</td>
+                      <td className="px-3 py-2 font-bold text-white">{candEn(c.name, en)}</td>
+                      <td className="px-3 py-2" style={{ color }}>{party(c.party)}</td>
                       <td className="px-3 py-2 text-right font-mono">{fmtNum(c.votes)}</td>
                       <td className="px-3 py-2 text-right font-mono font-bold">{fmtPct(c.pct)}</td>
-                      <td className="px-3 py-2 text-center text-xs">{c.result}</td>
+                      <td className="px-3 py-2 text-center text-xs">{pe(c, 'result')}</td>
                     </tr>
                   );
                 })}
                 {report.margin && (
                   <tr className="bg-white/[0.02]">
                     <td className="px-3 py-2 text-xs italic text-slate-400" colSpan={2}>
-                      {report.margin.label ?? '표차'}
+                      {pe(report.margin, 'label') ?? L('표차', 'Margin')}
                     </td>
                     <td className="px-3 py-2 text-right font-mono text-amber-300">{fmtNum(report.margin.votes)}</td>
                     <td className="px-3 py-2 text-right font-mono text-amber-300">{fmtPct(report.margin.pct)}</td>
-                    <td className="px-3 py-2 text-center text-[10px] text-slate-500">{report.margin.note ?? ''}</td>
+                    <td className="px-3 py-2 text-center text-[10px] text-slate-500">{pe(report.margin, 'note') ?? ''}</td>
                   </tr>
                 )}
               </tbody>
@@ -1052,7 +1058,7 @@ function ElectionReportView({ report }: { report: ElectionReport }) {
                 <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={12} width={70} axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: 12 }}
-                  formatter={(v: any) => [typeof v === 'number' ? v.toFixed(2) + '%' : v, '득표율']}
+                  formatter={(v: any) => [typeof v === 'number' ? v.toFixed(2) + '%' : v, L('득표율', 'Share')]}
                   cursor={{ fill: 'transparent' }}
                 />
                 <Bar dataKey="pct" radius={[0, 8, 8, 0]} barSize={22}>
@@ -1064,40 +1070,40 @@ function ElectionReportView({ report }: { report: ElectionReport }) {
         </div>
         {winner && runnerUp && (
           <div className="mt-4 rounded-xl border border-blue-500/20 bg-blue-500/5 p-3 text-xs text-slate-400">
-            <span className="font-bold text-blue-300">{winner.name}</span> 당선 ·{' '}
+            <span className="font-bold text-blue-300">{candEn(winner.name, en)}</span> {L('당선', 'elected')} ·{' '}
             <span className="font-mono">{fmtPct(winner.pct)}</span> vs{' '}
-            <span className="font-bold text-rose-300">{runnerUp.name}</span>{' '}
+            <span className="font-bold text-rose-300">{candEn(runnerUp.name, en)}</span>{' '}
             <span className="font-mono">{fmtPct(runnerUp.pct)}</span>
-            {report.margin?.pct && <> · 표차 {fmtPct(report.margin.pct)}</>}
+            {report.margin?.pct && <> · {L('표차', 'margin')} {fmtPct(report.margin.pct)}</>}
           </div>
         )}
       </div>
 
       {/* Provinces */}
       <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
-        <h2 className="mb-4 text-lg font-bold text-blue-400">3. 시도별 개표 결과 (Results by Province)</h2>
+        <h2 className="mb-4 text-lg font-bold text-blue-400">{L('3. 시도별 개표 결과 (Results by Province)', '3. Results by Province')}</h2>
         <div className="overflow-x-auto rounded-xl border border-white/10 bg-[#020617]/50">
           <table className="w-full text-left text-sm text-slate-300">
             <thead className="bg-slate-800/90 text-xs uppercase text-slate-400">
               <tr>
-                <th className="px-3 py-2">시도명</th>
-                <th className="px-3 py-2 text-right">투표율</th>
+                <th className="px-3 py-2">{L('시도명', 'Province')}</th>
+                <th className="px-3 py-2 text-right">{L('투표율', 'Turnout')}</th>
                 {report.provinceCandidates.map((n) => (
-                  <th key={n} className="px-3 py-2 text-right">{n}</th>
+                  <th key={n} className="px-3 py-2 text-right">{candEn(n, en)}</th>
                 ))}
-                <th className="px-3 py-2">우세</th>
-                <th className="px-3 py-2 text-right">표차 (%p)</th>
+                <th className="px-3 py-2">{L('우세', 'Leader')}</th>
+                <th className="px-3 py-2 text-right">{L('표차 (%p)', 'Margin (%p)')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {report.provinces.map((p, i) => (
                 <tr key={i} className="hover:bg-white/[0.03]">
-                  <td className="px-3 py-1.5 font-medium text-white">{p.name}</td>
+                  <td className="px-3 py-1.5 font-medium text-white">{provEn(p.name, en)}</td>
                   <td className="px-3 py-1.5 text-right font-mono text-xs">{fmtPct(p.turnout)}</td>
                   {report.provinceCandidates.map((n) => (
                     <td key={n} className="px-3 py-1.5 text-right font-mono text-xs">{fmtPct(p.shares?.[n])}</td>
                   ))}
-                  <td className="px-3 py-1.5 text-xs" style={{ color: getPartyColor(p.winner) }}>{p.winner}</td>
+                  <td className="px-3 py-1.5 text-xs" style={{ color: getPartyColor(p.winner) }}>{candEn(p.winner, en)}</td>
                   <td className="px-3 py-1.5 text-right font-mono text-xs text-amber-300">{fmtPct(p.leadPct)}</td>
                 </tr>
               ))}
@@ -1109,14 +1115,14 @@ function ElectionReportView({ report }: { report: ElectionReport }) {
       {/* Regional summary (21st only) */}
       {report.regionalSummary && report.regionalSummary.length > 0 && (
         <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
-          <h2 className="mb-4 text-lg font-bold text-blue-400">권역별 요약 (Regional Summary)</h2>
+          <h2 className="mb-4 text-lg font-bold text-blue-400">{L('권역별 요약 (Regional Summary)', 'Regional Summary')}</h2>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
             {report.regionalSummary.map((r, i) => (
               <div key={i} className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
-                <p className="text-[11px] font-bold text-slate-400">{r.region}</p>
-                <p className="mt-2 text-sm font-mono" style={{ color: DEMOCRATIC }}>이재명 {fmtPct(r.lee)}</p>
-                <p className="text-sm font-mono" style={{ color: CONSERVATIVE }}>김문수 {fmtPct(r.kim)}</p>
-                <p className="mt-2 text-[10px] text-slate-500">우세 {r.winner} (+{fmtPct(r.leadPct)})</p>
+                <p className="text-[11px] font-bold text-slate-400">{pe(r, 'region')}</p>
+                <p className="mt-2 text-sm font-mono" style={{ color: DEMOCRATIC }}>{candEn('이재명', en)} {fmtPct(r.lee)}</p>
+                <p className="text-sm font-mono" style={{ color: CONSERVATIVE }}>{candEn('김문수', en)} {fmtPct(r.kim)}</p>
+                <p className="mt-2 text-[10px] text-slate-500">{L('우세', 'lead')} {candEn(r.winner, en)} (+{fmtPct(r.leadPct)})</p>
               </div>
             ))}
           </div>
@@ -1125,20 +1131,20 @@ function ElectionReportView({ report }: { report: ElectionReport }) {
 
       {/* Insights */}
       <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
-        <h2 className="mb-4 text-lg font-bold text-blue-400">4. 주요 분석 (Key Insights)</h2>
+        <h2 className="mb-4 text-lg font-bold text-blue-400">{L('4. 주요 분석 (Key Insights)', '4. Key Insights')}</h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {report.insights.map((sec, i) => (
             <div key={i} className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
-              <h3 className="mb-3 text-sm font-bold text-rose-300">■ {sec.section}</h3>
+              <h3 className="mb-3 text-sm font-bold text-rose-300">■ {pe(sec, 'section')}</h3>
               <ul className="space-y-2 text-xs">
                 {sec.items.map((it, j) => (
                   <li key={j} className="flex items-start justify-between gap-2 border-b border-white/5 pb-1.5 last:border-0">
-                    <span className="text-slate-400">{it.label}</span>
+                    <span className="text-slate-400">{pe(it, 'label')}</span>
                     <span className="text-right font-mono text-slate-200">
                       {isFraction(it.value) ? fmtPct(it.value) : fmtNum(it.value)}
                       {it.note !== null && it.note !== undefined && it.note !== '' && (
                         <span className="ml-1 text-[10px] text-slate-500">
-                          {isFraction(it.note) ? `(${fmtPct(it.note)})` : `(${it.note})`}
+                          {isFraction(it.note) ? `(${fmtPct(it.note as number)})` : `(${pe(it, 'note')})`}
                         </span>
                       )}
                     </span>

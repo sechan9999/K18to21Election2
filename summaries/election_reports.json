@@ -7,27 +7,34 @@
       {
         "label": "총 선거인수",
         "value": 40507842,
-        "note": "전국 유권자 총수"
+        "note": "전국 유권자 총수",
+        "label_en": "Total electorate",
+        "note_en": "Total eligible voters nationwide"
       },
       {
         "label": "총 투표수",
         "value": 30721459,
-        "note": "사전투표 + 본투표 + 재외투표 (합산)"
+        "note": "사전투표 + 본투표 + 재외투표 (합산)",
+        "label_en": "Total votes",
+        "note_en": "Early + main + overseas voting (combined)"
       },
       {
         "label": "투표율",
         "value": 0.7584076930091709,
-        "note": null
+        "note": null,
+        "label_en": "Turnout"
       },
       {
         "label": "무효 투표",
         "value": 126838,
-        "note": null
+        "note": null,
+        "label_en": "Invalid votes"
       },
       {
         "label": "기권자수",
         "value": 9786383,
-        "note": null
+        "note": null,
+        "label_en": "Abstentions"
       }
     ],
     "candidates": [
@@ -37,7 +44,8 @@
         "votes": 15773128,
         "pct": 0.5134237927957783,
         "winningProvinces": 13,
-        "result": "★ 당선"
+        "result": "★ 당선",
+        "result_en": "★ Elected"
       },
       {
         "name": "문재인",
@@ -45,7 +53,8 @@
         "votes": 14692632,
         "pct": 0.4782530673429279,
         "winningProvinces": 4,
-        "result": "낙선"
+        "result": "낙선",
+        "result_en": "Not elected"
       },
       {
         "name": "강지원",
@@ -53,14 +62,17 @@
         "votes": 53303,
         "pct": 0.001735041294751008,
         "winningProvinces": "-",
-        "result": "낙선"
+        "result": "낙선",
+        "result_en": "Not elected"
       }
     ],
     "margin": {
       "label": "표차 (1위 - 2위)",
       "votes": 1080496,
       "pct": 0.03517072545285038,
-      "note": "3.52%p 차이"
+      "note": "3.52%p 차이",
+      "label_en": "Margin (1st − 2nd)",
+      "note_en": "3.52%p difference"
     },
     "provinces": [
       {
@@ -263,14 +275,19 @@
           {
             "label": "박근혜 우세 시도 수",
             "value": 13,
-            "note": "개 시도 (부산광역시, 대구광역시, 인천광역시, 대전광역시, 울산광역시, 세종특별자치시, 경기도, 강원도, 충청북도, 충청남도, 경상북도, 경상남도, 제주특별자치도)"
+            "note": "개 시도 (부산광역시, 대구광역시, 인천광역시, 대전광역시, 울산광역시, 세종특별자치시, 경기도, 강원도, 충청북도, 충청남도, 경상북도, 경상남도, 제주특별자치도)",
+            "label_en": "Provinces where Park led",
+            "note_en": "provinces (Busan, Daegu, Incheon, Daejeon, Ulsan, Sejong, Gyeonggi, Gangwon, Chungbuk, Chungnam, Gyeongbuk, Gyeongnam, Jeju)"
           },
           {
             "label": "문재인 우세 시도 수",
             "value": 4,
-            "note": "개 시도 (서울특별시, 광주광역시, 전라북도, 전라남도)"
+            "note": "개 시도 (서울특별시, 광주광역시, 전라북도, 전라남도)",
+            "label_en": "Provinces where Moon led",
+            "note_en": "provinces (Seoul, Gwangju, Jeonbuk, Jeonnam)"
           }
-        ]
+        ],
+        "section_en": "Regional Dynamics"
       },
       {
         "section": "전국 표차 (National Margin)",
@@ -278,9 +295,11 @@
           {
             "label": "박근혜  - 문재인 표차",
             "value": 1080496,
-            "note": 0.03517072545285038
+            "note": 0.03517072545285038,
+            "label_en": "Park − Moon margin"
           }
-        ]
+        ],
+        "section_en": "National Margin"
       },
       {
         "section": "투표율 분석 (Turnout Analysis)",
@@ -288,17 +307,21 @@
           {
             "label": "최고 투표율",
             "value": "광주광역시",
-            "note": 0.8037495716960656
+            "note": 0.8037495716960656,
+            "label_en": "Highest turnout"
           },
           {
             "label": "최저 투표율",
             "value": "충청남도",
-            "note": 0.7292612896761107
+            "note": 0.7292612896761107,
+            "label_en": "Lowest turnout"
           }
-        ]
+        ],
+        "section_en": "Turnout Analysis"
       }
     ],
-    "regionalSummary": null
+    "regionalSummary": null,
+    "title_en": "18th presidential election (results & analysis)"
   },
   "19th": {
     "title": "제19대 대통령선거 (결과 및 분석)",
@@ -308,27 +331,34 @@
       {
         "label": "총 선거인수",
         "value": 42479710,
-        "note": "전국 유권자 총수"
+        "note": "전국 유권자 총수",
+        "label_en": "Total electorate",
+        "note_en": "Total eligible voters nationwide"
       },
       {
         "label": "총 투표수",
         "value": 32807908,
-        "note": "사전투표 + 본투표 + 재외투표 (합산)"
+        "note": "사전투표 + 본투표 + 재외투표 (합산)",
+        "label_en": "Total votes",
+        "note_en": "Early + main + overseas voting (combined)"
       },
       {
         "label": "투표율",
         "value": 0.7723194908816468,
-        "note": null
+        "note": null,
+        "label_en": "Turnout"
       },
       {
         "label": "무효 투표",
         "value": 135733,
-        "note": null
+        "note": null,
+        "label_en": "Invalid votes"
       },
       {
         "label": "기권자수",
         "value": 9671802,
-        "note": null
+        "note": null,
+        "label_en": "Abstentions"
       }
     ],
     "candidates": [
@@ -338,7 +368,8 @@
         "votes": 13423800,
         "pct": 0.4091635467887803,
         "winningProvinces": 14,
-        "result": "★ 당선"
+        "result": "★ 당선",
+        "result_en": "★ Elected"
       },
       {
         "name": "홍준표",
@@ -346,7 +377,8 @@
         "votes": 7852849,
         "pct": 0.239358419317684,
         "winningProvinces": 3,
-        "result": "낙선"
+        "result": "낙선",
+        "result_en": "Not elected"
       },
       {
         "name": "안철수",
@@ -354,7 +386,8 @@
         "votes": 6998342,
         "pct": 0.2133126562047175,
         "winningProvinces": "-",
-        "result": "낙선"
+        "result": "낙선",
+        "result_en": "Not elected"
       },
       {
         "name": "유승민",
@@ -362,7 +395,8 @@
         "votes": 2208771,
         "pct": 0.06732434753230837,
         "winningProvinces": "-",
-        "result": "낙선"
+        "result": "낙선",
+        "result_en": "Not elected"
       },
       {
         "name": "심상정",
@@ -370,14 +404,17 @@
         "votes": 2017458,
         "pct": 0.06149304003168992,
         "winningProvinces": "-",
-        "result": "낙선"
+        "result": "낙선",
+        "result_en": "Not elected"
       }
     ],
     "margin": {
       "label": "표차 (1위 - 2위)",
       "votes": 5570951,
       "pct": 0.1698051274710963,
-      "note": "16.98%p 차이"
+      "note": "16.98%p 차이",
+      "label_en": "Margin (1st − 2nd)",
+      "note_en": "16.98%p difference"
     },
     "provinces": [
       {
@@ -616,14 +653,19 @@
           {
             "label": "문재인 우세 시도 수",
             "value": 14,
-            "note": "개 시도 (서울특별시, 부산광역시, 인천광역시, 광주광역시, 대전광역시, 울산광역시, 세종특별자치시, 경기도, 강원도, 충청북도, 충청남도, 전라북도, 전라남도, 제주특별자치도)"
+            "note": "개 시도 (서울특별시, 부산광역시, 인천광역시, 광주광역시, 대전광역시, 울산광역시, 세종특별자치시, 경기도, 강원도, 충청북도, 충청남도, 전라북도, 전라남도, 제주특별자치도)",
+            "label_en": "Provinces where Moon led",
+            "note_en": "provinces (Seoul, Busan, Incheon, Gwangju, Daejeon, Ulsan, Sejong, Gyeonggi, Gangwon, Chungbuk, Chungnam, Jeonbuk, Jeonnam, Jeju)"
           },
           {
             "label": "홍준표 우세 시도 수",
             "value": 3,
-            "note": "개 시도 (대구광역시, 경상북도, 경상남도)"
+            "note": "개 시도 (대구광역시, 경상북도, 경상남도)",
+            "label_en": "Provinces where Hong led",
+            "note_en": "provinces (Daegu, Gyeongbuk, Gyeongnam)"
           }
-        ]
+        ],
+        "section_en": "Regional Dynamics"
       },
       {
         "section": "전국 표차 (National Margin)",
@@ -631,9 +673,11 @@
           {
             "label": "문재인  - 홍준표 표차",
             "value": 5570951,
-            "note": 0.1698051274710963
+            "note": 0.1698051274710963,
+            "label_en": "Moon − Hong margin"
           }
-        ]
+        ],
+        "section_en": "National Margin"
       },
       {
         "section": "투표율 분석 (Turnout Analysis)",
@@ -641,17 +685,21 @@
           {
             "label": "최고 투표율",
             "value": "광주광역시",
-            "note": 0.8203960747312754
+            "note": 0.8203960747312754,
+            "label_en": "Highest turnout"
           },
           {
             "label": "최저 투표율",
             "value": "제주특별자치도",
-            "note": 0.7228938223938224
+            "note": 0.7228938223938224,
+            "label_en": "Lowest turnout"
           }
-        ]
+        ],
+        "section_en": "Turnout Analysis"
       }
     ],
-    "regionalSummary": null
+    "regionalSummary": null,
+    "title_en": "19th presidential election (results & analysis)"
   },
   "20th": {
     "title": "제20대 대통령선거 개표 결과 보고서",
@@ -661,27 +709,35 @@
       {
         "label": "총 선거인수",
         "value": 44197692,
-        "note": "전국 유권자 총수"
+        "note": "전국 유권자 총수",
+        "label_en": "Total electorate",
+        "note_en": "Total eligible voters nationwide"
       },
       {
         "label": "총 투표수",
         "value": 34067853,
-        "note": "사전투표 + 본투표 + 재외투표"
+        "note": "사전투표 + 본투표 + 재외투표",
+        "label_en": "Total votes",
+        "note_en": "Early + main + overseas voting"
       },
       {
         "label": "투표율",
         "value": 0.7708,
-        "note": "직전 19대 대선 77.2% 대비 소폭 하락"
+        "note": "직전 19대 대선 77.2% 대비 소폭 하락",
+        "label_en": "Turnout",
+        "note_en": "Slightly below the 77.2% of the previous (19th) election"
       },
       {
         "label": "무효 투표",
         "value": 307542,
-        "note": null
+        "note": null,
+        "label_en": "Invalid votes"
       },
       {
         "label": "기권자수",
         "value": 10129839,
-        "note": null
+        "note": null,
+        "label_en": "Abstentions"
       }
     ],
     "candidates": [
@@ -691,7 +747,8 @@
         "votes": 16394815,
         "pct": 0.4856,
         "winningProvinces": 10,
-        "result": "★ 당선"
+        "result": "★ 당선",
+        "result_en": "★ Elected"
       },
       {
         "name": "이재명",
@@ -699,7 +756,8 @@
         "votes": 16147738,
         "pct": 0.4783,
         "winningProvinces": 7,
-        "result": "낙선"
+        "result": "낙선",
+        "result_en": "Not elected"
       },
       {
         "name": "심상정",
@@ -707,7 +765,8 @@
         "votes": 803358,
         "pct": 0.0238,
         "winningProvinces": "-",
-        "result": "낙선"
+        "result": "낙선",
+        "result_en": "Not elected"
       },
       {
         "name": "허경영",
@@ -715,7 +774,8 @@
         "votes": 281481,
         "pct": 0.0083,
         "winningProvinces": "-",
-        "result": "낙선"
+        "result": "낙선",
+        "result_en": "Not elected"
       },
       {
         "name": "기타 후보 (8명)",
@@ -730,7 +790,9 @@
       "label": "표차 (1위 - 2위)",
       "votes": 247077,
       "pct": 0.0073,
-      "note": "0.73%p 차이"
+      "note": "0.73%p 차이",
+      "label_en": "Margin (1st − 2nd)",
+      "note_en": "0.73%p difference"
     },
     "provinces": [
       {
@@ -933,14 +995,19 @@
           {
             "label": "윤석열 우세 시도 수",
             "value": 10,
-            "note": "개 시도  (서울 + 부산 + 대구 + 대전 + 울산 + 강원 + 충북 + 충남 + 경북 + 경남)"
+            "note": "개 시도  (서울 + 부산 + 대구 + 대전 + 울산 + 강원 + 충북 + 충남 + 경북 + 경남)",
+            "label_en": "Provinces where Yoon led",
+            "note_en": "provinces (Seoul + Busan + Daegu + Daejeon + Ulsan + Gangwon + Chungbuk + Chungnam + Gyeongbuk + Gyeongnam)"
           },
           {
             "label": "이재명 우세 시도 수",
             "value": 7,
-            "note": "개 시도  (인천 + 광주 + 세종 + 경기 + 전북 + 전남 + 제주)"
+            "note": "개 시도  (인천 + 광주 + 세종 + 경기 + 전북 + 전남 + 제주)",
+            "label_en": "Provinces where Lee led",
+            "note_en": "provinces (Incheon + Gwangju + Sejong + Gyeonggi + Jeonbuk + Jeonnam + Jeju)"
           }
-        ]
+        ],
+        "section_en": "Regional Dynamics"
       },
       {
         "section": "전국 표차 (National Margin)",
@@ -948,9 +1015,11 @@
           {
             "label": "윤석열 - 이재명 표차",
             "value": 247077,
-            "note": 0.0073
+            "note": 0.0073,
+            "label_en": "Yoon − Lee margin"
           }
-        ]
+        ],
+        "section_en": "National Margin"
       },
       {
         "section": "투표율 분석 (Turnout Analysis)",
@@ -958,17 +1027,22 @@
           {
             "label": "최고 투표율",
             "value": "광주광역시",
-            "note": 0.815
+            "note": 0.815,
+            "label_en": "Highest turnout"
           },
           {
             "label": "최저 투표율",
             "value": "제주특별자치도",
-            "note": 0.7259
+            "note": 0.7259,
+            "label_en": "Lowest turnout"
           }
-        ]
+        ],
+        "section_en": "Turnout Analysis"
       }
     ],
-    "regionalSummary": null
+    "regionalSummary": null,
+    "title_en": "20th presidential election — results report",
+    "date_en": "Election day: Mar 9, 2022  |  Count completed: Mar 10, 2022"
   },
   "21st": {
     "title": "제21대 대통령선거 개표 결과 보고서",
@@ -978,27 +1052,35 @@
       {
         "label": "총 선거인수",
         "value": 44391871,
-        "note": "전국 유권자 총수"
+        "note": "전국 유권자 총수",
+        "label_en": "Total electorate",
+        "note_en": "Total eligible voters nationwide"
       },
       {
         "label": "총 투표수",
         "value": 35236218,
-        "note": "사전투표 + 본투표 + 재외투표"
+        "note": "사전투표 + 본투표 + 재외투표",
+        "label_en": "Total votes",
+        "note_en": "Early + main + overseas voting"
       },
       {
         "label": "투표율",
         "value": 0.7937538383998277,
-        "note": "28년 만에 최고 투표율 (1997년 80.7% 이후)"
+        "note": "28년 만에 최고 투표율 (1997년 80.7% 이후)",
+        "label_en": "Turnout",
+        "note_en": "Highest turnout in 28 years (since 80.7% in 1997)"
       },
       {
         "label": "무효 투표",
         "value": 255872,
-        "note": null
+        "note": null,
+        "label_en": "Invalid votes"
       },
       {
         "label": "기권자수",
         "value": 9155653,
-        "note": null
+        "note": null,
+        "label_en": "Abstentions"
       }
     ],
     "candidates": [
@@ -1008,7 +1090,8 @@
         "votes": 17287344,
         "pct": 0.4942016296808499,
         "winningProvinces": 11,
-        "result": "★ 당선"
+        "result": "★ 당선",
+        "result_en": "★ Elected"
       },
       {
         "name": "김문수",
@@ -1016,7 +1099,8 @@
         "votes": 14395566,
         "pct": 0.4115329791191888,
         "winningProvinces": 6,
-        "result": "낙선"
+        "result": "낙선",
+        "result_en": "Not elected"
       },
       {
         "name": "이준석",
@@ -1024,7 +1108,8 @@
         "votes": 2917499,
         "pct": 0.0834039491776325,
         "winningProvinces": "-",
-        "result": "낙선"
+        "result": "낙선",
+        "result_en": "Not elected"
       },
       {
         "name": "권영국",
@@ -1032,7 +1117,8 @@
         "votes": 344148,
         "pct": 0.009838324640928367,
         "winningProvinces": "-",
-        "result": "낙선"
+        "result": "낙선",
+        "result_en": "Not elected"
       },
       {
         "name": "송진호",
@@ -1040,14 +1126,17 @@
         "votes": 35789,
         "pct": 0.0010231173814004013,
         "winningProvinces": "-",
-        "result": "낙선"
+        "result": "낙선",
+        "result_en": "Not elected"
       }
     ],
     "margin": {
       "label": "표차 (1위 - 2위)",
       "votes": 2891778,
       "pct": 0.08266865056166112,
-      "note": "8.27%p 차이"
+      "note": "8.27%p 차이",
+      "label_en": "Margin (1st − 2nd)",
+      "note_en": "8.27%p difference"
     },
     "provinces": [
       {
@@ -1250,14 +1339,19 @@
           {
             "label": "이재명 우세 시도 수",
             "value": 11,
-            "note": "개 시도  (수도권 + 충청 + 호남 + 세종 + 제주)"
+            "note": "개 시도  (수도권 + 충청 + 호남 + 세종 + 제주)",
+            "label_en": "Provinces where Lee led",
+            "note_en": "provinces (Capital area + Chungcheong + Honam + Sejong + Jeju)"
           },
           {
             "label": "김문수 우세 시도 수",
             "value": 6,
-            "note": "개 시도  (부산 + 대구 + 울산 + 강원 + 경북 + 경남)"
+            "note": "개 시도  (부산 + 대구 + 울산 + 강원 + 경북 + 경남)",
+            "label_en": "Provinces where Kim led",
+            "note_en": "provinces (Busan + Daegu + Ulsan + Gangwon + Gyeongbuk + Gyeongnam)"
           }
-        ]
+        ],
+        "section_en": "Regional Dynamics"
       },
       {
         "section": "전국 표차 (National Margin)",
@@ -1265,9 +1359,11 @@
           {
             "label": "이재명 - 김문수 표차",
             "value": 2891778,
-            "note": 0.08206834229485128
+            "note": 0.08206834229485128,
+            "label_en": "Lee − Kim margin"
           }
-        ]
+        ],
+        "section_en": "National Margin"
       },
       {
         "section": "투표율 분석 (Turnout Analysis)",
@@ -1275,14 +1371,17 @@
           {
             "label": "최고 투표율",
             "value": "광주광역시",
-            "note": 0.8389856262730531
+            "note": 0.8389856262730531,
+            "label_en": "Highest turnout"
           },
           {
             "label": "최저 투표율",
             "value": "제주특별자치도",
-            "note": 0.7458085288940389
+            "note": 0.7458085288940389,
+            "label_en": "Lowest turnout"
           }
-        ]
+        ],
+        "section_en": "Turnout Analysis"
       },
       {
         "section": "강세 지역 (Strongest Provinces)",
@@ -1290,14 +1389,17 @@
           {
             "label": "이재명 최다득표 지역",
             "value": "전라남도",
-            "note": 0.8531310037503299
+            "note": 0.8531310037503299,
+            "label_en": "Lee's top province"
           },
           {
             "label": "김문수 최다득표 지역",
             "value": "대구광역시",
-            "note": 0.6718685904107371
+            "note": 0.6718685904107371,
+            "label_en": "Kim's top province"
           }
-        ]
+        ],
+        "section_en": "Strongest Provinces"
       },
       {
         "section": "가장 접전 지역 (Closest Race)",
@@ -1305,9 +1407,11 @@
           {
             "label": "최접전 시도",
             "value": "강원특별자치도",
-            "note": 0.033222200850590924
+            "note": 0.033222200850590924,
+            "label_en": "Closest province"
           }
-        ]
+        ],
+        "section_en": "Closest Race"
       }
     ],
     "regionalSummary": [
@@ -1316,36 +1420,43 @@
         "lee": 0.499092145001323,
         "kim": 0.390554791869874,
         "winner": "이재명",
-        "leadPct": 0.10853735313144897
+        "leadPct": 0.10853735313144897,
+        "region_en": "Capital area (Seoul/Incheon/Gyeonggi)"
       },
       {
         "region": "충청권 (대전/세종/충북/충남)",
         "lee": 0.480126255867843,
         "kim": 0.415299160865011,
         "winner": "이재명",
-        "leadPct": 0.06482709500283201
+        "leadPct": 0.06482709500283201,
+        "region_en": "Chungcheong (Daejeon/Sejong/Chungbuk/Chungnam)"
       },
       {
         "region": "호남권 (광주/전북/전남)",
         "lee": 0.839025839276714,
         "kim": 0.0916656577232041,
         "winner": "이재명",
-        "leadPct": 0.7473601815535099
+        "leadPct": 0.7473601815535099,
+        "region_en": "Honam (Gwangju/Jeonbuk/Jeonnam)"
       },
       {
         "region": "영남권 (부산/대구/울산/경북/경남)",
         "lee": 0.336821038091051,
         "kim": 0.570610987630319,
         "winner": "김문수",
-        "leadPct": 0.23378994953926802
+        "leadPct": 0.23378994953926802,
+        "region_en": "Yeongnam (Busan/Daegu/Ulsan/Gyeongbuk/Gyeongnam)"
       },
       {
         "region": "강원/제주",
         "lee": 0.467193071688397,
         "kim": 0.433258624896104,
         "winner": "이재명",
-        "leadPct": 0.033934446792293016
+        "leadPct": 0.033934446792293016,
+        "region_en": "Gangwon/Jeju"
       }
-    ]
+    ],
+    "title_en": "21st presidential election — results report",
+    "date_en": "Election day: Jun 3, 2025  |  Count completed: Jun 4, 2025"
   }
 }
