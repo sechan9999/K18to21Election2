@@ -90,6 +90,7 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
   const { locale } = useLanguage();
   const en = locale === 'en';
   const L = (ko: string, eng: string) => (en ? eng : ko);
+  const pe = (o: any, k: string) => (en && o && o[k + '_en'] != null ? o[k + '_en'] : o[k]);
   const cand = (s: string) => (en ? (EN_CAND[s] ?? s) : s);
   const prov = (s: string) => { const k = short(s); return en ? (EN_PROV[k] ?? k) : k; };
   const camp = (s: string) => (en ? (EN_CAMP[s] ?? s) : s);
@@ -112,11 +113,11 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
   return (
     <div className="space-y-6">
       <div className="rounded-3xl border border-teal-500/20 bg-teal-500/5 p-6">
-        <h1 className="text-2xl font-bold text-white">{data.meta.title}</h1>
+        <h1 className="text-2xl font-bold text-white">{pe(data.meta, 'title')}</h1>
         <p className="mt-2 text-sm text-slate-400">
-          {L('분자', 'Numerator')}: {data.meta.numerator}. R1 = {data.meta.definitions.R1} · R2 = {data.meta.definitions.R2} · K = {data.meta.definitions.K} · {L('비율의 비', 'ratio of shares')} = R2/R1. {L('단위', 'Units')}: {data.meta.units}.
+          {L('분자', 'Numerator')}: {pe(data.meta, 'numerator')}. R1 = {pe(data.meta.definitions, 'R1')} · R2 = {pe(data.meta.definitions, 'R2')} · K = {pe(data.meta.definitions, 'K')} · {L('비율의 비', 'ratio of shares')} = R2/R1. {L('단위', 'Units')}: {pe(data.meta, 'units')}.
         </p>
-        <p className="mt-2 text-xs text-teal-200/80">{data.meta.why_conservative}</p>
+        <p className="mt-2 text-xs text-teal-200/80">{pe(data.meta, 'why_conservative')}</p>
         {winnerK && <p className="mt-2 text-xs text-teal-200/80">{L('당선자를 분자로 둔 K와 승패 회계는 “방법 2” 탭에서 볼 수 있습니다.', 'The winner-numerator K and the margin accounting are on the “Method 2” tab.')}</p>}
       </div>
 
@@ -142,10 +143,10 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
               <>
                 <div className="mt-3 text-2xl font-bold text-slate-400">K &gt; 1</div>
                 <div className="text-xs text-slate-500">{L('SAS 결과', 'SAS result')}: n {e.fit.n} · R² {e.fit.r2} · MSE {e.fit.mse}</div>
-                <div className="mt-2 text-xs text-amber-300/80">{e.note}</div>
+                <div className="mt-2 text-xs text-amber-300/80">{pe(e, 'note')}</div>
               </>
             )}
-            <div className="mt-2 text-[10px] text-slate-600">{e.source}</div>
+            <div className="mt-2 text-[10px] text-slate-600">{pe(e, 'source')}</div>
           </div>
         ))}
       </div>
@@ -187,7 +188,7 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
         const verdictLabel = (v: string) => (v === '정규' ? L('정규', 'Normal') : v === '경계' ? L('경계', 'Borderline') : L('기각', 'Reject'));
         return (
           <div className="space-y-6">
-            <Card title={L('구·시·군 K 정규성 검정', 'District-level K normality tests')} sub={nm.source}>
+            <Card title={L('구·시·군 K 정규성 검정', 'District-level K normality tests')} sub={pe(nm, 'source')}>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead><tr className="border-b border-white/10 text-slate-400">
@@ -198,7 +199,7 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
                   </tr></thead>
                   <tbody>{nm.tests.map((r) => (
                     <tr key={r.K} className={`border-b border-white/5 ${r.K.startsWith('log') ? 'text-slate-400' : 'text-slate-200'}`}>
-                      <td className="px-2 py-1.5 font-semibold">{r.K}</td><td className="px-2 py-1.5 text-right">{r.n}</td>
+                      <td className="px-2 py-1.5 font-semibold">{pe(r, 'K')}</td><td className="px-2 py-1.5 text-right">{r.n}</td>
                       <td className="px-2 py-1.5 text-right">{r.mean.toFixed(3)}</td><td className="px-2 py-1.5 text-right">{r.median.toFixed(3)}</td><td className="px-2 py-1.5 text-right">{r.sd.toFixed(3)}</td>
                       <td className="px-2 py-1.5 text-right">{r.skew.toFixed(2)}</td><td className="px-2 py-1.5 text-right">{r.kurt.toFixed(2)}</td>
                       <td className="px-2 py-1.5 text-right">{fp(r.sw_p)}</td><td className="px-2 py-1.5 text-right">{fp(r.dag_p)}</td>
@@ -221,17 +222,17 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
                 </tr></thead>
                 <tbody>{nm.heterogeneity.map((h) => (
                   <tr key={h.K} className="border-b border-white/5 text-slate-200">
-                    <td className="px-2 py-1.5 font-semibold">{h.K}</td><td className="px-2 py-1.5 text-right">{h.n}</td>
+                    <td className="px-2 py-1.5 font-semibold">{pe(h, 'K')}</td><td className="px-2 py-1.5 text-right">{h.n}</td>
                     <td className="px-2 py-1.5 text-right font-bold text-white">{h.z_sd.toFixed(2)}</td><td className="px-2 py-1.5 text-right">{h.Q.toLocaleString()} ({h.df})</td>
                     <td className="px-2 py-1.5 text-right">{(h.I2 * 100).toFixed(0)}%</td><td className="px-2 py-1.5 text-right">{h.tau.toFixed(3)}</td>
                     <td className="px-2 py-1.5 text-right">{h.r_R1 != null ? h.r_R1.toFixed(2) : '—'}</td><td className="px-2 py-1.5 text-right">{h.k_below1 ?? '—'}</td>
                   </tr>))}</tbody>
               </table>
-              <ul className="mt-3 list-disc space-y-0.5 pl-4 text-xs text-slate-400">{nm.conclusions.map((c) => <li key={c}>{c}</li>)}</ul>
+              <ul className="mt-3 list-disc space-y-0.5 pl-4 text-xs text-slate-400">{(en && (nm as any).conclusions_en ? (nm as any).conclusions_en : nm.conclusions).map((c: string) => <li key={c}>{c}</li>)}</ul>
             </Card>
             {nm.why && (
               <Card title={L('정규성을 왜 검토하나', 'Why test normality')}>
-                <ol className="list-decimal space-y-1.5 pl-5 text-sm text-slate-300">{nm.why.map((w) => <li key={w}>{w}</li>)}</ol>
+                <ol className="list-decimal space-y-1.5 pl-5 text-sm text-slate-300">{(en && (nm as any).why_en ? (nm as any).why_en : nm.why).map((w: string) => <li key={w}>{w}</li>)}</ol>
               </Card>
             )}
             <Card title={L('K 분포와 정규 QQ', 'K distribution and normal QQ')}>
@@ -261,7 +262,7 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
         const campColor: Record<string, string> = { 보수: '#e11d48', 중도: '#f59e0b', 진보: '#eab308', 군소: '#94a3b8' };
         const pos = (k: number) => 50 + (Math.log(k) / Math.log(3)) * 50;
         return (<>
-          <Card title={L('19대 후보별 K (문재인 대비)', '19th: K by candidate (vs Moon Jae-in)')} sub={c.source}>
+          <Card title={L('19대 후보별 K (문재인 대비)', '19th: K by candidate (vs Moon Jae-in)')} sub={pe(c, 'source')}>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead><tr className="border-b border-white/10 text-slate-400">
@@ -298,12 +299,12 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
             </div>
             <ul className="mt-3 list-disc space-y-0.5 pl-4 text-xs text-slate-400">
               <li>{L('K = (미분류 후보/문재인) ÷ (분류 후보/문재인). 1보다 크면 그 후보가 미분류표에서 상대적으로 많습니다.', 'K = (unclassified candidate/Moon) ÷ (classified candidate/Moon). Above 1 means the candidate is relatively over-represented in the unclassified pile.')}</li>
-              <li>{c.note}</li>
+              <li>{pe(c, 'note')}</li>
               <li>{L('무효표', 'Invalid ballots')} {c.invalid.total.toLocaleString()}{L('장은 모두 미분류로 들어갑니다 (미분류', ' all fall into the unclassified pile (')} {c.invalid.recheck_total.toLocaleString()}{L('장의', ' unclassified,')} {(c.invalid.total / c.invalid.recheck_total * 100).toFixed(1)}%).</li>
             </ul>
           </Card>
           {data.candidates_all && (() => { const ca = data.candidates_all!; const pos = (k: number) => 50 + (Math.log(k) / Math.log(5)) * 50; return (<>
-            <Card title={L('18·19·21대 후보별 K (민주 후보 대비)', '18th/19th/21st: K by candidate (vs Democratic candidate)')} sub={ca.source}>
+            <Card title={L('18·19·21대 후보별 K (민주 후보 대비)', '18th/19th/21st: K by candidate (vs Democratic candidate)')} sub={pe(ca, 'source')}>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead><tr className="border-b border-white/10 text-slate-400">
@@ -326,7 +327,7 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
                     </tr>))}</tbody>
                 </table>
               </div>
-              <ul className="mt-3 list-disc space-y-0.5 pl-4 text-xs text-slate-400">{ca.conclusions.map((c) => <li key={c}>{c}</li>)}</ul>
+              <ul className="mt-3 list-disc space-y-0.5 pl-4 text-xs text-slate-400">{(en && (ca as any).conclusions_en ? (ca as any).conclusions_en : ca.conclusions).map((c: string) => <li key={c}>{c}</li>)}</ul>
             </Card>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <Card title={L('21대 투표 유형별 K (이재명 대비, 전국 합산)', '21st: K by ballot type (vs Lee Jae-myung, pooled)')}>
@@ -455,13 +456,13 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
               <div>
                 <h3 className="mb-1 font-semibold text-slate-300">{L('18대 자료 점검', '18th data check')}</h3>
                 <ul className="list-disc space-y-0.5 pl-4">
-                  {data.data_quality.pe18.name_fixes.map((f) => <li key={f}>{f}</li>)}
+                  {(en && (data.data_quality.pe18 as any).name_fixes_en ? (data.data_quality.pe18 as any).name_fixes_en : data.data_quality.pe18.name_fixes).map((f: string) => <li key={f}>{f}</li>)}
                   <li>{L('공개 최종득표 대조', 'Final published tally check')}: {L('2% 미만', 'within 2%')} {data.data_quality.pe18.within_2pct}{L('곳', '')}, 2–10% {data.data_quality.pe18.pct_2_10}{L('곳', '')}, {L('10% 이상', '≥10%')} {data.data_quality.pe18.over_10pct}{L('곳', '')} ({data.data_quality.pe18.over_10pct_units.join('·')})</li>
-                  <li>{data.data_quality.pe18.note}</li>
+                  <li>{pe(data.data_quality.pe18, 'note')}</li>
                   {data.data_quality.pe18.newstapa && (() => { const n = data.data_quality.pe18.newstapa!; return (<>
-                    <li>{n.source}{L('와 대조', ' cross-check')}: {n.categories.map((c) => `${c.label} ${c.n}${L('곳', '')}`).join(', ')}. {L('공개 최종득표 = 뉴스타파 총투표', 'public final tally = Newstapa total vote')} ({n.public_equals_total}{L('곳', '')}).</li>
-                    <li>{n.note} {L('수개표 비중', 'hand-count share')}: {n.hand_top.map((h) => `${h.unit.split(' ').pop()} ${(h.share * 100).toFixed(0)}%`).join(' · ')}</li>
-                    <li>{L('K 구·시·군 평균 / 전국 합산', 'K district mean / pooled')}: {n.K.map((k) => `${k.label} ${k.K_mean.toFixed(3)} / ${k.K_pooled.toFixed(3)}`).join(' · ')}</li>
+                    <li>{pe(n, 'source')}{L('와 대조', ' cross-check')}: {n.categories.map((c) => `${pe(c, 'label')} ${c.n}${L('곳', '')}`).join(', ')}. {L('공개 최종득표 = 뉴스타파 총투표', 'public final tally = Newstapa total vote')} ({n.public_equals_total}{L('곳', '')}).</li>
+                    <li>{pe(n, 'note')} {L('수개표 비중', 'hand-count share')}: {n.hand_top.map((h) => `${pe(h, 'unit').split(' ').pop()} ${(h.share * 100).toFixed(0)}%`).join(' · ')}</li>
+                    <li>{L('K 구·시·군 평균 / 전국 합산', 'K district mean / pooled')}: {n.K.map((k) => `${pe(k, 'label')} ${k.K_mean.toFixed(3)} / ${k.K_pooled.toFixed(3)}`).join(' · ')}</li>
                   </>); })()}
                   <li>{L('10% 이상', '≥10%')} {data.data_quality.pe18.over_10pct}{L('곳 제외 시', ' excluded:')} {data.data_quality.pe18.sensitivity_excluding.intercept.toFixed(3)} + {data.data_quality.pe18.sensitivity_excluding.slope.toFixed(3)}·R1, R² {data.data_quality.pe18.sensitivity_excluding.r2.toFixed(3)}</li>
                 </ul>
@@ -470,15 +471,15 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
             <div>
               <h3 className="mb-1 font-semibold text-slate-300">{L('19대 자료 점검', '19th data check')}</h3>
               <ul className="list-disc space-y-0.5 pl-4">
-                {data.data_quality.pe19.name_fixes.map((f) => <li key={f}>{f}</li>)}
+                {(en && (data.data_quality.pe19 as any).name_fixes_en ? (data.data_quality.pe19 as any).name_fixes_en : data.data_quality.pe19.name_fixes).map((f: string) => <li key={f}>{f}</li>)}
                 <li>{L('공개 최종득표 대조', 'Final published tally check')}: {L('2% 미만', 'within 2%')} {data.data_quality.pe19.within_2pct}{L('곳', '')}, {L('2% 이상', '≥2%')} {data.data_quality.pe19.over_2pct}{L('곳', '')}</li>
                 <li>{L('2% 이상', '≥2%')} {data.data_quality.pe19.over_2pct}{L('곳 제외 시', ' excluded:')} {data.data_quality.pe19.sensitivity_excluding.intercept.toFixed(3)} + {data.data_quality.pe19.sensitivity_excluding.slope.toFixed(3)}·R1, R² {data.data_quality.pe19.sensitivity_excluding.r2.toFixed(3)}</li>
-                <li>{L('SAS 보고값', 'SAS reported')}: n {data.data_quality.pe19.sas_reported.n}, R² {data.data_quality.pe19.sas_reported.r2}, MSE {data.data_quality.pe19.sas_reported.mse}{data.data_quality.pe19.sas_reported.note ? ` — ${data.data_quality.pe19.sas_reported.note}` : ''}</li>
+                <li>{L('SAS 보고값', 'SAS reported')}: n {data.data_quality.pe19.sas_reported.n}, R² {data.data_quality.pe19.sas_reported.r2}, MSE {data.data_quality.pe19.sas_reported.mse}{data.data_quality.pe19.sas_reported.note ? ` — ${pe(data.data_quality.pe19.sas_reported, 'note')}` : ''}</li>
               </ul>
             </div>
             <div>
               <h3 className="mb-1 font-semibold text-slate-300">{L('20대 자료 보정', '20th data corrections')}</h3>
-              <ul className="list-disc space-y-0.5 pl-4">{data.data_quality.pe20.fixes.map((f) => <li key={f}>{f}</li>)}</ul>
+              <ul className="list-disc space-y-0.5 pl-4">{(en && (data.data_quality.pe20 as any).fixes_en ? (data.data_quality.pe20 as any).fixes_en : data.data_quality.pe20.fixes).map((f: string) => <li key={f}>{f}</li>)}</ul>
             </div>
           </div>
         </Card>
@@ -488,8 +489,8 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {data.figures.map((f) => (
             <figure key={f.file} className="rounded-3xl border border-white/5 bg-slate-900/40 p-4">
-              <a href={f.file} target="_blank" rel="noreferrer"><img src={f.file} alt={f.title} loading="lazy" className="w-full rounded-xl bg-white" /></a>
-              <figcaption className="mt-2 text-sm text-slate-400">{f.title}</figcaption>
+              <a href={f.file} target="_blank" rel="noreferrer"><img src={f.file} alt={pe(f, 'title')} loading="lazy" className="w-full rounded-xl bg-white" /></a>
+              <figcaption className="mt-2 text-sm text-slate-400">{pe(f, 'title')}</figcaption>
             </figure>
           ))}
         </div>
