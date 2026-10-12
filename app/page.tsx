@@ -19,6 +19,7 @@ export default async function Home() {
   const presentationAudit = fs.readFileSync(path.join(reportsDir, 'presentation_audit_report.md'), 'utf-8');
   const classifiedRecheckReport = fs.readFileSync(path.join(reportsDir, 'k21_classified_recheck_report.md'), 'utf-8');
   const comparisonReport = fs.readFileSync(path.join(reportsDir, 'k18_21_comparison_report.md'), 'utf-8');
+  const comparisonReportEn = fs.readFileSync(path.join(reportsDir, 'k18_21_comparison_report.en.md'), 'utf-8');
 
   return (
     <ElectionDashboard
@@ -36,6 +37,7 @@ export default async function Home() {
         presentationAudit: presentationAudit,
         classifiedRecheck: classifiedRecheckReport,
         comparison: comparisonReport,
+        comparison_en: comparisonReportEn,
       }}
     />
   );

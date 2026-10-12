@@ -86,7 +86,7 @@ function Card({ title, sub, children }: { title: string; sub?: string; children:
   );
 }
 
-export default function CompareElectionsView({ data, report, winnerK }: { data: ComparisonData; report?: string; winnerK?: WinnerKData }) {
+export default function CompareElectionsView({ data, report, reportEn, winnerK }: { data: ComparisonData; report?: string; reportEn?: string; winnerK?: WinnerKData }) {
   const { locale } = useLanguage();
   const en = locale === 'en';
   const L = (ko: string, eng: string) => (en ? eng : ko);
@@ -498,7 +498,7 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
 
       {tab === 'report' && (
         <section className="rounded-3xl border border-white/5 bg-slate-900/40 p-8">
-          {report ? <Markdown md={report} /> : <p className="text-sm text-slate-500">{L('보고서가 없습니다.', 'No report available.')}</p>}
+          {(en && reportEn ? reportEn : report) ? <Markdown md={(en && reportEn ? reportEn : report)!} /> :<p className="text-sm text-slate-500">{L('보고서가 없습니다.', 'No report available.')}</p>}
         </section>
       )}
     </div>

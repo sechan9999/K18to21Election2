@@ -121,6 +121,7 @@ interface Props {
   reports: {
     classifiedRecheck?: string;
     comparison?: string;
+    comparison_en?: string;
     analysis: string;
     excelAudit: string;
     presentationAudit: string;
@@ -547,7 +548,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
         {/* 18–21대 비교 View */}
         {view === 'compare' && comparison && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <CompareElectionsView data={comparison} report={reports.comparison} winnerK={winnerK} />
+            <CompareElectionsView data={comparison} report={reports.comparison} reportEn={reports.comparison_en} winnerK={winnerK} />
           </div>
         )}
 

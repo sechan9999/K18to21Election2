@@ -69,6 +69,10 @@ const TXT = {
 export default function WinnerKPanel({ data }: { data: WinnerKData }) {
   const { locale } = useLanguage();
   const t = TXT[locale];
+  const en = locale === 'en';
+  const EN_CAND: Record<string, string> = { '박근혜': 'Park Geun-hye', '문재인': 'Moon Jae-in', '홍준표': 'Hong Joon-pyo', '윤석열': 'Yoon Suk-yeol', '이재명': 'Lee Jae-myung', '김문수': 'Kim Moon-soo', '안철수': 'Ahn Cheol-soo' };
+  const cand = (s: string) => (en ? (EN_CAND[s] ?? s) : s);
+  const elec = (id: string) => (en ? id.replace('대', 'th') : id);
   // JSON notes are stored as "한국어 / English"; show the part for the current language.
   const pick = (s: string) => { const p = s.split(' / '); return p.length < 2 ? s : locale === 'ko' ? p[0] : p.slice(1).join(' / '); };
   const e22 = data.elections.find((e) => e.id === '20대');
@@ -94,8 +98,8 @@ export default function WinnerKPanel({ data }: { data: WinnerKData }) {
             <tbody>
               {data.elections.map((e) => (
                 <tr key={e.id} className="border-b border-white/5 text-slate-300">
-                  <td className="px-2 py-1.5 font-semibold" style={{ color: COLORS[e.id] }}>{e.id} <span className="font-normal text-slate-500">{e.year}</span></td>
-                  <td className="px-2 py-1.5">{e.winner} / {e.runner_up}</td>
+                  <td className="px-2 py-1.5 font-semibold" style={{ color: COLORS[e.id] }}>{elec(e.id)} <span className="font-normal text-slate-500">{e.year}</span></td>
+                  <td className="px-2 py-1.5">{cand(e.winner)} / {cand(e.runner_up)}</td>
                   <td className={`px-2 py-1.5 text-right font-bold ${kTone(e.K_winner.pooled)}`}>
                     {e.K_winner.pooled.toFixed(3)} <span className="font-normal text-slate-400">[{e.K_winner.lo.toFixed(2)}, {e.K_winner.hi.toFixed(2)}]</span>
                   </td>
@@ -126,7 +130,7 @@ export default function WinnerKPanel({ data }: { data: WinnerKData }) {
                 const a = e.accounting;
                 return (
                   <tr key={e.id} className="border-b border-white/5 text-slate-300">
-                    <td className="px-2 py-1.5 font-semibold" style={{ color: COLORS[e.id] }}>{e.id}</td>
+                    <td className="px-2 py-1.5 font-semibold" style={{ color: COLORS[e.id] }}>{elec(e.id)}</td>
                     <td className="px-2 py-1.5">{e.winner_is_conservative ? t.cons : t.dem}</td>
                     <td className="px-2 py-1.5 text-right">{a.unclassified_share_pct.toFixed(1)}%</td>
                     <td className="px-2 py-1.5 text-right">{num(a.margin_classified)}</td>
