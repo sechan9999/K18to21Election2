@@ -4,9 +4,11 @@ import React, { useMemo, useState } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { Markdown } from './ClassifiedRecheckView';
 import WinnerKPanel, { type WinnerKData } from './WinnerKPanel';
+import { useLanguage } from './LanguageProvider';
 
 // 18–21대 분류/미분류(재확인) 투표지 비교 화면. 분자는 보수 후보로 통일.
 // 데이터: summaries/k18_21_comparison.json, 보고서: reports/k18_21_comparison_report.md
+// UI 문자열과 이름은 locale(ko/en)에 따라 전환. 정의/결론/노트 등 데이터 값은 JSON 번역 패스에서 처리.
 
 type Fit = { n: number; intercept?: number; slope?: number; slope_se?: number; r2: number; mse: number; at_half?: number; quad?: number; quad_t?: number };
 type Election = {
@@ -51,6 +53,20 @@ const ABBR: Record<string, string> = { 경상북도: '경북', 경상남도: '�
 const short = (s: string) => ABBR[s] ?? s.replace(/특별자치시|광역시|특별시/g, '');
 const PROV_E = ['18대', '19대', '20대', '21대'] as const;
 const pfmt = (p: number) => (p < 0.001 ? '< 0.001' : `= ${p.toFixed(p < 0.01 ? 3 : 2)}`);
+
+// Romanization maps (English mode). Data sentences stay Korean until the JSON pass.
+const EN_CAND: Record<string, string> = {
+  '박근혜': 'Park Geun-hye', '문재인': 'Moon Jae-in', '홍준표': 'Hong Joon-pyo', '윤석열': 'Yoon Suk-yeol',
+  '이재명': 'Lee Jae-myung', '김문수': 'Kim Moon-soo', '이준석': 'Lee Jun-seok', '유승민': 'Yoo Seung-min',
+  '안철수': 'Ahn Cheol-soo', '심상정': 'Sim Sang-jung', '권영국': 'Kwon Young-guk', '송진호': 'Song Jin-ho',
+};
+const EN_PROV: Record<string, string> = {
+  '서울': 'Seoul', '부산': 'Busan', '대구': 'Daegu', '인천': 'Incheon', '광주': 'Gwangju', '대전': 'Daejeon',
+  '울산': 'Ulsan', '세종': 'Sejong', '경기': 'Gyeonggi', '강원': 'Gangwon', '충북': 'Chungbuk', '충남': 'Chungnam',
+  '전북': 'Jeonbuk', '전남': 'Jeonnam', '경북': 'Gyeongbuk', '경남': 'Gyeongnam', '제주': 'Jeju',
+};
+const EN_CAMP: Record<string, string> = { '보수': 'Conservative', '중도': 'Centrist', '진보': 'Progressive', '군소': 'Minor' };
+
 // 셀 배경: OR 1 에서 멀수록 진하게
 const cellBg = (v?: number) => {
   if (v == null) return 'transparent';
@@ -71,6 +87,14 @@ function Card({ title, sub, children }: { title: string; sub?: string; children:
 }
 
 export default function CompareElectionsView({ data, report, winnerK }: { data: ComparisonData; report?: string; winnerK?: WinnerKData }) {
+  const { locale } = useLanguage();
+  const en = locale === 'en';
+  const L = (ko: string, eng: string) => (en ? eng : ko);
+  const cand = (s: string) => (en ? (EN_CAND[s] ?? s) : s);
+  const prov = (s: string) => { const k = short(s); return en ? (EN_PROV[k] ?? k) : k; };
+  const camp = (s: string) => (en ? (EN_CAMP[s] ?? s) : s);
+  const elec = (id: string) => (en ? id.replace('대', 'th') : id);
+
   const [tab, setTab] = useState<'overview' | 'provinces' | 'cand19' | 'normality' | 'winner' | 'figures' | 'report'>('overview');
   const avail = data.elections.filter((e) => e.available);
   const [shown, setShown] = useState<Record<string, boolean>>(Object.fromEntries(avail.map((e) => [e.id, true])));
@@ -90,10 +114,10 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
       <div className="rounded-3xl border border-teal-500/20 bg-teal-500/5 p-6">
         <h1 className="text-2xl font-bold text-white">{data.meta.title}</h1>
         <p className="mt-2 text-sm text-slate-400">
-          분자: {data.meta.numerator}. R1 = {data.meta.definitions.R1} · R2 = {data.meta.definitions.R2} · K = {data.meta.definitions.K} · 비율의 비 = R2/R1. 단위: {data.meta.units}.
+          {L('분자', 'Numerator')}: {data.meta.numerator}. R1 = {data.meta.definitions.R1} · R2 = {data.meta.definitions.R2} · K = {data.meta.definitions.K} · {L('비율의 비', 'ratio of shares')} = R2/R1. {L('단위', 'Units')}: {data.meta.units}.
         </p>
         <p className="mt-2 text-xs text-teal-200/80">{data.meta.why_conservative}</p>
-        {winnerK && <p className="mt-2 text-xs text-teal-200/80">당선자를 분자로 둔 K와 승패 회계는 “방법 2” 탭에서 볼 수 있습니다. / The winner-numerator K and the margin accounting are on the “Method 2” tab.</p>}
+        {winnerK && <p className="mt-2 text-xs text-teal-200/80">{L('당선자를 분자로 둔 K와 승패 회계는 “방법 2” 탭에서 볼 수 있습니다.', 'The winner-numerator K and the margin accounting are on the “Method 2” tab.')}</p>}
       </div>
 
       {/* 선거별 카드 */}
@@ -101,23 +125,23 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
         {data.elections.map((e) => (
           <div key={e.id} className={`rounded-2xl border p-5 ${e.available ? 'border-white/5 bg-slate-900/40' : 'border-dashed border-white/10 bg-slate-900/20'}`}>
             <div className="flex items-center justify-between">
-              <span className="text-lg font-bold" style={{ color: COLORS[e.id] }}>{e.id} <span className="text-xs font-normal text-slate-500">{e.year}</span></span>
+              <span className="text-lg font-bold" style={{ color: COLORS[e.id] }}>{elec(e.id)} <span className="text-xs font-normal text-slate-500">{e.year}</span></span>
               <span className={`rounded-md px-2 py-0.5 text-[10px] font-semibold ${e.winner_is_conservative ? 'bg-rose-500/20 text-rose-300' : 'bg-blue-500/20 text-blue-300'}`}>
-                당선 {e.winner}
+                {L('당선', 'Elected')} {cand(e.winner)}
               </span>
             </div>
-            <div className="mt-1 text-xs text-slate-400">분자 {e.conservative} · 상대 {e.democratic}</div>
+            <div className="mt-1 text-xs text-slate-400">{L('분자', 'Num.')} {cand(e.conservative)} · {L('상대', 'vs')} {cand(e.democratic)}</div>
             {e.national ? (
               <>
                 <div className="mt-3 text-2xl font-bold text-white">K {e.k_defs ? e.k_defs.K_sheet_mean.toFixed(3) : e.national.OR.toFixed(2)}</div>
-                <div className="text-[11px] text-slate-500">K = (재확인 보수/민주) ÷ (분류 보수/민주), 구·시·군 평균{e.k_defs ? ` (${e.k_defs.sheet}, n ${e.k_defs.n_sheet})` : ''}</div>
-                <div className="mt-1 text-xs text-slate-500">전국 합산 {e.national.OR.toFixed(3)} [{e.national.lo.toFixed(2)}, {e.national.hi.toFixed(2)}] · 비율의 비 {e.national.K.toFixed(3)}</div>
+                <div className="text-[11px] text-slate-500">{L('K = (재확인 보수/민주) ÷ (분류 보수/민주), 구·시·군 평균', 'K = (recheck cons./dem.) ÷ (classified cons./dem.), district mean')}{e.k_defs ? ` (${e.k_defs.sheet}, n ${e.k_defs.n_sheet})` : ''}</div>
+                <div className="mt-1 text-xs text-slate-500">{L('전국 합산', 'National pooled')} {e.national.OR.toFixed(3)} [{e.national.lo.toFixed(2)}, {e.national.hi.toFixed(2)}] · {L('비율의 비', 'ratio of shares')} {e.national.K.toFixed(3)}</div>
                 <div className="mt-2 text-xs text-slate-400">R2 = {e.fit.intercept!.toFixed(3)} + {e.fit.slope!.toFixed(3)}·R1 · R² {e.fit.r2.toFixed(4)} · n {e.fit.n}</div>
               </>
             ) : (
               <>
                 <div className="mt-3 text-2xl font-bold text-slate-400">K &gt; 1</div>
-                <div className="text-xs text-slate-500">SAS 결과: n {e.fit.n} · R² {e.fit.r2} · MSE {e.fit.mse}</div>
+                <div className="text-xs text-slate-500">{L('SAS 결과', 'SAS result')}: n {e.fit.n} · R² {e.fit.r2} · MSE {e.fit.mse}</div>
                 <div className="mt-2 text-xs text-amber-300/80">{e.note}</div>
               </>
             )}
@@ -127,20 +151,20 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <TabBtn id="overview" label="적합선 비교" /><TabBtn id="provinces" label="시도별 OR" />{data.candidates19 && <TabBtn id="cand19" label="후보별 K" />}{data.normality && <TabBtn id="normality" label="K 정규성" />}{winnerK && <TabBtn id="winner" label="방법 2: 당선자 분자 K / Method 2: winner K" />}<TabBtn id="figures" label="그림" /><TabBtn id="report" label="비교 보고서" />
+        <TabBtn id="overview" label={L('적합선 비교', 'Fit lines')} /><TabBtn id="provinces" label={L('시도별 OR', 'OR by province')} />{data.candidates19 && <TabBtn id="cand19" label={L('후보별 K', 'K by candidate')} />}{data.normality && <TabBtn id="normality" label={L('K 정규성', 'K normality')} />}{winnerK && <TabBtn id="winner" label={L('방법 2: 당선자 분자 K', 'Method 2: winner K')} />}<TabBtn id="figures" label={L('그림', 'Figures')} /><TabBtn id="report" label={L('비교 보고서', 'Report')} />
       </div>
 
-      <Card title="K 정의와 집계 방식" sub="같은 자료라도 정의(비의 비 / 비율의 비)와 집계(구·시·군 평균 / 전국 합산)에 따라 값이 달라집니다">
+      <Card title={L('K 정의와 집계 방식', 'K: definitions and aggregation')} sub={L('같은 자료라도 정의(비의 비 / 비율의 비)와 집계(구·시·군 평균 / 전국 합산)에 따라 값이 달라집니다', 'The same data gives different values depending on the definition (odds ratio / ratio of shares) and aggregation (district mean / national pooled)')}>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">
             <thead><tr className="border-b border-white/10 text-slate-400">
-              <th className="px-2 py-1.5 text-left">선거</th>
-              <th className="px-2 py-1.5 text-right">K 구·시·군 평균</th><th className="px-2 py-1.5 text-right">K 중앙값</th><th className="px-2 py-1.5 text-right">K 전국 합산</th>
-              <th className="px-2 py-1.5 text-right">비율의 비 평균</th><th className="px-2 py-1.5 text-right">비율의 비 전국 합산</th>
+              <th className="px-2 py-1.5 text-left">{L('선거', 'Election')}</th>
+              <th className="px-2 py-1.5 text-right">{L('K 구·시·군 평균', 'K district mean')}</th><th className="px-2 py-1.5 text-right">{L('K 중앙값', 'K median')}</th><th className="px-2 py-1.5 text-right">{L('K 전국 합산', 'K national pooled')}</th>
+              <th className="px-2 py-1.5 text-right">{L('비율의 비 평균', 'Ratio-of-shares mean')}</th><th className="px-2 py-1.5 text-right">{L('비율의 비 전국 합산', 'Ratio-of-shares pooled')}</th>
             </tr></thead>
             <tbody>{avail.filter((e) => e.k_defs).map((e) => (
               <tr key={e.id} className="border-b border-white/5 text-slate-300">
-                <td className="px-2 py-1.5 font-semibold" style={{ color: COLORS[e.id] }}>{e.id} ({e.k_defs!.sheet})</td>
+                <td className="px-2 py-1.5 font-semibold" style={{ color: COLORS[e.id] }}>{elec(e.id)} ({e.k_defs!.sheet})</td>
                 <td className="px-2 py-1.5 text-right font-bold text-white">{e.k_defs!.K_sheet_mean.toFixed(3)}</td>
                 <td className="px-2 py-1.5 text-right">{e.k_defs!.K_sheet_median.toFixed(3)}</td>
                 <td className="px-2 py-1.5 text-right">{e.k_defs!.OR_pooled.toFixed(3)}</td>
@@ -150,26 +174,27 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
           </table>
         </div>
         <ul className="mt-3 list-disc space-y-0.5 pl-4 text-xs text-slate-400">
-          <li>K (엑셀 data18 T열 등) = (재확인 보수/민주) ÷ (분류 보수/민주). OR 과 같은 식입니다. 구·시·군마다 구한 뒤 평균한 값이 굵은 글씨 (18대 1.479).</li>
-          <li>전국 합산은 표를 모두 더한 뒤 한 번 계산한 값으로, 재확인표가 적은 곳과 많은 곳을 표 수로 가중합니다.</li>
-          <li>비율의 비 = [보수/(보수+민주)]재확인 ÷ [보수/(보수+민주)]분류. 적합식의 R_1·R_2 와 같은 척도라서 1에 더 가깝게 나옵니다.</li>
-          <li>네 가지 모두 네 선거에서 1보다 큽니다. 방향은 정의와 무관합니다.</li>
+          <li>{L('K (엑셀 data18 T열 등) = (재확인 보수/민주) ÷ (분류 보수/민주). OR 과 같은 식입니다. 구·시·군마다 구한 뒤 평균한 값이 굵은 글씨 (18대 1.479).', 'K (Excel data18 column T, etc.) = (recheck cons./dem.) ÷ (classified cons./dem.) — the same formula as OR. Computed per district then averaged; the bold figure is that mean (18th: 1.479).')}</li>
+          <li>{L('전국 합산은 표를 모두 더한 뒤 한 번 계산한 값으로, 재확인표가 적은 곳과 많은 곳을 표 수로 가중합니다.', 'The national pooled value sums all ballots and computes once, weighting districts by ballot count (few vs many recheck ballots).')}</li>
+          <li>{L('비율의 비 = [보수/(보수+민주)]재확인 ÷ [보수/(보수+민주)]분류. 적합식의 R_1·R_2 와 같은 척도라서 1에 더 가깝게 나옵니다.', 'Ratio of shares = [cons./(cons.+dem.)]recheck ÷ [cons./(cons.+dem.)]classified — the same scale as R1·R2 in the fit, so it lands closer to 1.')}</li>
+          <li>{L('네 가지 모두 네 선거에서 1보다 큽니다. 방향은 정의와 무관합니다.', 'All four measures exceed 1 in all four elections. The direction does not depend on the definition.')}</li>
         </ul>
       </Card>
 
       {tab === 'normality' && data.normality && (() => {
         const nm = data.normality;
         const fp = (p: number) => (p < 0.001 ? '< 0.001' : p.toFixed(3));
+        const verdictLabel = (v: string) => (v === '정규' ? L('정규', 'Normal') : v === '경계' ? L('경계', 'Borderline') : L('기각', 'Reject'));
         return (
           <div className="space-y-6">
-            <Card title="구·시·군 K 정규성 검정" sub={nm.source}>
+            <Card title={L('구·시·군 K 정규성 검정', 'District-level K normality tests')} sub={nm.source}>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead><tr className="border-b border-white/10 text-slate-400">
-                    <th className="px-2 py-1.5 text-left">K</th><th className="px-2 py-1.5 text-right">n</th><th className="px-2 py-1.5 text-right">평균</th><th className="px-2 py-1.5 text-right">중앙값</th>
-                    <th className="px-2 py-1.5 text-right">SD</th><th className="px-2 py-1.5 text-right">왜도</th><th className="px-2 py-1.5 text-right">첨도</th>
-                    <th className="px-2 py-1.5 text-right">Shapiro-Wilk p</th><th className="px-2 py-1.5 text-right">D&apos;Agostino p</th><th className="px-2 py-1.5 text-right">Anderson-Darling (5% 기준)</th>
-                    <th className="px-2 py-1.5 text-center">판정 (5%)</th>
+                    <th className="px-2 py-1.5 text-left">K</th><th className="px-2 py-1.5 text-right">n</th><th className="px-2 py-1.5 text-right">{L('평균', 'Mean')}</th><th className="px-2 py-1.5 text-right">{L('중앙값', 'Median')}</th>
+                    <th className="px-2 py-1.5 text-right">SD</th><th className="px-2 py-1.5 text-right">{L('왜도', 'Skew')}</th><th className="px-2 py-1.5 text-right">{L('첨도', 'Kurtosis')}</th>
+                    <th className="px-2 py-1.5 text-right">Shapiro-Wilk p</th><th className="px-2 py-1.5 text-right">D&apos;Agostino p</th><th className="px-2 py-1.5 text-right">{L('Anderson-Darling (5% 기준)', 'Anderson-Darling (5% crit.)')}</th>
+                    <th className="px-2 py-1.5 text-center">{L('판정 (5%)', 'Verdict (5%)')}</th>
                   </tr></thead>
                   <tbody>{nm.tests.map((r) => (
                     <tr key={r.K} className={`border-b border-white/5 ${r.K.startsWith('log') ? 'text-slate-400' : 'text-slate-200'}`}>
@@ -179,20 +204,20 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
                       <td className="px-2 py-1.5 text-right">{fp(r.sw_p)}</td><td className="px-2 py-1.5 text-right">{fp(r.dag_p)}</td>
                       <td className="px-2 py-1.5 text-right">{r.ad.toFixed(2)} ({r.ad_5.toFixed(2)})</td>
                       <td className="px-2 py-1.5 text-center">{(r.verdict ?? (r.normal ? '정규' : '기각')) === '정규'
-                        ? <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300">✓ 정규</span>
+                        ? <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300">✓ {verdictLabel('정규')}</span>
                         : (r.verdict === '경계'
-                          ? <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300">△ 경계</span>
-                          : <span className="rounded bg-slate-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-slate-300">✕ 기각</span>)}</td>
+                          ? <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300">△ {verdictLabel('경계')}</span>
+                          : <span className="rounded bg-slate-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-slate-300">✕ {verdictLabel('기각')}</span>)}</td>
                     </tr>))}</tbody>
                 </table>
               </div>
             </Card>
-            <Card title="구·시·군 K가 모두 같은 값인가 (이질성)" sub="표준화 값 = (구·시·군 log K − 전국 가중평균) ÷ 표본오차. 참 K가 모두 같다면 SD 1">
+            <Card title={L('구·시·군 K가 모두 같은 값인가 (이질성)', 'Is district K identical everywhere? (heterogeneity)')} sub={L('표준화 값 = (구·시·군 log K − 전국 가중평균) ÷ 표본오차. 참 K가 모두 같다면 SD 1', 'Standardized value = (district log K − national weighted mean) ÷ standard error. If true K is identical everywhere, SD = 1')}>
               <table className="w-full text-xs">
                 <thead><tr className="border-b border-white/10 text-slate-400">
-                  <th className="px-2 py-1.5 text-left">K</th><th className="px-2 py-1.5 text-right">n</th><th className="px-2 py-1.5 text-right">표준화 값 SD (기대 1)</th>
-                  <th className="px-2 py-1.5 text-right">Q (자유도)</th><th className="px-2 py-1.5 text-right">I²</th><th className="px-2 py-1.5 text-right">구·시·군 간 SD (log K)</th>
-                  <th className="px-2 py-1.5 text-right">log K–R1 상관</th><th className="px-2 py-1.5 text-right">K &lt; 1인 곳</th>
+                  <th className="px-2 py-1.5 text-left">K</th><th className="px-2 py-1.5 text-right">n</th><th className="px-2 py-1.5 text-right">{L('표준화 값 SD (기대 1)', 'Std. value SD (exp. 1)')}</th>
+                  <th className="px-2 py-1.5 text-right">{L('Q (자유도)', 'Q (df)')}</th><th className="px-2 py-1.5 text-right">I²</th><th className="px-2 py-1.5 text-right">{L('구·시·군 간 SD (log K)', 'Between-district SD (log K)')}</th>
+                  <th className="px-2 py-1.5 text-right">{L('log K–R1 상관', 'log K–R1 corr.')}</th><th className="px-2 py-1.5 text-right">{L('K < 1인 곳', 'Districts K < 1')}</th>
                 </tr></thead>
                 <tbody>{nm.heterogeneity.map((h) => (
                   <tr key={h.K} className="border-b border-white/5 text-slate-200">
@@ -205,28 +230,28 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
               <ul className="mt-3 list-disc space-y-0.5 pl-4 text-xs text-slate-400">{nm.conclusions.map((c) => <li key={c}>{c}</li>)}</ul>
             </Card>
             {nm.why && (
-              <Card title="정규성을 왜 검토하나">
+              <Card title={L('정규성을 왜 검토하나', 'Why test normality')}>
                 <ol className="list-decimal space-y-1.5 pl-5 text-sm text-slate-300">{nm.why.map((w) => <li key={w}>{w}</li>)}</ol>
               </Card>
             )}
-            <Card title="K 분포와 정규 QQ">
+            <Card title={L('K 분포와 정규 QQ', 'K distribution and normal QQ')}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/analysis/k18_k19_normality.png" alt="18·19대 K 분포와 정규 QQ" className="w-full rounded-lg bg-white" />
+              <img src="/analysis/k18_k19_normality.png" alt={L('18·19대 K 분포와 정규 QQ', '18th/19th K distribution and normal QQ')} className="w-full rounded-lg bg-white" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/analysis/k20_k21_normality.png" alt="20·21대 K 분포와 정규 QQ" className="mt-4 w-full rounded-lg bg-white" />
+              <img src="/analysis/k20_k21_normality.png" alt={L('20·21대 K 분포와 정규 QQ', '20th/21st K distribution and normal QQ')} className="mt-4 w-full rounded-lg bg-white" />
             </Card>
           </div>
         );
       })()}
 
       {tab === 'cand19' && data.candidates_all?.mechanism && (
-        <Card title="K를 설명하는 두 사실" sub={`후보 지지의 고령 상관과 K: 후보 11명 상관 ${data.candidates_all.mechanism.r_candidates} · 60대 이상 비율과 미분류율: ${data.candidates_all.mechanism.urate.map((u) => `${u.election} +${u.per10}%p`).join(' · ')} (10%p 당)`}>
+        <Card title={L('K를 설명하는 두 사실', 'Two facts that explain K')} sub={`${L('후보 지지의 고령 상관과 K: 후보 11명 상관', 'Candidate old-age correlation and K: correlation across 11 candidates')} ${data.candidates_all.mechanism.r_candidates} · ${L('60대 이상 비율과 미분류율', 'Share aged 60+ vs unclassified rate')}: ${data.candidates_all.mechanism.urate.map((u) => `${elec(u.election)} +${u.per10}%p`).join(' · ')} (${L('10%p 당', 'per 10%p')})`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={data.candidates_all.mechanism.figure} alt="후보 지지의 고령 상관과 K, 60대 이상 비율과 미분류율" className="w-full rounded-lg bg-white" />
+          <img src={data.candidates_all.mechanism.figure} alt={L('후보 지지의 고령 상관과 K, 60대 이상 비율과 미분류율', 'Candidate old-age correlation and K; share aged 60+ vs unclassified rate')} className="w-full rounded-lg bg-white" />
           <ol className="mt-3 list-decimal space-y-1 pl-5 text-sm text-slate-300">
-            <li>고령 지역일수록 분류기가 못 읽는 투표지(미분류표)가 많다 (B, 네 선거 모두).</li>
-            <li>그러므로 고령 유권자가 많이 찍은 후보일수록 그 후보의 표가 미분류표에 더 많이 들어간다 (A).</li>
-            <li>보수 후보라도 젊은 층 지지가 강한 유승민·이준석은 K ≤ 1이고, 고령 지역에서 득표가 강한 군소 후보는 K 2.6–4.7이다. &apos;보수 후보에게 몰아주기&apos;로는 이 두 결과를 설명할 수 없다.</li>
+            <li>{L('고령 지역일수록 분류기가 못 읽는 투표지(미분류표)가 많다 (B, 네 선거 모두).', 'Older regions have more ballots the classifier cannot read (unclassified ballots) — B, in all four elections.')}</li>
+            <li>{L('그러므로 고령 유권자가 많이 찍은 후보일수록 그 후보의 표가 미분류표에 더 많이 들어간다 (A).', 'So the more a candidate is favored by older voters, the more of that candidate’s votes fall into the unclassified pile — A.')}</li>
+            <li>{L('보수 후보라도 젊은 층 지지가 강한 유승민·이준석은 K ≤ 1이고, 고령 지역에서 득표가 강한 군소 후보는 K 2.6–4.7이다. ‘보수 후보에게 몰아주기’로는 이 두 결과를 설명할 수 없다.', 'Even conservative candidates with strong youth support — Yoo Seung-min, Lee Jun-seok — have K ≤ 1, while minor candidates strong in older regions have K 2.6–4.7. “Dumping votes to the conservative” cannot explain both.')}</li>
           </ol>
         </Card>
       )}
@@ -236,24 +261,24 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
         const campColor: Record<string, string> = { 보수: '#e11d48', 중도: '#f59e0b', 진보: '#eab308', 군소: '#94a3b8' };
         const pos = (k: number) => 50 + (Math.log(k) / Math.log(3)) * 50;
         return (<>
-          <Card title="19대 후보별 K (문재인 대비)" sub={c.source}>
+          <Card title={L('19대 후보별 K (문재인 대비)', '19th: K by candidate (vs Moon Jae-in)')} sub={c.source}>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead><tr className="border-b border-white/10 text-slate-400">
-                  <th className="px-2 py-1.5 text-left">후보</th><th className="px-2 py-1.5 text-right">분류표 득표율</th><th className="px-2 py-1.5 text-right">미분류 득표율</th>
-                  <th className="px-2 py-1.5 text-right">K 전국 합산</th><th className="px-2 py-1.5 text-right">K 구·시·군 평균</th><th className="px-2 py-1.5 text-right">K &gt; 1인 곳</th>
-                  <th className="w-[32%] px-2 py-1.5 text-center">K (로그 눈금, 가운데 = 1)</th>
+                  <th className="px-2 py-1.5 text-left">{L('후보', 'Candidate')}</th><th className="px-2 py-1.5 text-right">{L('분류표 득표율', 'Classified share')}</th><th className="px-2 py-1.5 text-right">{L('미분류 득표율', 'Unclassified share')}</th>
+                  <th className="px-2 py-1.5 text-right">{L('K 전국 합산', 'K pooled')}</th><th className="px-2 py-1.5 text-right">{L('K 구·시·군 평균', 'K district mean')}</th><th className="px-2 py-1.5 text-right">{L('K > 1인 곳', 'K > 1 districts')}</th>
+                  <th className="w-[32%] px-2 py-1.5 text-center">{L('K (로그 눈금, 가운데 = 1)', 'K (log scale, center = 1)')}</th>
                 </tr></thead>
                 <tbody>
                   <tr className="border-b border-white/5 text-slate-500">
-                    <td className="px-2 py-1.5">{c.reference} <span className="text-[10px]">(기준)</span></td>
+                    <td className="px-2 py-1.5">{cand(c.reference)} <span className="text-[10px]">({L('기준', 'reference')})</span></td>
                     <td className="px-2 py-1.5 text-right">{(c.reference_share.classified * 100).toFixed(1)}%</td>
                     <td className="px-2 py-1.5 text-right">{(c.reference_share.recheck * 100).toFixed(1)}%</td>
                     <td className="px-2 py-1.5 text-right">1</td><td className="px-2 py-1.5 text-right">1</td><td className="px-2 py-1.5 text-right">—</td><td />
                   </tr>
                   {c.rows.map((r) => (
                     <tr key={r.candidate} className="border-b border-white/5 text-slate-300">
-                      <td className="px-2 py-1.5 font-semibold">{r.candidate} <span className="rounded px-1 text-[10px]" style={{ color: campColor[r.camp] }}>{r.camp}</span></td>
+                      <td className="px-2 py-1.5 font-semibold">{cand(r.candidate)} <span className="rounded px-1 text-[10px]" style={{ color: campColor[r.camp] }}>{camp(r.camp)}</span></td>
                       <td className="px-2 py-1.5 text-right">{(r.share_classified * 100).toFixed(1)}%</td>
                       <td className="px-2 py-1.5 text-right">{(r.share_recheck * 100).toFixed(1)}%</td>
                       <td className={`px-2 py-1.5 text-right font-bold ${r.K_pooled > 1 ? 'text-rose-300' : 'text-sky-300'}`}>{r.K_pooled.toFixed(3)}</td>
@@ -272,25 +297,25 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
               </table>
             </div>
             <ul className="mt-3 list-disc space-y-0.5 pl-4 text-xs text-slate-400">
-              <li>K = (미분류 후보/문재인) ÷ (분류 후보/문재인). 1보다 크면 그 후보가 미분류표에서 상대적으로 많습니다.</li>
+              <li>{L('K = (미분류 후보/문재인) ÷ (분류 후보/문재인). 1보다 크면 그 후보가 미분류표에서 상대적으로 많습니다.', 'K = (unclassified candidate/Moon) ÷ (classified candidate/Moon). Above 1 means the candidate is relatively over-represented in the unclassified pile.')}</li>
               <li>{c.note}</li>
-              <li>무효표 {c.invalid.total.toLocaleString()}장은 모두 미분류로 들어갑니다 (미분류 {c.invalid.recheck_total.toLocaleString()}장의 {(c.invalid.total / c.invalid.recheck_total * 100).toFixed(1)}%).</li>
+              <li>{L('무효표', 'Invalid ballots')} {c.invalid.total.toLocaleString()}{L('장은 모두 미분류로 들어갑니다 (미분류', ' all fall into the unclassified pile (')} {c.invalid.recheck_total.toLocaleString()}{L('장의', ' unclassified,')} {(c.invalid.total / c.invalid.recheck_total * 100).toFixed(1)}%).</li>
             </ul>
           </Card>
           {data.candidates_all && (() => { const ca = data.candidates_all!; const pos = (k: number) => 50 + (Math.log(k) / Math.log(5)) * 50; return (<>
-            <Card title="18·19·21대 후보별 K (민주 후보 대비)" sub={ca.source}>
+            <Card title={L('18·19·21대 후보별 K (민주 후보 대비)', '18th/19th/21st: K by candidate (vs Democratic candidate)')} sub={ca.source}>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead><tr className="border-b border-white/10 text-slate-400">
-                    <th className="px-2 py-1.5 text-left">선거</th><th className="px-2 py-1.5 text-left">후보</th><th className="px-2 py-1.5 text-left">기준</th>
-                    <th className="px-2 py-1.5 text-right">분류표</th><th className="px-2 py-1.5 text-right">미분류표</th><th className="px-2 py-1.5 text-right">K 전국 합산</th>
-                    <th className="px-2 py-1.5 text-right">K 구·시·군 평균</th><th className="px-2 py-1.5 text-right">K &gt; 1인 곳</th><th className="w-[26%] px-2 py-1.5 text-center">K (로그 눈금, 가운데 = 1)</th>
+                    <th className="px-2 py-1.5 text-left">{L('선거', 'Election')}</th><th className="px-2 py-1.5 text-left">{L('후보', 'Candidate')}</th><th className="px-2 py-1.5 text-left">{L('기준', 'Reference')}</th>
+                    <th className="px-2 py-1.5 text-right">{L('분류표', 'Classified')}</th><th className="px-2 py-1.5 text-right">{L('미분류표', 'Unclassified')}</th><th className="px-2 py-1.5 text-right">{L('K 전국 합산', 'K pooled')}</th>
+                    <th className="px-2 py-1.5 text-right">{L('K 구·시·군 평균', 'K district mean')}</th><th className="px-2 py-1.5 text-right">{L('K > 1인 곳', 'K > 1 districts')}</th><th className="w-[26%] px-2 py-1.5 text-center">{L('K (로그 눈금, 가운데 = 1)', 'K (log scale, center = 1)')}</th>
                   </tr></thead>
                   <tbody>{ca.rows.map((r) => (
                     <tr key={r.election + r.candidate} className="border-b border-white/5 text-slate-300">
-                      <td className="px-2 py-1.5" style={{ color: COLORS[r.election] }}>{r.election}</td>
-                      <td className="px-2 py-1.5 font-semibold">{r.candidate} <span className="text-[10px] text-slate-500">{r.camp}</span></td>
-                      <td className="px-2 py-1.5 text-slate-500">{r.reference}</td>
+                      <td className="px-2 py-1.5" style={{ color: COLORS[r.election] }}>{elec(r.election)}</td>
+                      <td className="px-2 py-1.5 font-semibold">{cand(r.candidate)} <span className="text-[10px] text-slate-500">{camp(r.camp)}</span></td>
+                      <td className="px-2 py-1.5 text-slate-500">{cand(r.reference)}</td>
                       <td className="px-2 py-1.5 text-right">{(r.share_classified * 100).toFixed(2)}%</td><td className="px-2 py-1.5 text-right">{(r.share_recheck * 100).toFixed(2)}%</td>
                       <td className={`px-2 py-1.5 text-right font-bold ${r.K_pooled > 1 ? 'text-rose-300' : 'text-sky-300'}`}>{r.K_pooled.toFixed(3)}</td>
                       <td className="px-2 py-1.5 text-right">{r.K_mean.toFixed(3)}</td><td className="px-2 py-1.5 text-right">{r.n_above1} / {r.n}</td>
@@ -304,22 +329,22 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
               <ul className="mt-3 list-disc space-y-0.5 pl-4 text-xs text-slate-400">{ca.conclusions.map((c) => <li key={c}>{c}</li>)}</ul>
             </Card>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <Card title="21대 투표 유형별 K (이재명 대비, 전국 합산)">
+              <Card title={L('21대 투표 유형별 K (이재명 대비, 전국 합산)', '21st: K by ballot type (vs Lee Jae-myung, pooled)')}>
                 <table className="w-full text-xs">
-                  <thead><tr className="border-b border-white/10 text-slate-400"><th className="px-2 py-1.5 text-left">유형</th>{['김문수', '이준석', '권영국', '송진호'].map((c) => <th key={c} className="px-2 py-1.5 text-right">{c}</th>)}</tr></thead>
+                  <thead><tr className="border-b border-white/10 text-slate-400"><th className="px-2 py-1.5 text-left">{L('유형', 'Type')}</th>{['김문수', '이준석', '권영국', '송진호'].map((c) => <th key={c} className="px-2 py-1.5 text-right">{cand(c)}</th>)}</tr></thead>
                   <tbody>{ca.type21.map((r) => (
                     <tr key={String(r.type)} className="border-b border-white/5 text-slate-300"><td className="px-2 py-1.5">{r.type}</td>
                       {['김문수', '이준석', '권영국', '송진호'].map((c) => <td key={c} className="px-2 py-1.5 text-right">{Number(r[c]).toFixed(3)}</td>)}</tr>))}</tbody>
                 </table>
-                <p className="mt-2 text-[11px] text-slate-500">재외는 표 수가 적어 참고용입니다.</p>
+                <p className="mt-2 text-[11px] text-slate-500">{L('재외는 표 수가 적어 참고용입니다.', 'Overseas has few ballots; shown for reference only.')}</p>
               </Card>
-              <Card title="후보별 log K와 60대 이상 비율 (구·시·군, HC3)" sub="60대 이상 10%p 늘 때 log K 변화">
+              <Card title={L('후보별 log K와 60대 이상 비율 (구·시·군, HC3)', 'Candidate log K vs share aged 60+ (district, HC3)')} sub={L('60대 이상 10%p 늘 때 log K 변화', 'Change in log K per +10%p aged 60+')}>
                 <table className="w-full text-xs">
-                  <thead><tr className="border-b border-white/10 text-slate-400"><th className="px-2 py-1.5 text-left">선거</th><th className="px-2 py-1.5 text-left">후보</th>
-                    <th className="px-2 py-1.5 text-right">상관</th><th className="px-2 py-1.5 text-right">변화 (t)</th><th className="px-2 py-1.5 text-right">R1 통제 후 (t)</th></tr></thead>
+                  <thead><tr className="border-b border-white/10 text-slate-400"><th className="px-2 py-1.5 text-left">{L('선거', 'Election')}</th><th className="px-2 py-1.5 text-left">{L('후보', 'Candidate')}</th>
+                    <th className="px-2 py-1.5 text-right">{L('상관', 'Corr.')}</th><th className="px-2 py-1.5 text-right">{L('변화 (t)', 'Change (t)')}</th><th className="px-2 py-1.5 text-right">{L('R1 통제 후 (t)', 'After R1 control (t)')}</th></tr></thead>
                   <tbody>{ca.age.map((a) => (
                     <tr key={a.election + a.candidate} className="border-b border-white/5 text-slate-300">
-                      <td className="px-2 py-1.5" style={{ color: COLORS[a.election] }}>{a.election}</td><td className="px-2 py-1.5">{a.candidate}</td>
+                      <td className="px-2 py-1.5" style={{ color: COLORS[a.election] }}>{elec(a.election)}</td><td className="px-2 py-1.5">{cand(a.candidate)}</td>
                       <td className="px-2 py-1.5 text-right">{a.r.toFixed(2)}</td>
                       <td className={`px-2 py-1.5 text-right ${Math.abs(a.t) >= 2 ? 'font-semibold text-white' : ''}`}>{a.slope10 >= 0 ? '+' : ''}{a.slope10.toFixed(3)} ({a.t.toFixed(1)})</td>
                       <td className={`px-2 py-1.5 text-right ${Math.abs(a.t_R1) >= 2 ? 'font-semibold text-white' : ''}`}>{a.slope10_R1 >= 0 ? '+' : ''}{a.slope10_R1.toFixed(3)} ({a.t_R1.toFixed(1)})</td>
@@ -334,12 +359,12 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
       {tab === 'overview' && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <Card title="R1 대 R2 (구·시·군)" sub="점 = 구·시·군, 선 = 선거별 OLS 적합선, 점선 = K = 1">
+            <Card title={L('R1 대 R2 (구·시·군)', 'R1 vs R2 (districts)')} sub={L('점 = 구·시·군, 선 = 선거별 OLS 적합선, 점선 = K = 1', 'Dots = districts, lines = OLS fit per election, dashed = K = 1')}>
               <div className="mb-3 flex flex-wrap gap-3 text-xs">
                 {avail.map((e) => (
                   <label key={e.id} className="flex cursor-pointer items-center gap-1.5 text-slate-300">
                     <input type="checkbox" checked={!!shown[e.id]} onChange={() => setShown((s) => ({ ...s, [e.id]: !s[e.id] }))} />
-                    <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: COLORS[e.id] }} />{e.id} ({e.conservative})
+                    <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: COLORS[e.id] }} />{elec(e.id)} ({cand(e.conservative)})
                   </label>
                 ))}
               </div>
@@ -348,16 +373,16 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
                   <ScatterChart margin={{ top: 10, right: 20, bottom: 30, left: 10 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                     <XAxis type="number" dataKey="x" domain={[0, 1]} ticks={[0, 0.2, 0.4, 0.6, 0.8, 1]} stroke="#64748b" fontSize={11}
-                      label={{ value: 'R1 = 보수/(보수+민주), 분류표', position: 'insideBottom', offset: -15, fill: '#64748b', fontSize: 11 }} />
+                      label={{ value: L('R1 = 보수/(보수+민주), 분류표', 'R1 = conservative/(conservative+democratic), classified'), position: 'insideBottom', offset: -15, fill: '#64748b', fontSize: 11 }} />
                     <YAxis type="number" dataKey="y" domain={[0, 1]} ticks={[0, 0.2, 0.4, 0.6, 0.8, 1]} stroke="#64748b" fontSize={11}
-                      label={{ value: 'R2 (미분류표)', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }} />
+                      label={{ value: L('R2 (미분류표)', 'R2 (unclassified)'), angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }} />
                     <ReferenceLine segment={[{ x: 0, y: 0 }, { x: 1, y: 1 }]} stroke="#64748b" strokeDasharray="4 4" />
                     <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ payload }) => {
                       const p = payload?.[0]?.payload as any;
                       if (!p || !p.d) return null;
                       return (
                         <div className="rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-xs text-slate-200 shadow-xl">
-                          <div className="font-bold" style={{ color: COLORS[p.e] }}>{p.e} · {short(p.s)} {p.d}</div>
+                          <div className="font-bold" style={{ color: COLORS[p.e] }}>{elec(p.e)} · {prov(p.s)} {p.d}</div>
                           <div>R1 {p.x.toFixed(3)} · R2 {p.y.toFixed(3)} · K {(p.y / p.x).toFixed(3)}</div>
                         </div>
                       );
@@ -375,28 +400,28 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
           </div>
 
           <div className="space-y-6">
-            <Card title="20대 대비 차이 (HC3)">
+            <Card title={L('20대 대비 차이 (HC3)', 'Difference vs 20th (HC3)')}>
               <table className="w-full text-sm">
-                <thead className="text-slate-400"><tr><th className="py-1 text-left">선거</th><th className="text-right">기울기 차이</th><th className="text-right">R1=0.5 높이 차이</th></tr></thead>
+                <thead className="text-slate-400"><tr><th className="py-1 text-left">{L('선거', 'Election')}</th><th className="text-right">{L('기울기 차이', 'Slope diff')}</th><th className="text-right">{L('R1=0.5 높이 차이', 'Level diff at R1=0.5')}</th></tr></thead>
                 <tbody>{data.tests_vs_20.map((t) => (
                   <tr key={t.election} className="border-t border-white/5 text-slate-300">
-                    <td className="py-2" style={{ color: COLORS[t.election] }}>{t.election}</td>
+                    <td className="py-2" style={{ color: COLORS[t.election] }}>{elec(t.election)}</td>
                     <td className="text-right">{t.slope_diff >= 0 ? '+' : ''}{t.slope_diff.toFixed(3)} <span className="text-xs text-slate-500">p {pfmt(t.slope_p)}</span></td>
                     <td className="text-right font-semibold text-white">{t.level_diff_at_half >= 0 ? '+' : ''}{t.level_diff_at_half.toFixed(3)} <span className="text-xs font-normal text-slate-500">p {pfmt(t.level_p)}</span></td>
                   </tr>))}</tbody>
               </table>
-              <p className="mt-3 text-xs text-slate-500">19·21대는 20대와 기울기가 같고(약 1.11) 높이만 다릅니다. 18대는 기울기가 1.06으로 낮은 대신 절편이 커서 선 전체가 위에 있습니다.</p>
+              <p className="mt-3 text-xs text-slate-500">{L('19·21대는 20대와 기울기가 같고(약 1.11) 높이만 다릅니다. 18대는 기울기가 1.06으로 낮은 대신 절편이 커서 선 전체가 위에 있습니다.', 'The 19th and 21st share the 20th’s slope (~1.11) and differ only in level. The 18th has a lower slope (1.06) but a larger intercept, so its whole line sits higher.')}</p>
             </Card>
-            <Card title="곡선성 (2차항)">
+            <Card title={L('곡선성 (2차항)', 'Curvature (quadratic term)')}>
               <ul className="space-y-1 text-sm text-slate-300">
-                {avail.map((e) => <li key={e.id}><span style={{ color: COLORS[e.id] }}>{e.id}</span>: R1² 계수 {e.fit.quad?.toFixed(3)} (t {e.fit.quad_t?.toFixed(1)})</li>)}
+                {avail.map((e) => <li key={e.id}><span style={{ color: COLORS[e.id] }}>{elec(e.id)}</span>: {L('R1² 계수', 'R1² coef.')} {e.fit.quad?.toFixed(3)} (t {e.fit.quad_t?.toFixed(1)})</li>)}
               </ul>
-              <p className="mt-2 text-xs text-slate-500">비율이 0–1에 갇혀 생기는 곡선. 19대가 가장 강합니다.</p>
+              <p className="mt-2 text-xs text-slate-500">{L('비율이 0–1에 갇혀 생기는 곡선. 19대가 가장 강합니다.', 'Curvature arises because proportions are bounded in 0–1; strongest in the 19th.')}</p>
             </Card>
-            <Card title="이상점 (|RStudent| 상위)">
+            <Card title={L('이상점 (|RStudent| 상위)', 'Outliers (top |RStudent|)')}>
               {avail.map((e) => (
                 <div key={e.id} className="mb-2 text-xs text-slate-400">
-                  <span className="font-semibold" style={{ color: COLORS[e.id] }}>{e.id}</span>{' '}
+                  <span className="font-semibold" style={{ color: COLORS[e.id] }}>{elec(e.id)}</span>{' '}
                   {e.outliers?.slice(0, 4).map((o) => `${o.district}(${o.rstudent > 0 ? '+' : ''}${o.rstudent})`).join(' · ')}
                 </div>
               ))}
@@ -405,14 +430,16 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
         </div>
       )}
 
+      {tab === 'winner' && winnerK && <WinnerKPanel data={winnerK} />}
+
       {tab === 'provinces' && (
-        <Card title="시도별 OR (보수 후보 분자, 95% 구간)" sub={`log OR 상관: ${Object.entries(data.province_log_or_corr).map(([k, v]) => `${k} ${v}`).join(' · ')}`}>
+        <Card title={L('시도별 OR (보수 후보 분자, 95% 구간)', 'OR by province (conservative numerator, 95% CI)')} sub={`${L('log OR 상관', 'log OR correlation')}: ${Object.entries(data.province_log_or_corr).map(([k, v]) => `${k} ${v}`).join(' · ')}`}>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="text-slate-400"><tr><th className="py-2 text-left">시도</th>{PROV_E.map((e) => <th key={e} className="text-right" style={{ color: COLORS[e] }}>{e} OR [95%]</th>)}</tr></thead>
+              <thead className="text-slate-400"><tr><th className="py-2 text-left">{L('시도', 'Province')}</th>{PROV_E.map((e) => <th key={e} className="text-right" style={{ color: COLORS[e] }}>{elec(e)} OR [95%]</th>)}</tr></thead>
               <tbody>{data.provinces.map((p) => (
                 <tr key={p.province} className="border-t border-white/5 text-slate-300">
-                  <td className="py-2">{short(p.province)}</td>
+                  <td className="py-2">{prov(p.province)}</td>
                   {PROV_E.map((e) => {
                     const c = p[e];
                     return <td key={e} className="px-2 text-right" style={{ background: cellBg(c?.OR) }}>
@@ -422,42 +449,40 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
                 </tr>))}</tbody>
             </table>
           </div>
-          <p className="mt-3 text-xs text-slate-500">세종은 충남에 포함. 제주는 구·시·군이 2곳뿐이라 구간이 넓습니다.</p>
+          <p className="mt-3 text-xs text-slate-500">{L('세종은 충남에 포함. 제주는 구·시·군이 2곳뿐이라 구간이 넓습니다.', 'Sejong is included in Chungnam. Jeju has only 2 districts, so its interval is wide.')}</p>
           <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3 text-xs text-slate-400">
             {data.data_quality.pe18 && (
               <div>
-                <h3 className="mb-1 font-semibold text-slate-300">18대 자료 점검</h3>
+                <h3 className="mb-1 font-semibold text-slate-300">{L('18대 자료 점검', '18th data check')}</h3>
                 <ul className="list-disc space-y-0.5 pl-4">
                   {data.data_quality.pe18.name_fixes.map((f) => <li key={f}>{f}</li>)}
-                  <li>공개 최종득표 대조: 2% 미만 {data.data_quality.pe18.within_2pct}곳, 2–10% {data.data_quality.pe18.pct_2_10}곳, 10% 이상 {data.data_quality.pe18.over_10pct}곳 ({data.data_quality.pe18.over_10pct_units.join('·')})</li>
+                  <li>{L('공개 최종득표 대조', 'Final published tally check')}: {L('2% 미만', 'within 2%')} {data.data_quality.pe18.within_2pct}{L('곳', '')}, 2–10% {data.data_quality.pe18.pct_2_10}{L('곳', '')}, {L('10% 이상', '≥10%')} {data.data_quality.pe18.over_10pct}{L('곳', '')} ({data.data_quality.pe18.over_10pct_units.join('·')})</li>
                   <li>{data.data_quality.pe18.note}</li>
                   {data.data_quality.pe18.newstapa && (() => { const n = data.data_quality.pe18.newstapa!; return (<>
-                    <li>{n.source}와 대조: {n.categories.map((c) => `${c.label} ${c.n}곳`).join(', ')}. 공개 최종득표 = 뉴스타파 총투표 ({n.public_equals_total}곳).</li>
-                    <li>{n.note} 수개표 비중: {n.hand_top.map((h) => `${h.unit.split(' ').pop()} ${(h.share * 100).toFixed(0)}%`).join(' · ')}</li>
-                    <li>K 구·시·군 평균 / 전국 합산: {n.K.map((k) => `${k.label} ${k.K_mean.toFixed(3)} / ${k.K_pooled.toFixed(3)}`).join(' · ')}</li>
+                    <li>{n.source}{L('와 대조', ' cross-check')}: {n.categories.map((c) => `${c.label} ${c.n}${L('곳', '')}`).join(', ')}. {L('공개 최종득표 = 뉴스타파 총투표', 'public final tally = Newstapa total vote')} ({n.public_equals_total}{L('곳', '')}).</li>
+                    <li>{n.note} {L('수개표 비중', 'hand-count share')}: {n.hand_top.map((h) => `${h.unit.split(' ').pop()} ${(h.share * 100).toFixed(0)}%`).join(' · ')}</li>
+                    <li>{L('K 구·시·군 평균 / 전국 합산', 'K district mean / pooled')}: {n.K.map((k) => `${k.label} ${k.K_mean.toFixed(3)} / ${k.K_pooled.toFixed(3)}`).join(' · ')}</li>
                   </>); })()}
-                  <li>10% 이상 {data.data_quality.pe18.over_10pct}곳 제외 시 {data.data_quality.pe18.sensitivity_excluding.intercept.toFixed(3)} + {data.data_quality.pe18.sensitivity_excluding.slope.toFixed(3)}·R1, R² {data.data_quality.pe18.sensitivity_excluding.r2.toFixed(3)}</li>
+                  <li>{L('10% 이상', '≥10%')} {data.data_quality.pe18.over_10pct}{L('곳 제외 시', ' excluded:')} {data.data_quality.pe18.sensitivity_excluding.intercept.toFixed(3)} + {data.data_quality.pe18.sensitivity_excluding.slope.toFixed(3)}·R1, R² {data.data_quality.pe18.sensitivity_excluding.r2.toFixed(3)}</li>
                 </ul>
               </div>
             )}
             <div>
-              <h3 className="mb-1 font-semibold text-slate-300">19대 자료 점검</h3>
+              <h3 className="mb-1 font-semibold text-slate-300">{L('19대 자료 점검', '19th data check')}</h3>
               <ul className="list-disc space-y-0.5 pl-4">
                 {data.data_quality.pe19.name_fixes.map((f) => <li key={f}>{f}</li>)}
-                <li>공개 최종득표 대조: 2% 미만 {data.data_quality.pe19.within_2pct}곳, 2% 이상 {data.data_quality.pe19.over_2pct}곳</li>
-                <li>2% 이상 {data.data_quality.pe19.over_2pct}곳 제외 시 {data.data_quality.pe19.sensitivity_excluding.intercept.toFixed(3)} + {data.data_quality.pe19.sensitivity_excluding.slope.toFixed(3)}·R1, R² {data.data_quality.pe19.sensitivity_excluding.r2.toFixed(3)}</li>
-                <li>SAS 보고값: n {data.data_quality.pe19.sas_reported.n}, R² {data.data_quality.pe19.sas_reported.r2}, MSE {data.data_quality.pe19.sas_reported.mse}{data.data_quality.pe19.sas_reported.note ? ` — ${data.data_quality.pe19.sas_reported.note}` : ''}</li>
+                <li>{L('공개 최종득표 대조', 'Final published tally check')}: {L('2% 미만', 'within 2%')} {data.data_quality.pe19.within_2pct}{L('곳', '')}, {L('2% 이상', '≥2%')} {data.data_quality.pe19.over_2pct}{L('곳', '')}</li>
+                <li>{L('2% 이상', '≥2%')} {data.data_quality.pe19.over_2pct}{L('곳 제외 시', ' excluded:')} {data.data_quality.pe19.sensitivity_excluding.intercept.toFixed(3)} + {data.data_quality.pe19.sensitivity_excluding.slope.toFixed(3)}·R1, R² {data.data_quality.pe19.sensitivity_excluding.r2.toFixed(3)}</li>
+                <li>{L('SAS 보고값', 'SAS reported')}: n {data.data_quality.pe19.sas_reported.n}, R² {data.data_quality.pe19.sas_reported.r2}, MSE {data.data_quality.pe19.sas_reported.mse}{data.data_quality.pe19.sas_reported.note ? ` — ${data.data_quality.pe19.sas_reported.note}` : ''}</li>
               </ul>
             </div>
             <div>
-              <h3 className="mb-1 font-semibold text-slate-300">20대 자료 보정</h3>
+              <h3 className="mb-1 font-semibold text-slate-300">{L('20대 자료 보정', '20th data corrections')}</h3>
               <ul className="list-disc space-y-0.5 pl-4">{data.data_quality.pe20.fixes.map((f) => <li key={f}>{f}</li>)}</ul>
             </div>
           </div>
         </Card>
       )}
-
-      {tab === 'winner' && winnerK && <WinnerKPanel data={winnerK} />}
 
       {tab === 'figures' && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -472,7 +497,7 @@ export default function CompareElectionsView({ data, report, winnerK }: { data: 
 
       {tab === 'report' && (
         <section className="rounded-3xl border border-white/5 bg-slate-900/40 p-8">
-          {report ? <Markdown md={report} /> : <p className="text-sm text-slate-500">보고서가 없습니다.</p>}
+          {report ? <Markdown md={report} /> : <p className="text-sm text-slate-500">{L('보고서가 없습니다.', 'No report available.')}</p>}
         </section>
       )}
     </div>
