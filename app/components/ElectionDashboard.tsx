@@ -45,6 +45,7 @@ import type { ComparisonData } from './CompareElectionsView';
 import type { WinnerKData } from './WinnerKPanel';
 import { LAST_PIPELINE_RUN, METRIC_PROVENANCE, sourceById } from '../lib/methodology';
 import { shortRegion } from '../lib/analytics';
+import { provEn, candEn, distEn } from '../lib/romanize';
 
 // Code-split heavy analytics widgets — they're only needed on the Insight view
 // after first paint, so we load them lazily (no SSR needed, they use Recharts).
@@ -190,10 +191,13 @@ const ELECTION_LABELS: Record<string, string> = {
   '21st': '21대 (2025)',
 };
 
+const ELECTION_LABELS_EN: Record<string, string> = { '18th': '18th (2012)', '19th': '19th (2017)', '20th': '20th (2022)', '21st': '21st (2025)' };
 const ELECTIONS = ['18th', '19th', '20th', '21st'] as const;
 
 export default function ElectionDashboard({ electionData, regionalData, reports, recountData, recountSummary, electionReports, classifiedRecheck, comparison, winnerK }: Props) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
+  const en = locale === 'en';
+  const L = (ko: string, eng: string) => (en ? eng : ko);
   const [view, setView] = useState<View>('insight');
   const [selectedElection, setSelectedElection] = useState<(typeof ELECTIONS)[number]>('21st');
   const [reportElection, setReportElection] = useState<(typeof ELECTIONS)[number]>('21st');
@@ -334,7 +338,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                   }`}
                 >
                   <span className="relative z-10 text-sm font-bold uppercase tracking-wide">
-                    {ELECTION_LABELS[e].split(' ')[0]}
+                    {locale === 'en' ? e : ELECTION_LABELS[e].split(' ')[0]}
                   </span>
                   <div className={`absolute bottom-0 left-0 h-1 w-full bg-blue-500 transition-transform duration-500 ${
                     selectedElection === e ? 'scale-x-100' : 'scale-x-0'
@@ -371,7 +375,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <ChartContainer
                 title={t('chart.candidatePerf')}
-                description={`${t('chart.candidatePerf.desc')} · ${ELECTION_LABELS[selectedElection]}`}
+                description={`${t('chart.candidatePerf.desc')} · ${(locale === 'en' ? ELECTION_LABELS_EN : ELECTION_LABELS)[selectedElection]}`}
                 data={sortedCandidates.map((c) => ({
                   name: c.name,
                   party: c.party,
@@ -566,10 +570,10 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
             {recountSummary && (
               <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
                 {[
-                  { label: '분석 구시군 수', value: recountSummary.districtRows.length.toLocaleString(), sub: '253 districts' },
-                  { label: '이재명 전국 관외사전/관내 비', value: recountSummary.candidateRatios[0].k.toFixed(4), sub: `관내 ${recountSummary.candidateRatios[0].r1}% → 관외사전 ${recountSummary.candidateRatios[0].r2}%` },
-                  { label: '관외/관내 비 ≥ 1.5 구시군', value: recountSummary.districtRows.filter(d => d.lee_k >= 1.5).length.toString(), sub: '고위험 (High risk)' },
-                  { label: '최대 관외사전/관내 비', value: Math.max(...recountSummary.districtRows.map(d => d.lee_k)).toFixed(4), sub: recountSummary.districtRows[0].district },
+                  { label: L('분석 구시군 수', 'Districts analyzed'), value: recountSummary.districtRows.length.toLocaleString(), sub: '253 districts' },
+                  { label: L('이재명 전국 관외사전/관내 비', 'Lee out-of-district/in-district ratio (national)'), value: recountSummary.candidateRatios[0].k.toFixed(4), sub: `${L('관내', 'in-district')} ${recountSummary.candidateRatios[0].r1}% → ${L('관외사전', 'out-of-district early')} ${recountSummary.candidateRatios[0].r2}%` },
+                  { label: L('관외/관내 비 ≥ 1.5 구시군', 'Districts with ratio ≥ 1.5'), value: recountSummary.districtRows.filter(d => d.lee_k >= 1.5).length.toString(), sub: L('고위험 (High risk)', 'High risk') },
+                  { label: L('최대 관외사전/관내 비', 'Max out-of-district/in-district ratio'), value: Math.max(...recountSummary.districtRows.map(d => d.lee_k)).toFixed(4), sub: distEn(recountSummary.districtRows[0].district, en) },
                 ].map((kpi, i) => (
                   <div key={i} className="rounded-3xl border border-white/5 bg-slate-900/40 p-5">
                     <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{kpi.label}</p>
@@ -585,7 +589,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
                   <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-white">후보별 재확인표 비율</h2>
+                    <h2 className="text-lg font-bold text-white">{L('후보별 재확인표 비율', 'Recheck-ballot share by candidate')}</h2>
                     <span className="text-xs text-slate-500">전국 R1 vs R2 (%)</span>
                   </div>
                   <div className="h-[320px] w-full">
@@ -596,9 +600,9 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                         <YAxis stroke="#94a3b8" fontSize={11} axisLine={false} tickLine={false} unit="%" />
                         <Tooltip
                           contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: 12 }}
-                          formatter={(v: any, n: any) => [typeof v === 'number' ? v.toFixed(2) + '%' : v, n === 'r1' ? 'R1 (관내)' : 'R2 (관외사전)']}
+                          formatter={(v: any, n: any) => [typeof v === 'number' ? v.toFixed(2) + '%' : v, n === 'r1' ? L('R1 (관내)', 'R1 (in-district)') : L('R2 (관외사전)', 'R2 (out-of-district early)')]}
                         />
-                        <Legend wrapperStyle={{ fontSize: 12 }} formatter={(v) => v === 'r1' ? 'R1 (관내)' : 'R2 (관외사전)'} />
+                        <Legend wrapperStyle={{ fontSize: 12 }} formatter={(v) => v === 'r1' ? L('R1 (관내)', 'R1 (in-district)') : L('R2 (관외사전)', 'R2 (out-of-district early)')} />
                         <Bar dataKey="r1" fill="#64748b" radius={[4, 4, 0, 0]} />
                         <Bar dataKey="r2" fill="#3b82f6" radius={[4, 4, 0, 0]}>
                           {recountSummary.candidateRatios.map((c, i) => <Cell key={i} fill={CANDIDATE_COLORS[c.name] ?? '#3b82f6'} />)}
@@ -609,8 +613,8 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                   <div className="mt-3 grid grid-cols-5 gap-1 text-[10px]">
                     {recountSummary.candidateRatios.map(c => (
                       <div key={c.name} className="rounded bg-white/5 p-1 text-center">
-                        <div className="font-bold text-white">{c.name}</div>
-                        <div className="font-mono" style={{ color: kColor(c.k) }}>관외/관내 비={c.k.toFixed(3)}</div>
+                        <div className="font-bold text-white">{candEn(c.name, en)}</div>
+                        <div className="font-mono" style={{ color: kColor(c.k) }}>{L('관외/관내 비', 'ratio')}={c.k.toFixed(3)}</div>
                       </div>
                     ))}
                   </div>
@@ -618,8 +622,8 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
 
                 <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
                   <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-white">지역별 관외사전/관내 비 (이재명 기준)</h2>
-                    <span className="text-xs text-slate-500">관외사전 득표율 ÷ 관내 득표율 (논문의 K와 다름)</span>
+                    <h2 className="text-lg font-bold text-white">{L('지역별 관외사전/관내 비 (이재명 기준)', 'Out-of-district/in-district ratio by region (Lee basis)')}</h2>
+                    <span className="text-xs text-slate-500">{L('관외사전 득표율 ÷ 관내 득표율 (논문의 K와 다름)', 'out-of-district early share ÷ in-district share (not the paper\u2019s K)')}</span>
                   </div>
                   <div className="h-[320px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
@@ -629,7 +633,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                         <YAxis dataKey="province" type="category" stroke="#94a3b8" fontSize={10} width={70} axisLine={false} tickLine={false} />
                         <Tooltip
                           contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: 12 }}
-                          formatter={(v: any) => [typeof v === 'number' ? v.toFixed(4) : v, '관외/관내 비']}
+                          formatter={(v: any) => [typeof v === 'number' ? v.toFixed(4) : v, L('관외/관내 비', 'ratio')]}
                         />
                         <ReferenceLine x={1} stroke="#10b981" strokeDasharray="3 3" />
                         <ReferenceLine x={1.5} stroke="#f43f5e" strokeDasharray="3 3" />
@@ -647,8 +651,8 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
             {recountSummary && (
               <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
                 <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-white">R1(분류표 비율) vs R2(재확인표 비율)</h2>
-                  <span className="text-xs text-slate-500">253개 구시군 · 이재명 기준 (%)</span>
+                  <h2 className="text-lg font-bold text-white">{L('R1(분류표 비율) vs R2(재확인표 비율)', 'R1 (in-district share) vs R2 (out-of-district early share)')}</h2>
+                  <span className="text-xs text-slate-500">{L('253개 구시군 · 이재명 기준 (%)', '253 districts · Lee basis (%)')}</span>
                 </div>
                 <div className="h-[400px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
@@ -661,7 +665,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                         stroke="#94a3b8"
                         fontSize={11}
                         unit="%"
-                        label={{ value: 'R1 (관내 득표율)', position: 'insideBottom', offset: -5, fill: '#64748b', fontSize: 11 }}
+                        label={{ value: L('R1 (관내 득표율)', 'R1 (in-district share)'), position: 'insideBottom', offset: -5, fill: '#64748b', fontSize: 11 }}
                       />
                       <YAxis
                         type="number"
@@ -670,7 +674,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                         stroke="#94a3b8"
                         fontSize={11}
                         unit="%"
-                        label={{ value: 'R2 (관외사전 득표율)', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }}
+                        label={{ value: L('R2 (관외사전 득표율)', 'R2 (out-of-district early share)'), angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }}
                       />
                       <ZAxis type="number" range={[40, 40]} />
                       <Tooltip
@@ -681,10 +685,10 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                           const d = payload[0].payload;
                           return (
                             <div className="rounded-lg border border-white/10 bg-[#0f172a] p-2 text-xs">
-                              <div className="font-bold text-white">{d.province} {d.district}</div>
+                              <div className="font-bold text-white">{provEn(d.province, en)} {distEn(d.district, en)}</div>
                               <div className="text-slate-400">R1: {d.lee_r1.toFixed(2)}%</div>
                               <div className="text-slate-400">R2: {d.lee_r2.toFixed(2)}%</div>
-                              <div className="font-bold" style={{ color: kColor(d.lee_k) }}>관외/관내 비: {d.lee_k.toFixed(4)}</div>
+                              <div className="font-bold" style={{ color: kColor(d.lee_k) }}>{L('관외/관내 비', 'ratio')}: {d.lee_k.toFixed(4)}</div>
                             </div>
                           );
                         }}
@@ -694,17 +698,17 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                         stroke="#10b981"
                         strokeDasharray="4 4"
                       />
-                      <Scatter name="구시군" data={recountSummary.districtRows}>
+                      <Scatter name={L('구시군', 'Districts')} data={recountSummary.districtRows}>
                         {recountSummary.districtRows.map((d, i) => <Cell key={i} fill={kColor(d.lee_k)} />)}
                       </Scatter>
                     </ScatterChart>
                   </ResponsiveContainer>
                 </div>
                 <div className="mt-3 flex items-center justify-center gap-4 text-[11px]">
-                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-500" /> 비 ≤ 1</span>
-                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" /> 1 &lt; 비 &lt; 1.5</span>
-                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-rose-500" /> 비 ≥ 1.5</span>
-                  <span className="text-slate-500">· 녹색 점선: y=x (R1=R2)</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-500" /> {L('비 ≤ 1', 'ratio ≤ 1')}</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-500" /> 1 &lt; {L('비', 'ratio')} &lt; 1.5</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-rose-500" /> {L('비 ≥ 1.5', 'ratio ≥ 1.5')}</span>
+                  <span className="text-slate-500">· {L('녹색 점선: y=x (R1=R2)', 'green dashed: y=x (R1=R2)')}</span>
                 </div>
               </div>
             )}
@@ -713,18 +717,18 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
             {recountSummary && (
               <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
                 <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-white">지역별 상세 데이터</h2>
-                  <span className="text-xs text-slate-500">17개 시도 집계 (이재명)</span>
+                  <h2 className="text-lg font-bold text-white">{L('지역별 상세 데이터', 'Regional detail')}</h2>
+                  <span className="text-xs text-slate-500">{L('17개 시도 집계 (이재명)', '17 provinces aggregated (Lee)')}</span>
                 </div>
                 <div className="overflow-x-auto rounded-xl border border-white/10 bg-[#020617]/50">
                   <table className="w-full text-left text-sm text-slate-300">
                     <thead className="bg-slate-800/90 text-xs uppercase text-slate-400">
                       <tr>
-                        <th className="px-4 py-3 font-semibold">시도</th>
-                        <th className="px-4 py-3 text-right font-semibold">R1 (관내)</th>
-                        <th className="px-4 py-3 text-right font-semibold">R2 (관외사전)</th>
+                        <th className="px-4 py-3 font-semibold">{L('시도', 'Province')}</th>
+                        <th className="px-4 py-3 text-right font-semibold">{L('R1 (관내)', 'R1 (in-district)')}</th>
+                        <th className="px-4 py-3 text-right font-semibold">{L('R2 (관외사전)', 'R2 (out-of-district early)')}</th>
                         <th className="px-4 py-3 text-right font-semibold">Δ (R2−R1)</th>
-                        <th className="px-4 py-3 text-right font-bold text-rose-300">관외/관내 비</th>
+                        <th className="px-4 py-3 text-right font-bold text-rose-300">{L('관외/관내 비', 'ratio')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
@@ -732,7 +736,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                         const delta = p.r2_lee - p.r1_lee;
                         return (
                           <tr key={i} className="transition-colors hover:bg-white/[0.03]">
-                            <td className="px-4 py-2 font-medium text-white">{p.province}</td>
+                            <td className="px-4 py-2 font-medium text-white">{provEn(p.province, en)}</td>
                             <td className="px-4 py-2 text-right font-mono">{p.r1_lee.toFixed(2)}%</td>
                             <td className="px-4 py-2 text-right font-mono">{p.r2_lee.toFixed(2)}%</td>
                             <td className={`px-4 py-2 text-right font-mono ${delta >= 0 ? 'text-amber-300' : 'text-emerald-300'}`}>
@@ -753,8 +757,8 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
             <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur shadow-2xl">
               <div className="mb-6 flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold text-white">21대 대선 관외사전/관내 득표율 비 분석 (이재명 기준)</h2>
-                  <p className="text-xs text-amber-300/80">이 화면의 비율은 관외사전 득표율 ÷ 관내 득표율이며 논문의 K 통계량이 아닙니다. K(분류된 투표지 대 미분류·재확인 투표지 비교)는 &lsquo;분류·재확인 분석&rsquo; 탭과 &lsquo;18–21대 비교&rsquo; 탭을 보세요.</p>
+                  <h2 className="text-xl font-bold text-white">{L('21대 대선 관외사전/관내 득표율 비 분석 (이재명 기준)', '21st election: out-of-district early / in-district share ratio (Lee basis)')}</h2>
+                  {!en && <p className="text-xs text-amber-300/80">이 화면의 비율은 관외사전 득표율 ÷ 관내 득표율이며 논문의 K 통계량이 아닙니다. K(분류된 투표지 대 미분류·재확인 투표지 비교)는 &lsquo;분류·재확인 분석&rsquo; 탭과 &lsquo;18–21대 비교&rsquo; 탭을 보세요.</p>}
                   <p className="text-sm text-slate-400">Analysis of the absentee-to-in-precinct share ratio for statistical anomalies in absentee vs local voting. This ratio is not the K statistic; K (classified vs. unclassified ballots) is on the Classified and Compare tabs.</p>
                 </div>
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-500/20">
@@ -767,19 +771,19 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                 <table className="w-full text-left text-sm text-slate-300">
                   <thead className="sticky top-0 bg-slate-800/90 text-xs uppercase text-slate-400 backdrop-blur">
                     <tr>
-                      <th className="px-4 py-3 font-semibold">시도명 (Region)</th>
-                      <th className="px-4 py-3 font-semibold">구시군명 (District)</th>
-                      <th className="px-4 py-3 text-right font-semibold">R1 (관내득표율)</th>
-                      <th className="px-4 py-3 text-right font-semibold">R2 (관외득표율)</th>
-                      <th className="px-4 py-3 text-right font-bold text-rose-300">관외/관내 비</th>
-                      <th className="px-4 py-3 text-right font-semibold">잔차 (Residual)</th>
+                      <th className="px-4 py-3 font-semibold">{L('시도명 (Region)', 'Province (Region)')}</th>
+                      <th className="px-4 py-3 font-semibold">{L('구시군명 (District)', 'District')}</th>
+                      <th className="px-4 py-3 text-right font-semibold">{L('R1 (관내득표율)', 'R1 (in-district share)')}</th>
+                      <th className="px-4 py-3 text-right font-semibold">{L('R2 (관외득표율)', 'R2 (out-of-district share)')}</th>
+                      <th className="px-4 py-3 text-right font-bold text-rose-300">{L('관외/관내 비', 'ratio')}</th>
+                      <th className="px-4 py-3 text-right font-semibold">{L('잔차 (Residual)', 'Residual')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {recountData?.map((d: any, i: number) => (
                       <tr key={i} className="hover:bg-white/[0.03] transition-colors">
-                        <td className="px-4 py-3 font-medium text-white">{d.province}</td>
-                        <td className="px-4 py-3">{d.district}</td>
+                        <td className="px-4 py-3 font-medium text-white">{provEn(d.province, en)}</td>
+                        <td className="px-4 py-3">{distEn(d.district, en)}</td>
                         <td className="px-4 py-3 text-right">{(d.r1 * 100).toFixed(2)}%</td>
                         <td className="px-4 py-3 text-right">{(d.r2 * 100).toFixed(2)}%</td>
                         <td className={`px-4 py-3 text-right font-bold ${d.k_value >= 1.5 ? 'text-rose-400' : d.k_value > 1 ? 'text-amber-400' : 'text-emerald-400'}`}>
@@ -793,9 +797,9 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
               </div>
               
               <div className="mt-6 rounded-xl border border-rose-500/20 bg-rose-500/10 p-4">
-                 <h3 className="mb-2 text-sm font-bold text-rose-300">💡 관외사전/관내 비 인사이트</h3>
+                 <h3 className="mb-2 text-sm font-bold text-rose-300">{L('💡 관외사전/관내 비 인사이트', '💡 Out-of-district / in-district ratio — notes')}</h3>
                  <p className="text-xs leading-relaxed text-slate-400">
-                   이 비율은 특정 후보의 관외사전투표 득표율을 관내당일투표 득표율로 나눈 값이며, 두 투표 방식을 비교합니다. 관외사전 유권자와 관내 유권자는 연령·지역 구성이 다르므로 이 값이 1이어야 할 이유는 없습니다. 1을 크게 벗어난 선거구는 추가 검토 대상일 뿐 조작의 증거가 아닙니다. 논문의 K 통계량(분류표 대비 미분류표의 보수/민주 득표비의 비, 기계 거부의 오즈비)은 분류·비교 탭에서 확인할 수 있습니다. </p>
+                   {L('이 비율은 특정 후보의 관외사전투표 득표율을 관내당일투표 득표율로 나눈 값이며, 두 투표 방식을 비교합니다. 관외사전 유권자와 관내 유권자는 연령·지역 구성이 다르므로 이 값이 1이어야 할 이유는 없습니다. 1을 크게 벗어난 선거구는 추가 검토 대상일 뿐 조작의 증거가 아닙니다. 논문의 K 통계량(분류표 대비 미분류표의 보수/민주 득표비의 비, 기계 거부의 오즈비)은 분류·비교 탭에서 확인할 수 있습니다.', 'This ratio divides a candidate\u2019s out-of-district early-voting share by their in-district election-day share, comparing the two voting methods. Out-of-district early voters and in-district voters differ in age and regional composition, so there is no reason this value should equal 1. Precincts far from 1 merely warrant further review and are not evidence of manipulation. The paper\u2019s K statistic (the ratio of the conservative/democratic vote ratio in unclassified vs classified ballots \u2014 the odds ratio of machine rejection) is on the Classified and Compare tabs.')} </p>
               </div>
             </div>
           </div>

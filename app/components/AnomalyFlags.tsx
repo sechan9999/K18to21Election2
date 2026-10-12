@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { AlertTriangle, Flag, Download } from 'lucide-react';
 import { detectAnomalies, downloadCsv, type AnomalyRow } from '../lib/analytics';
+import { useLanguage } from './LanguageProvider';
 
 interface Props {
   recountRows: Array<{
@@ -25,6 +26,8 @@ const SEVERITY_STYLE: Record<AnomalyRow['severity'], { bg: string; text: string;
 };
 
 export default function AnomalyFlags({ recountRows }: Props) {
+  const { locale } = useLanguage();
+  const L = (ko: string, eng: string) => (locale === 'en' ? eng : ko);
   const [minSeverity, setMinSeverity] = useState<AnomalyRow['severity']>('watch');
   const all = useMemo(() => detectAnomalies(recountRows), [recountRows]);
 
@@ -129,8 +132,8 @@ export default function AnomalyFlags({ recountRows }: Props) {
           <thead className="bg-slate-800/90 text-xs uppercase text-slate-400">
             <tr>
               <th scope="col" className="px-3 py-2">Severity</th>
-              <th scope="col" className="px-3 py-2">시도</th>
-              <th scope="col" className="px-3 py-2">구시군</th>
+              <th scope="col" className="px-3 py-2">{L('시도', 'Province')}</th>
+              <th scope="col" className="px-3 py-2">{L('구시군', 'District')}</th>
               <th scope="col" className="px-3 py-2 text-right">R1</th>
               <th scope="col" className="px-3 py-2 text-right">R2</th>
               <th scope="col" className="px-3 py-2 text-right">95% PI</th>
