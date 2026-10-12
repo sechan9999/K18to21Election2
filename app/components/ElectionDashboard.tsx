@@ -120,6 +120,7 @@ interface Props {
   winnerK?: WinnerKData;
   reports: {
     classifiedRecheck?: string;
+    classifiedRecheck_en?: string;
     comparison?: string;
     comparison_en?: string;
     analysis: string;
@@ -541,7 +542,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
         {/* Classified vs Recheck View (개표상황표 판독) */}
         {view === 'classified' && classifiedRecheck && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <ClassifiedRecheckView data={classifiedRecheck} report={reports.classifiedRecheck} />
+            <ClassifiedRecheckView data={classifiedRecheck} report={reports.classifiedRecheck} reportEn={reports.classifiedRecheck_en} />
           </div>
         )}
 

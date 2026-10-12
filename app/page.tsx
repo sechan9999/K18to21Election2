@@ -18,6 +18,7 @@ export default async function Home() {
   const excelAudit = fs.readFileSync(path.join(reportsDir, 'excel_audit_report.md'), 'utf-8');
   const presentationAudit = fs.readFileSync(path.join(reportsDir, 'presentation_audit_report.md'), 'utf-8');
   const classifiedRecheckReport = fs.readFileSync(path.join(reportsDir, 'k21_classified_recheck_report.md'), 'utf-8');
+  const classifiedRecheckReportEn = fs.readFileSync(path.join(reportsDir, 'k21_classified_recheck_report.en.md'), 'utf-8');
   const comparisonReport = fs.readFileSync(path.join(reportsDir, 'k18_21_comparison_report.md'), 'utf-8');
   const comparisonReportEn = fs.readFileSync(path.join(reportsDir, 'k18_21_comparison_report.en.md'), 'utf-8');
 
@@ -36,6 +37,7 @@ export default async function Home() {
         excelAudit: excelAudit,
         presentationAudit: presentationAudit,
         classifiedRecheck: classifiedRecheckReport,
+        classifiedRecheck_en: classifiedRecheckReportEn,
         comparison: comparisonReport,
         comparison_en: comparisonReportEn,
       }}

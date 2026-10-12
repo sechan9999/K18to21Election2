@@ -96,7 +96,8 @@ export default function CompareElectionsView({ data, report, reportEn, winnerK }
   const prov = (s: string) => { const k = short(s); return en ? (EN_PROV[k] ?? k) : k; };
   const dist = (s: string) => (en ? (EN_DIST[s] ?? s) : s);
   const camp = (s: string) => (en ? (EN_CAMP[s] ?? s) : s);
-  const elec = (id: string) => (en ? id.replace('대', 'th') : id);
+  const ord = (n: number) => { const v = n % 100; const s = ['th', 'st', 'nd', 'rd']; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+  const elec = (id: string) => (en ? ord(parseInt(id, 10)) : id);
 
   const [tab, setTab] = useState<'overview' | 'provinces' | 'cand19' | 'normality' | 'winner' | 'figures' | 'report'>('overview');
   const avail = data.elections.filter((e) => e.available);

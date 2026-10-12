@@ -72,7 +72,8 @@ export default function WinnerKPanel({ data }: { data: WinnerKData }) {
   const en = locale === 'en';
   const EN_CAND: Record<string, string> = { '박근혜': 'Park Geun-hye', '문재인': 'Moon Jae-in', '홍준표': 'Hong Joon-pyo', '윤석열': 'Yoon Suk-yeol', '이재명': 'Lee Jae-myung', '김문수': 'Kim Moon-soo', '안철수': 'Ahn Cheol-soo' };
   const cand = (s: string) => (en ? (EN_CAND[s] ?? s) : s);
-  const elec = (id: string) => (en ? id.replace('대', 'th') : id);
+  const ord = (n: number) => { const v = n % 100; const s = ['th', 'st', 'nd', 'rd']; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+  const elec = (id: string) => (en ? ord(parseInt(id, 10)) : id);
   // JSON notes are stored as "한국어 / English"; show the part for the current language.
   const pick = (s: string) => { const p = s.split(' / '); return p.length < 2 ? s : locale === 'ko' ? p[0] : p.slice(1).join(' / '); };
   const e22 = data.elections.find((e) => e.id === '20대');
