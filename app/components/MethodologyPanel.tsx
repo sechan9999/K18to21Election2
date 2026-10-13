@@ -116,11 +116,11 @@ export default function MethodologyPanel() {
             <tbody className="divide-y divide-white/5">
               {DATA_SOURCES.map((s) => (
                 <tr key={s.id} id={`source-${s.id}`}>
-                  <td className="px-3 py-2 font-medium text-white">{s.name}</td>
+                  <td className="px-3 py-2 font-medium text-white">{locale === 'en' && s.name_en ? s.name_en : s.name}</td>
                   <td className="px-3 py-2 font-mono text-xs">{s.file}</td>
                   <td className="px-3 py-2 text-xs">{s.version}</td>
                   <td className="px-3 py-2 font-mono text-xs">{s.lastModified}</td>
-                  <td className="px-3 py-2 text-xs">{s.origin}</td>
+                  <td className="px-3 py-2 text-xs">{locale === 'en' && s.origin_en ? s.origin_en : s.origin}</td>
                   <td className="px-3 py-2 text-right font-mono text-xs">
                     {s.rowCount ? s.rowCount.toLocaleString() : '—'}
                   </td>

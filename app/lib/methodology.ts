@@ -23,6 +23,8 @@ export interface DataSource {
   version: string;
   lastModified: string; // ISO date
   origin: string; // upstream authority, e.g. NEC (중앙선거관리위원회)
+  name_en?: string;
+  origin_en?: string;
   rowCount?: number;
   notes?: string;
 }
@@ -176,41 +178,41 @@ export const METRICS: MetricDefinition[] = [
 export const DATA_SOURCES: DataSource[] = [
   {
     id: 'nec_18th',
-    name: '18대 대통령선거 개표자료',
+    name: '18대 대통령선거 개표자료', name_en: '18th presidential election count data',
     file: 'K21.xlsx (sheet: 18th)',
     version: '2012-12-19 final',
     lastModified: '2026-04-14',
-    origin: '중앙선거관리위원회 (NEC)',
+    origin: '중앙선거관리위원회 (NEC)', origin_en: 'National Election Commission (NEC)',
     notes: 'Precinct-level totals, post-certification.',
   },
   {
     id: 'nec_19th',
-    name: '19대 대통령선거 개표자료',
+    name: '19대 대통령선거 개표자료', name_en: '19th presidential election count data',
     file: 'K21.xlsx (sheet: 19th)',
     version: '2017-05-10 final',
     lastModified: '2026-04-14',
-    origin: '중앙선거관리위원회 (NEC)',
+    origin: '중앙선거관리위원회 (NEC)', origin_en: 'National Election Commission (NEC)',
   },
   {
     id: 'nec_20th',
-    name: '20대 대통령선거 개표자료',
+    name: '20대 대통령선거 개표자료', name_en: '20th presidential election count data',
     file: 'K21.xlsx (sheet: 20th)',
     version: '2022-03-10 final',
     lastModified: '2026-04-14',
-    origin: '중앙선거관리위원회 (NEC)',
+    origin: '중앙선거관리위원회 (NEC)', origin_en: 'National Election Commission (NEC)',
   },
   {
     id: 'nec_21st',
-    name: '21대 대통령선거 개표자료',
+    name: '21대 대통령선거 개표자료', name_en: '21st presidential election count data',
     file: 'K21.xlsx (sheet: 21st)',
     version: '2025 final + 재확인표 재집계본 v2',
     lastModified: '2026-04-22',
-    origin: '중앙선거관리위원회 (NEC)',
+    origin: '중앙선거관리위원회 (NEC)', origin_en: 'National Election Commission (NEC)',
     notes: 'Includes 관내/관외사전 split and 253-district recount cross-check.',
   },
   {
     id: 'recount_21st',
-    name: '21대 관외사전/관내 득표율 비 (R2/R1) dataset',
+    name: '21대 관외사전/관내 득표율 비 (R2/R1) dataset', name_en: '21st out-of-district/in-district vote-share ratio (R2/R1) dataset',
     file: 'summaries/k21_recount.json',
     version: 'build 2026-04-15 (OLS fit, 95% PI)',
     lastModified: '2026-04-15',
@@ -220,31 +222,31 @@ export const DATA_SOURCES: DataSource[] = [
   },
   {
     id: 'classified_recheck_21st',
-    name: '21대 분류/재확인 투표지 (개표상황표 판독)',
+    name: '21대 분류/재확인 투표지 (개표상황표 판독)', name_en: '21st classified/recheck ballots (tally-sheet transcription)',
     file: 'summaries/k21_classified_recheck.json',
     version: 'build 2026-09-28 (17개 시도, 18,847행)',
     lastModified: '2026-09-28',
-    origin: '개표상황표 PDF OCR + 수동 확인, 공개 최종득표와 검산',
+    origin: '개표상황표 PDF OCR + 수동 확인, 공개 최종득표와 검산', origin_en: 'Tally-sheet PDF OCR + manual verification, cross-checked against the published final tally',
     rowCount: 18847,
     notes: 'R1/R2 = 김문수/(이재명+김문수), 분류표/재확인대상. 투표구 CSV: corrected_data/k21_precinct_classified_recheck.csv',
   },
   {
     id: 'winner_k_18_21',
-    name: '18–21대 당선자 분자 K와 마진 회계 (방법 2)',
+    name: '18–21대 당선자 분자 K와 마진 회계 (방법 2)', name_en: '18th–21st winner-numerator K and margin accounting (Method 2)',
     file: 'summaries/k18_21_winner_k.json',
     version: 'build 2026-10-08 (구·시·군 249/249/248/252)',
     lastModified: '2026-10-08',
-    origin: 'corrected_data (pe18res, pe19res, pe20res 보정본, 21대 개표상황표 판독)에서 build_winner_k.py로 계산',
+    origin: 'corrected_data (pe18res, pe19res, pe20res 보정본, 21대 개표상황표 판독)에서 build_winner_k.py로 계산', origin_en: 'Computed by build_winner_k.py from corrected_data (pe18res, pe19res, pe20res corrected sets, 21st tally-sheet transcription)',
     rowCount: 998,
     notes: 'K = 당선자 분자. 보수 분자 K_P와 같은 자료·같은 오즈비이며 방향만 다르다. 회계는 두 후보 득표 기준.',
   },
   {
     id: 'classified_18_21',
-    name: '18–21대 분류/미분류 비교 (보수 후보 분자)',
+    name: '18–21대 분류/미분류 비교 (보수 후보 분자)', name_en: '18th–21st classified/unclassified comparison (conservative numerator)',
     file: 'summaries/k18_21_comparison.json',
     version: 'build 2026-09-28 (19대 pe19res 249곳, 20대 pe20res 보정 248곳, 21대 판독 252곳)',
     lastModified: '2026-09-28',
-    origin: 'pe19res.xlsx, pe20res.xlsx (구·시·군 분류/미분류), 21대 개표상황표 판독. 18대는 SAS 결과 요약만',
+    origin: 'pe19res.xlsx, pe20res.xlsx (구·시·군 분류/미분류), 21대 개표상황표 판독. 18대는 SAS 결과 요약만', origin_en: 'pe19res.xlsx, pe20res.xlsx (district classified/unclassified), 21st tally-sheet transcription. The 18th has only the SAS result summary',
     rowCount: 749,
     notes: '19대 이름 5곳 보정, 공개 최종득표 대조 235곳 2% 미만. 보정본: corrected_data/pe19res_corrected.csv',
   },
