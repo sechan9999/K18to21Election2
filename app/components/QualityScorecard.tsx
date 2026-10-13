@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { ShieldCheck, AlertTriangle, CircleAlert, CheckCircle2 } from 'lucide-react';
 import { DATA_SOURCES, LAST_PIPELINE_RUN, type DataSource } from '../lib/methodology';
 import type { ElectionRecord, RegionalRecord } from '../types/election';
-import { useT } from './LanguageProvider';
+import { useT, useLanguage } from './LanguageProvider';
 
 type Status = 'pass' | 'warn' | 'fail';
 
@@ -36,6 +36,7 @@ function daysBetween(a: number, b: number): number {
 
 export default function QualityScorecard({ electionData, regional, recountData }: Props) {
   const t = useT();
+  const { locale } = useLanguage();
 
   const scores = useMemo<Score[]>(() => {
     return DATA_SOURCES.map((src): Score => {
@@ -188,7 +189,7 @@ export default function QualityScorecard({ electionData, regional, recountData }
             {scores.map((s) => (
               <tr key={s.source.id} className="hover:bg-white/[0.03]">
                 <td className="px-4 py-2.5">
-                  <div className="font-medium text-white">{s.source.name}</div>
+                  <div className="font-medium text-white">{locale === 'en' && s.source.name_en ? s.source.name_en : s.source.name}</div>
                   <div className="font-mono text-[10px] text-slate-500">{s.source.id}</div>
                 </td>
                 <td className="px-4 py-2.5 text-right font-mono">
