@@ -6,6 +6,7 @@ import type { ElectionRecord, RegionalRecord } from '../types/election';
 import { buildNarrative } from '../lib/narrative';
 import { cycleLabel } from '../lib/i18n';
 import { useLanguage } from './LanguageProvider';
+import { provEn } from '../lib/romanize';
 
 interface Props {
   electionData: ElectionRecord[];
@@ -15,6 +16,7 @@ interface Props {
 
 export default function NarrativePanel({ electionData, regional, currentCycle }: Props) {
   const { locale, t } = useLanguage();
+  const en = locale === 'en';
   const pack = useMemo(
     () => buildNarrative(electionData, regional, currentCycle),
     [electionData, regional, currentCycle],
@@ -69,8 +71,8 @@ export default function NarrativePanel({ electionData, regional, currentCycle }:
         >
           <ul className="space-y-1.5 text-xs">
             {pack.topShifts.map((s) => (
-              <li key={s.region} className="flex items-center justify-between gap-2 border-b border-white/5 pb-1 last:border-0">
-                <span className="text-slate-300">{s.region}</span>
+              <li key={provEn(s.region, en)} className="flex items-center justify-between gap-2 border-b border-white/5 pb-1 last:border-0">
+                <span className="text-slate-300">{provEn(s.region, en)}</span>
                 <span
                   className={`font-mono font-semibold ${
                     s.netSwing >= 0 ? 'text-blue-300' : 'text-rose-300'
@@ -95,19 +97,19 @@ export default function NarrativePanel({ electionData, regional, currentCycle }:
         >
           <ul className="space-y-1.5 text-xs">
             {pack.turnoutExtremes.up.slice(0, 2).map((r) => (
-              <li key={`up-${r.region}`} className="flex items-center justify-between gap-2">
+              <li key={`up-${provEn(r.region, en)}`} className="flex items-center justify-between gap-2">
                 <span className="flex items-center gap-1.5 text-slate-300">
                   <ArrowUpRight className="h-3 w-3 text-emerald-300" aria-hidden />
-                  {r.region}
+                  {provEn(r.region, en)}
                 </span>
                 <span className="font-mono font-semibold text-emerald-300">+{r.delta.toFixed(2)} pp</span>
               </li>
             ))}
             {pack.turnoutExtremes.down.slice(0, 2).map((r) => (
-              <li key={`down-${r.region}`} className="flex items-center justify-between gap-2">
+              <li key={`down-${provEn(r.region, en)}`} className="flex items-center justify-between gap-2">
                 <span className="flex items-center gap-1.5 text-slate-300">
                   <ArrowDownRight className="h-3 w-3 text-rose-300" aria-hidden />
-                  {r.region}
+                  {provEn(r.region, en)}
                 </span>
                 <span className="font-mono font-semibold text-rose-300">{r.delta.toFixed(2)} pp</span>
               </li>
@@ -123,14 +125,14 @@ export default function NarrativePanel({ electionData, regional, currentCycle }:
         >
           <ul className="space-y-1.5 text-xs">
             {pack.performance.over.slice(0, 2).map((r) => (
-              <li key={`over-${r.region}`} className="flex items-center justify-between gap-2">
-                <span className="text-slate-300">{r.region}</span>
+              <li key={`over-${provEn(r.region, en)}`} className="flex items-center justify-between gap-2">
+                <span className="text-slate-300">{provEn(r.region, en)}</span>
                 <span className="font-mono font-semibold text-amber-300">+{r.gap.toFixed(2)} pp</span>
               </li>
             ))}
             {pack.performance.under.slice(0, 2).map((r) => (
-              <li key={`under-${r.region}`} className="flex items-center justify-between gap-2">
-                <span className="text-slate-300">{r.region}</span>
+              <li key={`under-${provEn(r.region, en)}`} className="flex items-center justify-between gap-2">
+                <span className="text-slate-300">{provEn(r.region, en)}</span>
                 <span className="font-mono font-semibold text-slate-400">{r.gap.toFixed(2)} pp</span>
               </li>
             ))}

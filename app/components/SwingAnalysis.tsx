@@ -14,6 +14,7 @@ import {
 } from 'recharts';
 import type { RegionalRecord } from '../types/election';
 import { computeSwing, shortRegion, pctPoint } from '../lib/analytics';
+import { provEn } from '../lib/romanize';
 import ChartContainer from './ChartContainer';
 import { cycleLabel, fill } from '../lib/i18n';
 import { useLanguage } from './LanguageProvider';
@@ -34,7 +35,7 @@ export default function SwingAnalysis({ regional }: Props) {
 
   const chartData = rows
     .map((r) => ({
-      region: shortRegion(r.region),
+      region: locale === 'en' ? provEn(r.region, true) : shortRegion(r.region),
       fullRegion: r.region,
       netSwing: r.netSwing,
       democraticSwing: r.democraticSwing,

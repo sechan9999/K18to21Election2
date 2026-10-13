@@ -249,7 +249,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
   const regions = regionalData[selectedElection] ?? {};
   const regionalChartData = Object.entries(regions)
     .map(([region, data]) => ({
-      region: shortRegion(region),
+      region: en ? provEn(region, true) : shortRegion(region),
       Conservative: Math.round(data.Conservative * 1000) / 10,
       Democratic: Math.round(data.Democratic * 1000) / 10,
     }))
