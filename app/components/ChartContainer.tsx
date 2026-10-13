@@ -221,6 +221,7 @@ export default function ChartContainer({
 }
 
 function ProvenanceRow({ ids }: { ids: string[] }) {
+  const { locale } = useLanguage();
   return (
     <div className="mt-3 flex flex-wrap items-center gap-2 text-[10px] text-slate-500">
       <span className="font-semibold uppercase tracking-wider text-slate-400">Source:</span>
