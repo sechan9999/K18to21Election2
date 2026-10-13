@@ -44,7 +44,7 @@ export interface PipelineRun {
 export const METRICS: MetricDefinition[] = [
   {
     id: 'margin',
-    label: 'Margin (표차)',
+    label: 'Margin',
     formula: 'margin_votes = winner.votes − runnerUp.votes;   margin_pct_points = winner.share − runnerUp.share',
     description:
       'Displayed in two complementary units: absolute votes (aggregate vote difference between first and second place) and percentage points (difference of vote shares as a fraction of total valid votes). Percentage-point margin is NOT a ratio of shares; it is the arithmetic difference of two percentages.',
@@ -56,7 +56,7 @@ export const METRICS: MetricDefinition[] = [
   },
   {
     id: 'turnout',
-    label: 'Turnout (투표율)',
+    label: 'Turnout',
     formula: 'turnout_rate = Turnout / Voters',
     description:
       'Numerator = Turnout (total ballots cast, including invalid). Denominator = Voters (eligible registered voters on the final electoral roll published by NEC). We do not use Total Votes in the denominator because that would exclude invalid ballots and inflate the rate.',
@@ -126,8 +126,8 @@ export const METRICS: MetricDefinition[] = [
   },
   {
     id: 'absentee_ratio',
-    label: 'Absentee-to-in-precinct share ratio (관외사전/관내 득표율 비, R2/R1) — not the paper’s K',
-    formula: 'ratio = 관외사전 득표율 ÷ 관내 득표율   (same candidate, same district)',
+    label: 'Absentee-to-in-precinct share ratio (R2/R1) — not the paper’s K',
+    formula: 'ratio = out-of-district early share ÷ in-district share   (same candidate, same district)',
     description:
       'Ratio of a candidate’s absentee-sort vote share to their in-precinct vote share within the same district. It is shown on the 21st-election absentee-ratio tab and drives the OLS-based anomaly flags. This is NOT the K statistic defined above: it compares two voting methods, not machine-classified with hand-confirmed ballots. The classified/unclassified K appears on the Classified and Compare tabs.',
     units: 'ratio (unitless)',
@@ -148,7 +148,7 @@ export const METRICS: MetricDefinition[] = [
   },
   {
     id: 'swing',
-    label: 'Swing (스윙)',
+    label: 'Swing',
     formula: 'swing_r,c = share_r,c,t − share_r,c,t-1',
     description:
       'Change in vote share for party block c in region r between consecutive election cycles. We compute swing on the Conservative/Democratic two-block aggregation because minor-party coalitions shift between cycles; the aggregation keeps the time series comparable.',

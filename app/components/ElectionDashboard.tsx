@@ -474,7 +474,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                       : 'bg-white/5 text-slate-400 ring-1 ring-white/5 hover:bg-white/10 hover:text-slate-200'
                   }`}
                 >
-                  {ELECTION_LABELS[e]}
+                  {(locale === 'en' ? ELECTION_LABELS_EN : ELECTION_LABELS)[e]}
                 </button>
               ))}
             </div>
@@ -590,7 +590,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                 <div className="rounded-3xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur">
                   <div className="mb-4 flex items-center justify-between">
                     <h2 className="text-lg font-bold text-white">{L('후보별 재확인표 비율', 'Recheck-ballot share by candidate')}</h2>
-                    <span className="text-xs text-slate-500">전국 R1 vs R2 (%)</span>
+                    <span className="text-xs text-slate-500">{L('전국 R1 vs R2 (%)', 'National R1 vs R2 (%)')}</span>
                   </div>
                   <div className="h-[320px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
@@ -1002,7 +1002,7 @@ function ElectionReportView({ report }: { report: ElectionReport }) {
             <div key={i} className="rounded-2xl border border-white/5 bg-white/[0.03] p-4">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">{pe(o, 'label')}</p>
               <p className="mt-1 text-xl font-bold text-white">
-                {isFraction(o.value) ? fmtPct(o.value) : fmtNum(o.value)}
+                {isFraction(o.value) ? fmtPct(o.value) : (typeof o.value === 'string' ? provEn(o.value, en) : fmtNum(o.value))}
               </p>
               {o.note && <p className="mt-1 text-[10px] text-slate-500 leading-tight">{String(pe(o, 'note'))}</p>}
             </div>
@@ -1139,9 +1139,9 @@ function ElectionReportView({ report }: { report: ElectionReport }) {
               <ul className="space-y-2 text-xs">
                 {sec.items.map((it, j) => (
                   <li key={j} className="flex items-start justify-between gap-2 border-b border-white/5 pb-1.5 last:border-0">
-                    <span className="text-slate-400">{pe(it, 'label')}</span>
+                    <span className="text-slate-400">{provEn(pe(it, 'label'), en)}</span>
                     <span className="text-right font-mono text-slate-200">
-                      {isFraction(it.value) ? fmtPct(it.value) : fmtNum(it.value)}
+                      {isFraction(it.value) ? fmtPct(it.value) : (typeof it.value === 'string' ? provEn(it.value, en) : fmtNum(it.value))}
                       {it.note !== null && it.note !== undefined && it.note !== '' && (
                         <span className="ml-1 text-[10px] text-slate-500">
                           {isFraction(it.note) ? `(${fmtPct(it.note as number)})` : `(${pe(it, 'note')})`}
