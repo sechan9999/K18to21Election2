@@ -36,7 +36,7 @@ export default function SwingAnalysis({ regional }: Props) {
   const chartData = rows
     .map((r) => ({
       region: locale === 'en' ? provEn(r.region, true) : shortRegion(r.region),
-      fullRegion: r.region,
+      fullRegion: locale === 'en' ? provEn(r.region, true) : r.region,
       netSwing: r.netSwing,
       democraticSwing: r.democraticSwing,
       conservativeSwing: r.conservativeSwing,

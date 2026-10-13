@@ -45,7 +45,7 @@ import type { ComparisonData } from './CompareElectionsView';
 import type { WinnerKData } from './WinnerKPanel';
 import { LAST_PIPELINE_RUN, METRIC_PROVENANCE, sourceById } from '../lib/methodology';
 import { shortRegion } from '../lib/analytics';
-import { provEn, candEn, distEn } from '../lib/romanize';
+import { provEn, candEn, distEn, partyEn } from '../lib/romanize';
 
 // Code-split heavy analytics widgets — they're only needed on the Insight view
 // after first paint, so we load them lazily (no SSR needed, they use Recharts).
@@ -352,7 +352,7 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
               {[
                 { label: t('kpi.totalVotes'), value: totalVotes.toLocaleString(), icon: Users, color: 'text-blue-400', bg: 'bg-blue-400/10', metricId: 'totalVotes', defHref: '#metric-margin' },
                 { label: t('kpi.turnout'), value: `${turnoutRate.toFixed(1)}%`, icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-400/10', metricId: 'turnout', defHref: '#metric-turnout' },
-                { label: t('kpi.winner'), value: sortedCandidates[0].name, icon: Search, color: 'text-rose-400', bg: 'bg-rose-400/10', metricId: 'winner', defHref: '#metric-margin' },
+                { label: t('kpi.winner'), value: candEn(sortedCandidates[0].name, en), icon: Search, color: 'text-rose-400', bg: 'bg-rose-400/10', metricId: 'winner', defHref: '#metric-margin' },
                 { label: t('kpi.marginVotes'), value: (sortedCandidates[0].votes - sortedCandidates[1].votes).toLocaleString(), icon: Info, color: 'text-amber-400', bg: 'bg-amber-400/10', metricId: 'margin', defHref: '#metric-margin' },
               ].map((stat, i) => (
                 <KpiCard
@@ -377,8 +377,8 @@ export default function ElectionDashboard({ electionData, regionalData, reports,
                 title={t('chart.candidatePerf')}
                 description={`${t('chart.candidatePerf.desc')} · ${(locale === 'en' ? ELECTION_LABELS_EN : ELECTION_LABELS)[selectedElection]}`}
                 data={sortedCandidates.map((c) => ({
-                  name: c.name,
-                  party: c.party,
+                  name: candEn(c.name, en),
+                  party: partyEn(c.party, en),
                   votes: c.votes,
                   pct: c.pct.toFixed(2),
                 }))}

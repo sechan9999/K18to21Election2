@@ -5,7 +5,8 @@ import { Beaker, TrendingUp, TrendingDown } from 'lucide-react';
 import type { ElectionRecord, RegionalRecord } from '../types/election';
 import { runCounterfactual, pctPoint } from '../lib/analytics';
 import { fill } from '../lib/i18n';
-import { useT } from './LanguageProvider';
+import { useT, useLanguage } from './LanguageProvider';
+import { provEn } from '../lib/romanize';
 
 interface Props {
   election: ElectionRecord;
@@ -15,6 +16,7 @@ interface Props {
 
 export default function CounterfactualWidget({ election, regional, electionKey }: Props) {
   const t = useT();
+  const { locale } = useLanguage();
   const regions = Object.keys(regional[electionKey] ?? {});
   const [region, setRegion] = useState<string>(regions[0] ?? '');
   const [turnoutBump, setTurnoutBump] = useState<number>(1.5);
@@ -52,7 +54,7 @@ export default function CounterfactualWidget({ election, regional, electionKey }
           >
             {regions.map((r) => (
               <option key={r} value={r}>
-                {r}
+                {locale === 'en' ? provEn(r, true) : r}
               </option>
             ))}
           </select>

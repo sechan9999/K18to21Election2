@@ -25,6 +25,7 @@ export interface DataSource {
   origin: string; // upstream authority, e.g. NEC (중앙선거관리위원회)
   name_en?: string;
   origin_en?: string;
+  version_en?: string;
   rowCount?: number;
   notes?: string;
 }
@@ -205,7 +206,7 @@ export const DATA_SOURCES: DataSource[] = [
     id: 'nec_21st',
     name: '21대 대통령선거 개표자료', name_en: '21st presidential election count data',
     file: 'K21.xlsx (sheet: 21st)',
-    version: '2025 final + 재확인표 재집계본 v2',
+    version: '2025 final + 재확인표 재집계본 v2', version_en: '2025 final + recheck recount v2',
     lastModified: '2026-04-22',
     origin: '중앙선거관리위원회 (NEC)', origin_en: 'National Election Commission (NEC)',
     notes: 'Includes 관내/관외사전 split and 253-district recount cross-check.',
@@ -224,7 +225,7 @@ export const DATA_SOURCES: DataSource[] = [
     id: 'classified_recheck_21st',
     name: '21대 분류/재확인 투표지 (개표상황표 판독)', name_en: '21st classified/recheck ballots (tally-sheet transcription)',
     file: 'summaries/k21_classified_recheck.json',
-    version: 'build 2026-09-28 (17개 시도, 18,847행)',
+    version: 'build 2026-09-28 (17개 시도, 18,847행)', version_en: 'build 2026-09-28 (17 provinces, 18,847 rows)',
     lastModified: '2026-09-28',
     origin: '개표상황표 PDF OCR + 수동 확인, 공개 최종득표와 검산', origin_en: 'Tally-sheet PDF OCR + manual verification, cross-checked against the published final tally',
     rowCount: 18847,
@@ -234,7 +235,7 @@ export const DATA_SOURCES: DataSource[] = [
     id: 'winner_k_18_21',
     name: '18–21대 당선자 분자 K와 마진 회계 (방법 2)', name_en: '18th–21st winner-numerator K and margin accounting (Method 2)',
     file: 'summaries/k18_21_winner_k.json',
-    version: 'build 2026-10-08 (구·시·군 249/249/248/252)',
+    version: 'build 2026-10-08 (구·시·군 249/249/248/252)', version_en: 'build 2026-10-08 (districts 249/249/248/252)',
     lastModified: '2026-10-08',
     origin: 'corrected_data (pe18res, pe19res, pe20res 보정본, 21대 개표상황표 판독)에서 build_winner_k.py로 계산', origin_en: 'Computed by build_winner_k.py from corrected_data (pe18res, pe19res, pe20res corrected sets, 21st tally-sheet transcription)',
     rowCount: 998,
@@ -244,7 +245,7 @@ export const DATA_SOURCES: DataSource[] = [
     id: 'classified_18_21',
     name: '18–21대 분류/미분류 비교 (보수 후보 분자)', name_en: '18th–21st classified/unclassified comparison (conservative numerator)',
     file: 'summaries/k18_21_comparison.json',
-    version: 'build 2026-09-28 (19대 pe19res 249곳, 20대 pe20res 보정 248곳, 21대 판독 252곳)',
+    version: 'build 2026-09-28 (19대 pe19res 249곳, 20대 pe20res 보정 248곳, 21대 판독 252곳)', version_en: 'build 2026-09-28 (19th pe19res 249, 20th pe20res corrected 248, 21st transcribed 252)',
     lastModified: '2026-09-28',
     origin: 'pe19res.xlsx, pe20res.xlsx (구·시·군 분류/미분류), 21대 개표상황표 판독. 18대는 SAS 결과 요약만', origin_en: 'pe19res.xlsx, pe20res.xlsx (district classified/unclassified), 21st tally-sheet transcription. The 18th has only the SAS result summary',
     rowCount: 749,

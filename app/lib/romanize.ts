@@ -3,7 +3,7 @@
 
 export const EN_CAND: Record<string, string> = {'박근혜': 'Park Geun-hye', '문재인': 'Moon Jae-in', '홍준표': 'Hong Joon-pyo', '윤석열': 'Yoon Suk-yeol',
   '이재명': 'Lee Jae-myung', '김문수': 'Kim Moon-soo', '이준석': 'Lee Jun-seok', '유승민': 'Yoo Seung-min',
-  '안철수': 'Ahn Cheol-soo', '심상정': 'Sim Sang-jung', '권영국': 'Kwon Young-guk', '송진호': 'Song Jin-ho',};
+  '안철수': 'Ahn Cheol-soo', '심상정': 'Sim Sang-jung', '권영국': 'Kwon Young-guk', '송진호': 'Song Jin-ho', '박종선': 'Park Jong-seon', '김소연': 'Kim So-yeon', '강지원': 'Kang Ji-won', '김순자': 'Kim Soon-ja', '조원진': 'Cho Won-jin', '오영국': 'Oh Young-guk', '장성민': 'Jang Sung-min', '이재오': 'Lee Jae-oh', '김선동': 'Kim Seon-dong', '이경희': 'Lee Kyung-hee', '윤홍식': 'Yoon Hong-sik', '김민찬': 'Kim Min-chan',};
 export const EN_PROV: Record<string, string> = {'서울': 'Seoul', '부산': 'Busan', '대구': 'Daegu', '인천': 'Incheon', '광주': 'Gwangju', '대전': 'Daejeon',
   '울산': 'Ulsan', '세종': 'Sejong', '경기': 'Gyeonggi', '강원': 'Gangwon', '충북': 'Chungbuk', '충남': 'Chungnam',
   '전북': 'Jeonbuk', '전남': 'Jeonnam', '경북': 'Gyeongbuk', '경남': 'Gyeongnam', '제주': 'Jeju',};
@@ -12,6 +12,8 @@ export const EN_DIST: Record<string, string> = {'가평군': 'Gapyeong-gun', '�
 const ABBR: Record<string, string> = {경상북도: '경북', 경상남도: '경남', 충청북도: '충북', 충청남도: '충남', 전라남도: '전남', 전북특별자치도: '전북', 강원특별자치도: '강원', 제주특별자치도: '제주', 경기도: '경기'};
 
 export const shortProv = (s: string): string => ABBR[s] ?? s.replace(/\uD2B9\uBCC4\uC790\uCE58\uC2DC|\uAD11\uC5ED\uC2DC|\uD2B9\uBCC4\uC2DC/g, '');
+export const EN_PARTY: Record<string, string> = { '새누리당': 'Saenuri Party', '민주통합당': 'Democratic United Party', '더불어민주당': 'Democratic Party', '국민의힘': 'People Power Party', '자유한국당': 'Liberty Korea Party', '국민의당': "People's Party", '바른정당': 'Bareun Party', '정의당': 'Justice Party', '민주노동당': 'Democratic Labor Party', '개혁신당': 'Reform Party', '국가혁명당': 'National Revolutionary Party', '무소속': 'Independent', '경제애국당': 'Economic Patriots Party', '국민대통합당': 'National Grand Unity Party', '늘푸른한국당': 'Evergreen Korea Party', '민중연합당': "People's United Party", '한국국민당': 'Korea National Party', '홍익당': 'Hongik Party' };
+export const partyEn = (s: string, en: boolean): string => (en ? (EN_PARTY[s] ?? s) : s);
 export const candEn = (s: string, en: boolean): string => (en ? (EN_CAND[s] ?? s) : s);
 export const provEn = (s: string, en: boolean): string => { const k = shortProv(s); return en ? (EN_PROV[k] ?? EN_PROV[s] ?? k) : k; };
 export const distEn = (s: string, en: boolean): string => (en ? (EN_DIST[s] ?? s) : s);

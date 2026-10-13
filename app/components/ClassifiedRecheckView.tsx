@@ -153,7 +153,7 @@ export default function ClassifiedRecheckView({ data, report, reportEn }: { data
   return (
     <div className="space-y-6">
       <div className="rounded-3xl border border-violet-500/20 bg-violet-500/5 p-6">
-        <h1 className="text-2xl font-bold text-white">{data.meta.title}</h1>
+        <h1 className="text-2xl font-bold text-white">{pe(data.meta, 'title')}</h1>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <span className="text-xs font-semibold text-slate-400">{L('분자', 'Numerator')}</span>
           {(['kim', 'lee'] as Num[]).map((v) => (
