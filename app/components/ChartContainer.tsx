@@ -5,7 +5,7 @@ import { Download, Table2, Info } from 'lucide-react';
 import { downloadCsv } from '../lib/analytics';
 import { sourceById } from '../lib/methodology';
 import { fill } from '../lib/i18n';
-import { useT } from './LanguageProvider';
+import { useT, useLanguage } from './LanguageProvider';
 
 // Accessibility + auditability wrapper for any chart.
 //
@@ -48,6 +48,7 @@ export default function ChartContainer({
   children,
 }: ChartContainerProps) {
   const t = useT();
+  const { locale } = useLanguage();
   const [showTable, setShowTable] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const headingId = useId();
@@ -230,7 +231,7 @@ function ProvenanceRow({ ids }: { ids: string[] }) {
           <span
             key={id}
             className="rounded-md border border-white/10 bg-white/5 px-2 py-0.5 font-mono"
-            title={`${src.name} · ${src.file} · v${src.version} · updated ${src.lastModified}`}
+            title={`${locale === 'en' && src.name_en ? src.name_en : src.name} · ${src.file} · v${src.version} · updated ${src.lastModified}`}
           >
             {src.file.split('/').pop()}
             <span className="ml-1 text-slate-600">@ {src.version}</span>
