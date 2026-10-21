@@ -28,6 +28,9 @@ export interface DataSource {
   version_en?: string;
   rowCount?: number;
   notes?: string;
+  notes_en?: string;
+  /** External canonical location (e.g. the public tally-sheet archive); renders the file cell as a link. */
+  url?: string;
 }
 
 export interface PipelineRun {
@@ -230,6 +233,18 @@ export const DATA_SOURCES: DataSource[] = [
     origin: '개표상황표 PDF OCR + 수동 확인, 공개 최종득표와 검산', origin_en: 'Tally-sheet PDF OCR + manual verification, cross-checked against the published final tally',
     rowCount: 18847,
     notes: 'R1/R2 = 김문수/(이재명+김문수), 분류표/재확인대상. 투표구 CSV: corrected_data/k21_precinct_classified_recheck.csv',
+  },
+  {
+    id: 'tally_archive_21st',
+    name: '21대 개표상황표 원본 아카이브', name_en: '21st tally-sheet originals archive',
+    file: 'storage.googleapis.com/k21-tally-archive/index.html',
+    url: 'https://storage.googleapis.com/k21-tally-archive/index.html',
+    version: 'published 2026-10-21 (17개 시도, 개표상황표 18,949장)', version_en: 'published 2026-10-21 (17 provinces, 18,949 tally sheets)',
+    lastModified: '2026-10-21',
+    origin: '중앙선거관리위원회 공개자료 + 정보공개청구로 확보한 원본', origin_en: 'Originals obtained from NEC public releases and information-disclosure requests',
+    rowCount: 18949,
+    notes: '위 판독 데이터의 원본을 그대로 공개한 아카이브다. 중앙선거관리위원회가 공개한 자료와 정보공개청구로 확보한 제21대 대통령선거 개표상황표 18,949장을 시도 → 구·시·군 → 장 단위로 제공하며, 각 장의 원본 이미지와 구·시·군별 원본 PDF를 누구나 직접 내려받아 판독 결과와 대조할 수 있다.',
+    notes_en: 'The source originals behind the transcription dataset above, published as-is. All 18,949 tally sheets of the 21st presidential election — obtained from NEC public releases and information-disclosure requests — are browsable by province, district, and sheet, with the original image of every sheet and the district-level original PDF available for direct download and cross-checking.',
   },
   {
     id: 'winner_k_18_21',

@@ -31,6 +31,14 @@ The files are organized into the following directories:
 - `major_party_vote_share.png`: Comparison of Democratic and Conservative party performance.
 - `regional_strength_21st.png`: Regional breakdown of party support in the 21st election.
 
+## 21st Tally-Sheet Originals Archive
+
+The 21st-election figures in this repository were transcribed from the official ballot tally sheets (개표상황표). The originals are published in full so that anyone can verify the transcription against the source documents:
+
+**[21st Tally-Sheet Originals Archive](https://storage.googleapis.com/k21-tally-archive/index.html)**
+
+The archive holds all 18,949 tally sheets of the 21st presidential election (June 3, 2025), obtained from National Election Commission public releases and information-disclosure requests. Sheets are browsable by province → district → individual sheet, with the original image of every sheet and the district-level original PDF available for direct download.
+
 ## Usage
 This repository is intended for researchers and analysts interested in Korean electoral trends. The data is structured to be easily accessible for further analysis or presentation.
 

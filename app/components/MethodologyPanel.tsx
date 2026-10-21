@@ -116,8 +116,28 @@ export default function MethodologyPanel() {
             <tbody className="divide-y divide-white/5">
               {DATA_SOURCES.map((s) => (
                 <tr key={s.id} id={`source-${s.id}`}>
-                  <td className="px-3 py-2 font-medium text-white">{locale === 'en' && s.name_en ? s.name_en : s.name}</td>
-                  <td className="px-3 py-2 font-mono text-xs">{s.file}</td>
+                  <td className="px-3 py-2 font-medium text-white">
+                    {locale === 'en' && s.name_en ? s.name_en : s.name}
+                    {s.url && (s.notes || s.notes_en) && (
+                      <p className="mt-1 max-w-md text-[11px] font-normal leading-relaxed text-slate-400">
+                        {locale === 'en' && s.notes_en ? s.notes_en : s.notes}
+                      </p>
+                    )}
+                  </td>
+                  <td className="px-3 py-2 font-mono text-xs">
+                    {s.url ? (
+                      <a
+                        href={s.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-indigo-300 underline decoration-indigo-300/40 underline-offset-2 hover:text-indigo-200"
+                      >
+                        {s.file}
+                      </a>
+                    ) : (
+                      s.file
+                    )}
+                  </td>
                   <td className="px-3 py-2 text-xs">{locale === 'en' && s.version_en ? s.version_en : s.version}</td>
                   <td className="px-3 py-2 font-mono text-xs">{s.lastModified}</td>
                   <td className="px-3 py-2 text-xs">{locale === 'en' && s.origin_en ? s.origin_en : s.origin}</td>
