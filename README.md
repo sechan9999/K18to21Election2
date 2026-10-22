@@ -31,13 +31,33 @@ The files are organized into the following directories:
 - `major_party_vote_share.png`: Comparison of Democratic and Conservative party performance.
 - `regional_strength_21st.png`: Regional breakdown of party support in the 21st election.
 
-## 21st Tally-Sheet Originals Archive
+## Public Data Archives (18th–21st Presidential Elections)
 
-The 21st-election figures in this repository were transcribed from the official ballot tally sheets (개표상황표). The originals are published in full so that anyone can verify the transcription against the source documents:
+The source records behind this analysis are published in full, so that anyone can verify the figures against the original documents. Each archive provides browsable tables plus the original workbook (XLSX) and a CSV export.
+
+### 18th Presidential Election (December 19, 2012)
+
+**[18th Ballot-Classifier Results Archive](https://storage.googleapis.com/k18-archive/index.html)**
+
+Ballot-classifier operation results at district level (251 districts): classified / unclassified / hand-count tallies, candidate votes, age-band turnout, and the unclassified-ballot odds ratio (K). The archive also includes the NEC precinct-level official results (17,871 counting-unit rows) as tables, workbook, and CSV.
+
+### 19th Presidential Election (May 9, 2017)
+
+**[19th Ballot-Classifier Operation-Log Archive](https://storage.googleapis.com/k19-archive/index.html)**
+
+The ballot-classifier operation log as 13,949 counting-unit (precinct) rows: ballots passed through the classifier, ballots classified by candidate, unclassified ballots, and classifier-start / chair-announcement times, in per-province tables. The NEC precinct-level official results (22,214 rows) are included in the same archive.
+
+### 20th Presidential Election (March 9, 2022)
+
+**[20th Tally-Sheet Originals Archive](https://storage.googleapis.com/k20-tally-archive/index.html)**
+
+17,377 original ballot tally sheets (개표상황표) obtained from National Election Commission public releases and information-disclosure requests, browsable by province → district → individual sheet for the 224 districts collected (some regions, including all of Busan, Jeju, and Sejong, are absent because no originals were obtained), with the original image of every sheet and district-level original PDFs. The NEC precinct-level official results (22,752 rows) are included.
+
+### 21st Presidential Election (June 3, 2025)
 
 **[21st Tally-Sheet Originals Archive](https://storage.googleapis.com/k21-tally-archive/index.html)**
 
-The archive holds all 18,949 tally sheets of the 21st presidential election (June 3, 2025), obtained from National Election Commission public releases and information-disclosure requests. Sheets are browsable by province → district → individual sheet, with the original image of every sheet and the district-level original PDF available for direct download.
+The 21st-election figures in this repository were transcribed from the official ballot tally sheets. The archive holds all 18,949 tally sheets, obtained from National Election Commission public releases and information-disclosure requests. Sheets are browsable by province → district → individual sheet, with the original image of every sheet and the district-level original PDF available for direct download, so the transcription can be checked against the source documents. The NEC precinct-level official results (22,685 rows) are included as tables, workbook, and CSV.
 
 ## Usage
 This repository is intended for researchers and analysts interested in Korean electoral trends. The data is structured to be easily accessible for further analysis or presentation.
