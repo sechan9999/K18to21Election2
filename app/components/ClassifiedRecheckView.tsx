@@ -12,13 +12,14 @@ type Block = {
   classified_kim: number; classified_lee: number; recheck_kim: number; recheck_lee: number;
   R1: number; R2: number; K: number; OR: number; lo: number; hi: number; n: number;
 };
-type Province = { province: string; 전체: Block; 관내사전?: Block; 선거일?: Block; OR20?: { OR: number; lo: number; hi: number; n: number } };
+type Province = { province: string; 전체: Block; 관내사전?: Block; 선거일?: Block; OR20?: { OR: number; lo: number; hi: number; n: number }; archive_url?: string };
 type District = {
   province: string; district: string; R1: number; R2: number; K: number; OR: number;
   pred: number; pi_lo: number; pi_hi: number; rstudent: number; cooksD: number; OR_pre?: number; OR_day?: number;
+  archive_url?: string;
 };
 export type ClassifiedRecheckData = {
-  meta: { title: string; built: string; definitions: Record<string, string>; rows_total: number; rows_used: number; rows_excluded: number; checks: string[]; not_same_as: string };
+  meta: { title: string; built: string; definitions: Record<string, string>; rows_total: number; rows_used: number; rows_excluded: number; checks: string[]; not_same_as: string; exclusion_reasons?: { ko: string; en: string; n: number }[]; scope_note?: string; scope_note_en?: string };
   candidates: { name: string; classified_pct: number; recheck_pct: number; K: number }[];
   national: Record<string, Block>;
   provinces: Province[];
@@ -117,6 +118,9 @@ function OrBar({ v, lo, hi, color, X0 = 0.8, X1 = 2.0 }: { v?: number; lo?: numb
 export default function ClassifiedRecheckView({ data, report, reportEn }: { data: ClassifiedRecheckData; report?: string; reportEn?: string }) {
   const [tab, setTab] = useState<'summary' | 'districts' | 'figures' | 'report'>('summary');
   const [q, setQ] = useState('');
+  const [sortKey, setSortKey] = useState<'rstudent' | 'R1' | 'R2' | 'K' | 'OR'>('rstudent');
+  const [sortDir, setSortDir] = useState<1 | -1>(1);
+  const [outliersOnly, setOutliersOnly] = useState(false);
   const [num, setNum] = useState<Num>('kim');
   const { locale } = useLanguage();
   const en = locale === 'en';
@@ -134,8 +138,27 @@ export default function ClassifiedRecheckView({ data, report, reportEn }: { data
   const reg = data.regression;
   const cmp = reg['20대21대_비교'];
   const districts = useMemo(() => data.districts.map((d) => flipDistrict(d, num))
-    .filter((d) => !q || d.province.includes(q) || d.district.includes(q))
-    .sort((a, b) => a.rstudent - b.rstudent), [data.districts, q, num]);
+    .filter((d) => {
+      if (outliersOnly && Math.abs(d.rstudent) <= 2) return false;
+      if (!q) return true;
+      const needle = q.toLowerCase();
+      return d.province.includes(q) || d.district.includes(q)
+        || provEn(d.province, true).toLowerCase().includes(needle)
+        || distEn(d.district, true).toLowerCase().includes(needle);
+    })
+    .sort((a, b) => (a[sortKey] - b[sortKey]) * sortDir), [data.districts, q, num, sortKey, sortDir, outliersOnly]);
+
+  const downloadCsv = () => {
+    const head = 'province,district,R1,R2,K,OR,OR_pre,OR_day,pred_R2,pi_lo,pi_hi,rstudent,archive_url';
+    const lines = districts.map((d) => [d.province, d.district, d.R1, d.R2, d.K, d.OR, d.OR_pre ?? '', d.OR_day ?? '', d.pred, d.pi_lo, d.pi_hi, d.rstudent, d.archive_url ?? '']
+      .map((v) => (typeof v === 'number' ? v.toFixed(4) : v)).join(','));
+    const blob = new Blob([[head, ...lines].join('\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `k21_classified_districts_${num}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
 
   const kpis = [
     { label: L('분석 행 (투표구)', 'Rows analyzed (precincts)'), value: data.meta.rows_used.toLocaleString(), sub: L(`전체 ${data.meta.rows_total.toLocaleString()}행 중 대조용 ${data.meta.rows_excluded}행 제외`, `${data.meta.rows_excluded} of ${data.meta.rows_total.toLocaleString()} rows excluded (for cross-check)`) },
@@ -170,6 +193,17 @@ export default function ClassifiedRecheckView({ data, report, reportEn }: { data
         </p>
         <p className="mt-2 text-xs text-amber-300/80">※ {pe(data.meta, 'not_same_as')}</p>
         <p className="mt-1 text-xs text-slate-500">{L('검산', 'Checks')}: {(en && (data.meta as any).checks_en ? (data.meta as any).checks_en : data.meta.checks).join(' · ')} · {L('작성', 'built')} {data.meta.built}</p>
+        {data.meta.scope_note && <p className="mt-1 text-xs text-amber-300/80">※ {pe(data.meta, 'scope_note')}</p>}
+        {data.meta.exclusion_reasons && (
+          <p className="mt-1 text-xs text-slate-500">
+            {L('제외 내역', 'Exclusions')}: {data.meta.exclusion_reasons.map((r) => `${en ? r.en : r.ko} ${r.n.toLocaleString()}`).join(' · ')}
+          </p>
+        )}
+        <p className="mt-3">
+          <a href="https://storage.googleapis.com/k21-tally-archive/index.html" target="_blank" rel="noreferrer" className="inline-block rounded-lg bg-violet-600/80 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-violet-500">
+            {L('개표상황표 원본 아카이브 (18,949장) ↗', 'Original tally-sheet archive (18,949 sheets) ↗')}
+          </a>
+        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -203,6 +237,7 @@ export default function ClassifiedRecheckView({ data, report, reportEn }: { data
               <tbody>{data.candidates.map((c) => (
                 <tr key={c.name} className="border-t border-white/5 text-slate-300"><td className="py-1">{candEn(c.name, en)}</td><td className="text-right">{c.classified_pct.toFixed(2)}</td><td className="text-right">{c.recheck_pct.toFixed(2)}</td><td className="text-right">{c.K.toFixed(3)}</td></tr>))}</tbody>
             </table>
+            <p className="mt-2 text-[11px] leading-relaxed text-slate-500">{L('※ 득표 비율이 작은 후보는 재확인 표본이 작아 K가 크게 흔들립니다. 예: 송진호는 분류 0.10% → 재확인 0.29%로 표본이 작아 K=3.054를 그대로 해석하면 안 됩니다.', '※ For candidates with a very small vote share the recheck base is tiny, so K swings widely. E.g., Song Jin-ho (0.10% classified → 0.29% recheck) — K = 3.054 should not be read at face value.')}</p>
           </Card>
 
           <Card title={`${L('시도별 OR', 'OR by province')} (${L('분자', 'num.')} ${numName})`} sub={L('점 = OR, 선 = 95% 구간, 세로선 = 1', 'dot = OR, line = 95% CI, vertical = 1')}>
@@ -214,12 +249,21 @@ export default function ClassifiedRecheckView({ data, report, reportEn }: { data
             <div className="space-y-2">
               {provinces.map((p) => (
                 <div key={p.province} className="grid grid-cols-[4.5rem_3.5rem_1fr] items-center gap-2 text-sm">
-                  <span className="text-slate-300">{prov(p.province)}</span>
+                  <span className="text-slate-300">{p.archive_url
+                    ? <a href={p.archive_url} target="_blank" rel="noreferrer" className="hover:text-sky-300 hover:underline" title={L('개표상황표 원본 아카이브', 'Original tally-sheet archive')}>{prov(p.province)} ↗</a>
+                    : prov(p.province)}</span>
                   <span className={`text-right font-semibold ${orColor(p.전체.OR)}`}>{p.전체.OR.toFixed(2)}</span>
                   <div className="space-y-0.5">
-                    <OrBar v={p.관내사전?.OR} lo={p.관내사전?.lo} hi={p.관내사전?.hi} color="#eb6834" X0={AX0} X1={AX1} />
-                    <OrBar v={p.선거일?.OR} lo={p.선거일?.lo} hi={p.선거일?.hi} color="#1baf7a" X0={AX0} X1={AX1} />
-                    <OrBar v={p.OR20?.OR} lo={p.OR20?.lo} hi={p.OR20?.hi} color="#2a78d6" X0={AX0} X1={AX1} />
+                    {([
+                      { b: p.관내사전, color: '#eb6834' },
+                      { b: p.선거일, color: '#1baf7a' },
+                      { b: p.OR20, color: '#2a78d6' },
+                    ] as const).map((row, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <div className="flex-1"><OrBar v={row.b?.OR} lo={row.b?.lo} hi={row.b?.hi} color={row.color} X0={AX0} X1={AX1} /></div>
+                        <span className="w-8 text-right text-[10px] tabular-nums text-slate-400">{row.b ? row.b.OR.toFixed(2) : ''}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}
@@ -247,12 +291,40 @@ export default function ClassifiedRecheckView({ data, report, reportEn }: { data
       )}
 
       {tab === 'districts' && (
-        <Card title={`${L('구·시·군', 'Districts')} ${data.districts.length}${L('곳', '')} (${L('분자', 'num.')} ${numName})`} sub={L('RStudent 오름차순 (적합선 아래로 크게 벗어난 곳부터)', 'By RStudent ascending (largest deviations below the fit line first)')}>
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={L('시도·구시군 검색', 'Search province / district')} className="mb-4 w-full rounded-xl bg-white/5 px-4 py-2 text-sm text-white ring-1 ring-white/10 placeholder:text-slate-500 sm:w-72" />
+        <Card title={`${L('구·시·군', 'Districts')} ${data.districts.length}${L('곳', '')} (${L('분자', 'num.')} ${numName})`} sub={L('열 제목을 누르면 정렬됩니다. 기본값은 RStudent 오름차순', 'Click a column title to sort. Default: RStudent ascending')}>
+          <div className="mb-4 flex flex-wrap items-center gap-3">
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={L('시도·구시군 검색 (영문도 가능)', 'Search province / district (English works too)')} className="w-full rounded-xl bg-white/5 px-4 py-2 text-sm text-white ring-1 ring-white/10 placeholder:text-slate-500 sm:w-72" />
+            <label className="flex cursor-pointer items-center gap-2 text-xs text-slate-300">
+              <input type="checkbox" checked={outliersOnly} onChange={(e) => setOutliersOnly(e.target.checked)} className="h-4 w-4 accent-violet-500" />
+              {L('|RStudent| > 2만 보기', 'Outliers only (|RStudent| > 2)')}
+            </label>
+            <span className="text-xs text-slate-500">{districts.length}{L('곳 표시', ' shown')}</span>
+            <button onClick={downloadCsv} className="ml-auto rounded-lg bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-200 ring-1 ring-white/10 transition hover:bg-white/10">{L('CSV 다운로드', 'Download CSV')}</button>
+          </div>
           <div className="max-h-[36rem] overflow-auto rounded-xl border border-white/5">
             <table className="w-full text-sm">
               <thead className="sticky top-0 bg-slate-900 text-slate-400">
-                <tr>{(en ? ['Province', 'District', 'R1', 'R2', 'K', 'OR', 'In-district early OR', 'Election-day OR', 'Pred. R2', '95% PI', 'RStudent'] : ['시도', '구시군', 'R1', 'R2', 'K', 'OR', '관내사전 OR', '선거일 OR', '예측 R2', '95% 예측구간', 'RStudent']).map((h) => <th key={h} className="px-3 py-2 text-right first:text-left [&:nth-child(2)]:text-left">{h}</th>)}</tr>
+                <tr>
+                  <th className="px-3 py-2 text-left">{L('시도', 'Province')}</th>
+                  <th className="px-3 py-2 text-left">{L('구시군', 'District')}</th>
+                  {([['R1', 'R1'], ['R2', 'R2'], ['K', 'K'], ['OR', 'OR']] as const).map(([k, label]) => (
+                    <th key={k} className="px-3 py-2 text-right">
+                      <button onClick={() => { if (sortKey === k) setSortDir(sortDir === 1 ? -1 : 1); else { setSortKey(k); setSortDir(-1); } }} className="font-semibold hover:text-white">
+                        {label}{sortKey === k ? (sortDir === 1 ? ' ↑' : ' ↓') : ''}
+                      </button>
+                    </th>
+                  ))}
+                  <th className="px-3 py-2 text-right">{L('관내사전 OR', 'In-district early OR')}</th>
+                  <th className="px-3 py-2 text-right">{L('선거일 OR', 'Election-day OR')}</th>
+                  <th className="px-3 py-2 text-right">{L('예측 R2', 'Pred. R2')}</th>
+                  <th className="px-3 py-2 text-right">{L('95% 예측구간', '95% PI')}</th>
+                  <th className="px-3 py-2 text-right">
+                    <button onClick={() => { if (sortKey === 'rstudent') setSortDir(sortDir === 1 ? -1 : 1); else { setSortKey('rstudent'); setSortDir(1); } }} className="font-semibold hover:text-white">
+                      RStudent{sortKey === 'rstudent' ? (sortDir === 1 ? ' ↑' : ' ↓') : ''}
+                    </button>
+                  </th>
+                  <th className="px-3 py-2 text-right">{L('원본', 'Originals')}</th>
+                </tr>
               </thead>
               <tbody>{districts.map((d) => (
                 <tr key={d.province + d.district} className="border-t border-white/5 text-slate-300">
@@ -262,6 +334,9 @@ export default function ClassifiedRecheckView({ data, report, reportEn }: { data
                   <td className="px-3 text-right">{f3(d.OR_pre)}</td><td className="px-3 text-right">{f3(d.OR_day)}</td>
                   <td className="px-3 text-right">{f3(d.pred)}</td><td className="px-3 text-right text-xs text-slate-500">[{f3(d.pi_lo)}, {f3(d.pi_hi)}]</td>
                   <td className={`px-3 text-right ${Math.abs(d.rstudent) > 2 ? 'font-bold text-rose-400' : ''}`}>{d.rstudent.toFixed(2)}</td>
+                  <td className="px-3 text-right">{d.archive_url
+                    ? <a href={d.archive_url} target="_blank" rel="noreferrer" className="text-sky-300 hover:underline" title={L('개표상황표 원본', 'Original tally sheets')}>↗</a>
+                    : <span className="text-slate-600">–</span>}</td>
                 </tr>))}</tbody>
             </table>
           </div>

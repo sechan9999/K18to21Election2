@@ -22,7 +22,8 @@
     "checks": [
       "후보 5명 합 = 계",
       "계 + 재확인대상 = 공개 투표수",
-      "분류 + 재확인 + 무효 = 투표수 (18,040개 투표구 전부 일치)"
+      "분류 + 재확인 + 무효 = 투표수 (18,040개 투표구 전부 일치)",
+      "구·시·군 워크북(data21)과 교차감사 (2026-10-21): 분류·재확인 수치가 비교 가능한 248개 구 전부 일치, 전국 합계 정확히 일치"
     ],
     "not_same_as": "summaries/k21_recount*.json 의 K는 관외사전 ÷ 관내 득표율 비(이재명 기준)로, 이 분석과 다른 지표임",
     "title_en": "21st presidential election: classified / recheck ballot analysis (tally-sheet transcription)",
@@ -30,8 +31,33 @@
     "checks_en": [
       "Sum of the 5 candidates = total",
       "Total + recheck-target = published turnout",
-      "Classified + recheck + invalid = votes (matches across all 18,040 precincts)"
-    ]
+      "Classified + recheck + invalid = votes (matches across all 18,040 precincts)",
+      "Cross-audit against the district workbook (data21), 2026-10-21: classified/recheck counts match in all 248 comparable districts; national totals match exactly"
+    ],
+    "exclusion_reasons": [
+      {
+        "ko": "수작업 개표(분류기 미사용)",
+        "en": "Manual counting (no ballot classifier used)",
+        "n": 478
+      },
+      {
+        "ko": "잘못 투입·구분된 투표지",
+        "en": "Mis-fed / mis-sorted ballots",
+        "n": 252
+      },
+      {
+        "ko": "분류기 미사용 또는 판독 불가로 분석에서 제외",
+        "en": "Excluded from analysis (no classifier or illegible)",
+        "n": 18
+      },
+      {
+        "ko": "손글씨 관외사전표 등으로 분석에서 제외",
+        "en": "Excluded from analysis (handwritten out-of-district early ballots, etc.)",
+        "n": 15
+      }
+    ],
+    "scope_note": "이 페이지의 합계는 투표지분류기를 사용한 개표단위만 포함하므로 공식 전국 총투표수와 다릅니다. 울릉군은 개표상황표 판독 자료가 없어 포함되지 않습니다.",
+    "scope_note_en": "Totals on this page cover only counting units that used a ballot classifier, so they differ from the official nationwide vote total. Ulleung-gun is not included because no tally-sheet transcription is available for it."
   },
   "candidates": [
     {
@@ -166,7 +192,8 @@
         "lo": 0.9171,
         "hi": 0.9968,
         "n": 22
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -214,7 +241,8 @@
         "lo": 0.9756,
         "hi": 1.0955,
         "n": 15
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/index.html"
     },
     {
       "province": "서울특별시",
@@ -262,7 +290,8 @@
         "lo": 1.0391,
         "hi": 1.141,
         "n": 25
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/index.html"
     },
     {
       "province": "광주광역시",
@@ -310,7 +339,8 @@
         "lo": 0.9743,
         "hi": 1.1538,
         "n": 5
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gwangju/index.html"
     },
     {
       "province": "경기도",
@@ -358,7 +388,8 @@
         "lo": 1.225,
         "hi": 1.3225,
         "n": 42
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/index.html"
     },
     {
       "province": "인천광역시",
@@ -406,7 +437,8 @@
         "lo": 1.1418,
         "hi": 1.3204,
         "n": 10
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/incheon/index.html"
     },
     {
       "province": "부산광역시",
@@ -454,7 +486,8 @@
         "lo": 1.2619,
         "hi": 1.4274,
         "n": 16
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/index.html"
     },
     {
       "province": "세종특별자치시",
@@ -496,7 +529,8 @@
         "lo": 1.2375,
         "hi": 1.4903,
         "n": 86
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/sejong/index.html"
     },
     {
       "province": "충청남도",
@@ -544,7 +578,8 @@
         "lo": 1.3381,
         "hi": 1.4874,
         "n": 17
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/index.html"
     },
     {
       "province": "충청북도",
@@ -592,7 +627,8 @@
         "lo": 1.3394,
         "hi": 1.4897,
         "n": 12
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -640,7 +676,8 @@
         "lo": 1.3985,
         "hi": 1.5547,
         "n": 18
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/index.html"
     },
     {
       "province": "대구광역시",
@@ -688,7 +725,8 @@
         "lo": 1.266,
         "hi": 1.5142,
         "n": 8
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daegu/index.html"
     },
     {
       "province": "대전광역시",
@@ -736,7 +774,8 @@
         "lo": 1.0874,
         "hi": 1.5095,
         "n": 5
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daejeon/index.html"
     },
     {
       "province": "울산광역시",
@@ -784,7 +823,8 @@
         "lo": 1.2348,
         "hi": 1.5929,
         "n": 5
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/ulsan/index.html"
     },
     {
       "province": "제주특별자치도",
@@ -832,7 +872,8 @@
         "lo": 0.3973,
         "hi": 3.4597,
         "n": 2
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeju/index.html"
     },
     {
       "province": "경상남도",
@@ -880,7 +921,8 @@
         "lo": 1.3964,
         "hi": 1.5534,
         "n": 22
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/index.html"
     },
     {
       "province": "경상북도",
@@ -928,7 +970,8 @@
         "lo": 1.4518,
         "hi": 1.549,
         "n": 24
-      }
+      },
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/index.html"
     }
   ],
   "districts": [
@@ -949,7 +992,8 @@
       "rstudent": 1.184,
       "cooksD": 0.0034,
       "OR_pre": 1.6254,
-      "OR_day": 1.358
+      "OR_day": 1.358,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/sejong/39110/index.html"
     },
     {
       "province": "제주특별자치도",
@@ -968,7 +1012,8 @@
       "rstudent": 2.006,
       "cooksD": 0.0095,
       "OR_pre": 1.4726,
-      "OR_day": 1.428
+      "OR_day": 1.428,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeju/39287/index.html"
     },
     {
       "province": "제주특별자치도",
@@ -987,7 +1032,8 @@
       "rstudent": 1.427,
       "cooksD": 0.0043,
       "OR_pre": 1.7114,
-      "OR_day": 1.1598
+      "OR_day": 1.1598,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeju/39288/index.html"
     },
     {
       "province": "광주광역시",
@@ -1006,7 +1052,8 @@
       "rstudent": -0.115,
       "cooksD": 0.0001,
       "OR_pre": 1.116,
-      "OR_day": 0.9972
+      "OR_day": 0.9972,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gwangju/x2d08de/index.html"
     },
     {
       "province": "광주광역시",
@@ -1025,7 +1072,8 @@
       "rstudent": -0.094,
       "cooksD": 0.0001,
       "OR_pre": 1.3941,
-      "OR_day": 1.087
+      "OR_day": 1.087,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gwangju/39097/index.html"
     },
     {
       "province": "광주광역시",
@@ -1044,7 +1092,8 @@
       "rstudent": 0.413,
       "cooksD": 0.0015,
       "OR_pre": 1.3964,
-      "OR_day": 1.1483
+      "OR_day": 1.1483,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gwangju/39095/index.html"
     },
     {
       "province": "광주광역시",
@@ -1063,7 +1112,8 @@
       "rstudent": -0.263,
       "cooksD": 0.0007,
       "OR_pre": 1.0321,
-      "OR_day": 1.0398
+      "OR_day": 1.0398,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gwangju/xb434e7/index.html"
     },
     {
       "province": "광주광역시",
@@ -1082,7 +1132,8 @@
       "rstudent": -0.045,
       "cooksD": 0.0,
       "OR_pre": 1.2524,
-      "OR_day": 1.1404
+      "OR_day": 1.1404,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gwangju/index.html"
     },
     {
       "province": "경상북도",
@@ -1101,7 +1152,8 @@
       "rstudent": -0.39,
       "cooksD": 0.0009,
       "OR_pre": 1.5523,
-      "OR_day": 1.5544
+      "OR_day": 1.5544,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39253/index.html"
     },
     {
       "province": "경상북도",
@@ -1120,7 +1172,8 @@
       "rstudent": -0.565,
       "cooksD": 0.0017,
       "OR_pre": 1.3185,
-      "OR_day": 1.3303
+      "OR_day": 1.3303,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39245/index.html"
     },
     {
       "province": "경상북도",
@@ -1139,7 +1192,8 @@
       "rstudent": -1.429,
       "cooksD": 0.0166,
       "OR_pre": 1.6336,
-      "OR_day": 1.3315
+      "OR_day": 1.3315,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39256/index.html"
     },
     {
       "province": "경상북도",
@@ -1158,7 +1212,8 @@
       "rstudent": 0.49,
       "cooksD": 0.0011,
       "OR_pre": 1.7577,
-      "OR_day": 1.6039
+      "OR_day": 1.6039,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/xa25ca0/index.html"
     },
     {
       "province": "경상북도",
@@ -1177,7 +1232,8 @@
       "rstudent": -0.532,
       "cooksD": 0.0016,
       "OR_pre": 1.7575,
-      "OR_day": 1.275
+      "OR_day": 1.275,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39246/index.html"
     },
     {
       "province": "경상북도",
@@ -1196,7 +1252,8 @@
       "rstudent": -0.893,
       "cooksD": 0.0056,
       "OR_pre": 1.7406,
-      "OR_day": 1.3241
+      "OR_day": 1.3241,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39252/index.html"
     },
     {
       "province": "경상북도",
@@ -1215,7 +1272,8 @@
       "rstudent": -2.135,
       "cooksD": 0.0271,
       "OR_pre": 1.7178,
-      "OR_day": 1.0321
+      "OR_day": 1.0321,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39261/index.html"
     },
     {
       "province": "경상북도",
@@ -1234,7 +1292,8 @@
       "rstudent": 0.046,
       "cooksD": 0.0,
       "OR_pre": 1.7577,
-      "OR_day": 1.628
+      "OR_day": 1.628,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39251/index.html"
     },
     {
       "province": "경상북도",
@@ -1253,7 +1312,8 @@
       "rstudent": -1.225,
       "cooksD": 0.0121,
       "OR_pre": 1.741,
-      "OR_day": 1.2091
+      "OR_day": 1.2091,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/xb434e7/index.html"
     },
     {
       "province": "경상북도",
@@ -1272,7 +1332,8 @@
       "rstudent": 0.291,
       "cooksD": 0.0003,
       "OR_pre": 1.5771,
-      "OR_day": 1.4099
+      "OR_day": 1.4099,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39247/index.html"
     },
     {
       "province": "경상북도",
@@ -1291,7 +1352,8 @@
       "rstudent": -2.072,
       "cooksD": 0.0359,
       "OR_pre": 1.4028,
-      "OR_day": 1.2186
+      "OR_day": 1.2186,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39259/index.html"
     },
     {
       "province": "경상북도",
@@ -1310,7 +1372,8 @@
       "rstudent": -1.679,
       "cooksD": 0.017,
       "OR_pre": 1.4462,
-      "OR_day": 1.0671
+      "OR_day": 1.0671,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39262/index.html"
     },
     {
       "province": "경상북도",
@@ -1329,7 +1392,8 @@
       "rstudent": -0.168,
       "cooksD": 0.0001,
       "OR_pre": 1.9004,
-      "OR_day": 1.2296
+      "OR_day": 1.2296,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39249/index.html"
     },
     {
       "province": "경상북도",
@@ -1348,7 +1412,8 @@
       "rstudent": -0.81,
       "cooksD": 0.0049,
       "OR_pre": 1.9564,
-      "OR_day": 1.3656
+      "OR_day": 1.3656,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39250/index.html"
     },
     {
       "province": "경상북도",
@@ -1367,7 +1432,8 @@
       "rstudent": 0.889,
       "cooksD": 0.0042,
       "OR_pre": 2.4948,
-      "OR_day": 1.4798
+      "OR_day": 1.4798,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39263/index.html"
     },
     {
       "province": "경상북도",
@@ -1386,7 +1452,8 @@
       "rstudent": -0.688,
       "cooksD": 0.0032,
       "OR_pre": 2.1364,
-      "OR_day": 1.0872
+      "OR_day": 1.0872,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39264/index.html"
     },
     {
       "province": "경상북도",
@@ -1405,7 +1472,8 @@
       "rstudent": -1.637,
       "cooksD": 0.0225,
       "OR_pre": 1.6108,
-      "OR_day": 1.2535
+      "OR_day": 1.2535,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39258/index.html"
     },
     {
       "province": "경상북도",
@@ -1424,7 +1492,8 @@
       "rstudent": -0.696,
       "cooksD": 0.0037,
       "OR_pre": 1.8923,
-      "OR_day": 1.3377
+      "OR_day": 1.3377,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39254/index.html"
     },
     {
       "province": "경상북도",
@@ -1443,7 +1512,8 @@
       "rstudent": -1.764,
       "cooksD": 0.0227,
       "OR_pre": 1.7937,
-      "OR_day": 1.0831
+      "OR_day": 1.0831,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39260/index.html"
     },
     {
       "province": "경상북도",
@@ -1462,7 +1532,8 @@
       "rstudent": -0.557,
       "cooksD": 0.0017,
       "OR_pre": 1.5316,
-      "OR_day": 1.3718
+      "OR_day": 1.3718,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39257/index.html"
     },
     {
       "province": "경상북도",
@@ -1481,7 +1552,8 @@
       "rstudent": -0.078,
       "cooksD": 0.0,
       "OR_pre": 1.7515,
-      "OR_day": 1.3939
+      "OR_day": 1.3939,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39243/index.html"
     },
     {
       "province": "경상북도",
@@ -1500,7 +1572,8 @@
       "rstudent": -0.108,
       "cooksD": 0.0001,
       "OR_pre": 1.7079,
-      "OR_day": 1.4562
+      "OR_day": 1.4562,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongbuk/39242/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1519,7 +1592,8 @@
       "rstudent": -0.798,
       "cooksD": 0.0058,
       "OR_pre": 0.8645,
-      "OR_day": 0.8777
+      "OR_day": 0.8777,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/39217/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1538,7 +1612,8 @@
       "rstudent": -0.562,
       "cooksD": 0.0025,
       "OR_pre": 1.1294,
-      "OR_day": 1.0516
+      "OR_day": 1.0516,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/39206/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1557,7 +1632,8 @@
       "rstudent": -0.677,
       "cooksD": 0.0041,
       "OR_pre": 1.1345,
-      "OR_day": 0.8039
+      "OR_day": 0.8039,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/39210/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1576,7 +1652,8 @@
       "rstudent": -0.913,
       "cooksD": 0.0076,
       "OR_pre": 0.9583,
-      "OR_day": 0.814
+      "OR_day": 0.814,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/39209/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1595,7 +1672,8 @@
       "rstudent": -0.557,
       "cooksD": 0.002,
       "OR_pre": 1.0757,
-      "OR_day": 1.1746
+      "OR_day": 1.1746,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/39213/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1614,7 +1692,8 @@
       "rstudent": -0.608,
       "cooksD": 0.0033,
       "OR_pre": 1.0473,
-      "OR_day": 0.8414
+      "OR_day": 0.8414,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/39218/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1633,7 +1712,8 @@
       "rstudent": -0.922,
       "cooksD": 0.0078,
       "OR_pre": 1.0777,
-      "OR_day": 0.5257
+      "OR_day": 0.5257,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/39216/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1652,7 +1732,8 @@
       "rstudent": -0.241,
       "cooksD": 0.0005,
       "OR_pre": 1.0934,
-      "OR_day": 1.1119
+      "OR_day": 1.1119,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/39211/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1671,7 +1752,8 @@
       "rstudent": -0.39,
       "cooksD": 0.0013,
       "OR_pre": 1.1934,
-      "OR_day": 0.9334
+      "OR_day": 0.9334,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/x2a81d8/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1690,7 +1772,8 @@
       "rstudent": -1.167,
       "cooksD": 0.0122,
       "OR_pre": 0.8012,
-      "OR_day": 0.623
+      "OR_day": 0.623,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/39215/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1709,7 +1792,8 @@
       "rstudent": 0.214,
       "cooksD": 0.0004,
       "OR_pre": 1.9756,
-      "OR_day": 0.4776
+      "OR_day": 0.4776,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/39214/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1728,7 +1812,8 @@
       "rstudent": -0.206,
       "cooksD": 0.0004,
       "OR_pre": 1.2639,
-      "OR_day": 1.0643
+      "OR_day": 1.0643,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/x8e82dc/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1747,7 +1832,8 @@
       "rstudent": -0.592,
       "cooksD": 0.0028,
       "OR_pre": 1.1491,
-      "OR_day": 0.9781
+      "OR_day": 0.9781,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/39204/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1766,7 +1852,8 @@
       "rstudent": -0.129,
       "cooksD": 0.0002,
       "OR_pre": 1.3596,
-      "OR_day": 0.992
+      "OR_day": 0.992,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/x1ddbc0/index.html"
     },
     {
       "province": "전북특별자치도",
@@ -1785,7 +1872,8 @@
       "rstudent": -0.038,
       "cooksD": 0.0,
       "OR_pre": 1.2147,
-      "OR_day": 0.9378
+      "OR_day": 0.9378,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonbuk/39212/index.html"
     },
     {
       "province": "부산광역시",
@@ -1804,7 +1892,8 @@
       "rstudent": -1.015,
       "cooksD": 0.0021,
       "OR_pre": 0.9674,
-      "OR_day": 0.9476
+      "OR_day": 0.9476,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39072/index.html"
     },
     {
       "province": "부산광역시",
@@ -1823,7 +1912,8 @@
       "rstudent": 0.296,
       "cooksD": 0.0002,
       "OR_pre": 1.5873,
-      "OR_day": 1.3574
+      "OR_day": 1.3574,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39071/index.html"
     },
     {
       "province": "부산광역시",
@@ -1842,7 +1932,8 @@
       "rstudent": 0.759,
       "cooksD": 0.0013,
       "OR_pre": 1.5629,
-      "OR_day": 1.3368
+      "OR_day": 1.3368,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39068/index.html"
     },
     {
       "province": "부산광역시",
@@ -1861,7 +1952,8 @@
       "rstudent": 0.624,
       "cooksD": 0.001,
       "OR_pre": 1.574,
-      "OR_day": 1.379
+      "OR_day": 1.379,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39066/index.html"
     },
     {
       "province": "부산광역시",
@@ -1880,7 +1972,8 @@
       "rstudent": 0.309,
       "cooksD": 0.0003,
       "OR_pre": 1.4293,
-      "OR_day": 1.2739
+      "OR_day": 1.2739,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39062/index.html"
     },
     {
       "province": "부산광역시",
@@ -1899,7 +1992,8 @@
       "rstudent": 0.043,
       "cooksD": 0.0,
       "OR_pre": 1.5277,
-      "OR_day": 1.2386
+      "OR_day": 1.2386,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39065/index.html"
     },
     {
       "province": "부산광역시",
@@ -1918,7 +2012,8 @@
       "rstudent": 0.961,
       "cooksD": 0.0025,
       "OR_pre": 1.7808,
-      "OR_day": 1.4165
+      "OR_day": 1.4165,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39064/index.html"
     },
     {
       "province": "부산광역시",
@@ -1937,7 +2032,8 @@
       "rstudent": 0.258,
       "cooksD": 0.0002,
       "OR_pre": 1.4489,
-      "OR_day": 1.3181
+      "OR_day": 1.3181,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39067/index.html"
     },
     {
       "province": "부산광역시",
@@ -1956,7 +2052,8 @@
       "rstudent": 0.638,
       "cooksD": 0.001,
       "OR_pre": 1.5043,
-      "OR_day": 1.3476
+      "OR_day": 1.3476,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/x022d24/index.html"
     },
     {
       "province": "부산광역시",
@@ -1975,7 +2072,8 @@
       "rstudent": 0.592,
       "cooksD": 0.0008,
       "OR_pre": 1.6015,
-      "OR_day": 1.3557
+      "OR_day": 1.3557,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39070/index.html"
     },
     {
       "province": "부산광역시",
@@ -1994,7 +2092,8 @@
       "rstudent": 0.477,
       "cooksD": 0.0007,
       "OR_pre": 1.6926,
-      "OR_day": 1.3925
+      "OR_day": 1.3925,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39061/index.html"
     },
     {
       "province": "부산광역시",
@@ -2013,7 +2112,8 @@
       "rstudent": 0.419,
       "cooksD": 0.0005,
       "OR_pre": 1.5126,
-      "OR_day": 1.3837
+      "OR_day": 1.3837,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39074/index.html"
     },
     {
       "province": "부산광역시",
@@ -2032,7 +2132,8 @@
       "rstudent": 0.16,
       "cooksD": 0.0001,
       "OR_pre": 1.6357,
-      "OR_day": 1.3555
+      "OR_day": 1.3555,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39073/index.html"
     },
     {
       "province": "부산광역시",
@@ -2051,7 +2152,8 @@
       "rstudent": 0.635,
       "cooksD": 0.0009,
       "OR_pre": 1.5367,
-      "OR_day": 1.3288
+      "OR_day": 1.3288,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39063/index.html"
     },
     {
       "province": "부산광역시",
@@ -2070,7 +2172,8 @@
       "rstudent": 0.677,
       "cooksD": 0.0013,
       "OR_pre": 2.1077,
-      "OR_day": 1.2117
+      "OR_day": 1.2117,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39060/index.html"
     },
     {
       "province": "부산광역시",
@@ -2089,7 +2192,8 @@
       "rstudent": -0.899,
       "cooksD": 0.0022,
       "OR_pre": 1.2398,
-      "OR_day": 1.3979
+      "OR_day": 1.3979,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/busan/39069/index.html"
     },
     {
       "province": "대전광역시",
@@ -2108,7 +2212,8 @@
       "rstudent": 1.197,
       "cooksD": 0.0029,
       "OR_pre": 1.632,
-      "OR_day": 1.241
+      "OR_day": 1.241,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daejeon/39104/index.html"
     },
     {
       "province": "대전광역시",
@@ -2127,7 +2232,8 @@
       "rstudent": 0.885,
       "cooksD": 0.0016,
       "OR_pre": 1.5403,
-      "OR_day": 1.3675
+      "OR_day": 1.3675,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daejeon/39100/index.html"
     },
     {
       "province": "대전광역시",
@@ -2146,7 +2252,8 @@
       "rstudent": 1.465,
       "cooksD": 0.0043,
       "OR_pre": 1.7374,
-      "OR_day": 1.4291
+      "OR_day": 1.4291,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daejeon/39102/index.html"
     },
     {
       "province": "대전광역시",
@@ -2165,7 +2272,8 @@
       "rstudent": 1.417,
       "cooksD": 0.0041,
       "OR_pre": 1.4714,
-      "OR_day": 1.4916
+      "OR_day": 1.4916,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daejeon/39584/index.html"
     },
     {
       "province": "대전광역시",
@@ -2184,7 +2292,8 @@
       "rstudent": 1.41,
       "cooksD": 0.004,
       "OR_pre": 1.4511,
-      "OR_day": 1.2598
+      "OR_day": 1.2598,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daejeon/39101/index.html"
     },
     {
       "province": "인천광역시",
@@ -2203,7 +2312,8 @@
       "rstudent": 0.441,
       "cooksD": 0.0005,
       "OR_pre": 1.6016,
-      "OR_day": 1.3858
+      "OR_day": 1.3858,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/incheon/39093/index.html"
     },
     {
       "province": "인천광역시",
@@ -2222,7 +2332,8 @@
       "rstudent": -0.084,
       "cooksD": 0.0,
       "OR_pre": 1.45,
-      "OR_day": 1.2695
+      "OR_day": 1.2695,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/incheon/39091/index.html"
     },
     {
       "province": "인천광역시",
@@ -2241,7 +2352,8 @@
       "rstudent": 0.751,
       "cooksD": 0.0011,
       "OR_pre": 1.4124,
-      "OR_day": 1.279
+      "OR_day": 1.279,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/incheon/39089/index.html"
     },
     {
       "province": "인천광역시",
@@ -2260,7 +2372,8 @@
       "rstudent": 1.677,
       "cooksD": 0.0056,
       "OR_pre": 1.5787,
-      "OR_day": 1.4191
+      "OR_day": 1.4191,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/incheon/39086/index.html"
     },
     {
       "province": "인천광역시",
@@ -2279,7 +2392,8 @@
       "rstudent": -0.459,
       "cooksD": 0.0004,
       "OR_pre": 1.4361,
-      "OR_day": 1.1609
+      "OR_day": 1.1609,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/incheon/39087/index.html"
     },
     {
       "province": "인천광역시",
@@ -2298,7 +2412,8 @@
       "rstudent": 0.862,
       "cooksD": 0.0015,
       "OR_pre": 1.3982,
-      "OR_day": 1.3634
+      "OR_day": 1.3634,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/incheon/39090/index.html"
     },
     {
       "province": "인천광역시",
@@ -2317,7 +2432,8 @@
       "rstudent": 0.632,
       "cooksD": 0.0008,
       "OR_pre": 1.3448,
-      "OR_day": 1.2533
+      "OR_day": 1.2533,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/incheon/39092/index.html"
     },
     {
       "province": "인천광역시",
@@ -2336,7 +2452,8 @@
       "rstudent": 0.515,
       "cooksD": 0.0005,
       "OR_pre": 1.4599,
-      "OR_day": 1.3108
+      "OR_day": 1.3108,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/incheon/39088/index.html"
     },
     {
       "province": "인천광역시",
@@ -2355,7 +2472,8 @@
       "rstudent": -2.302,
       "cooksD": 0.014,
       "OR_pre": 1.263,
-      "OR_day": 1.0017
+      "OR_day": 1.0017,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/incheon/39094/index.html"
     },
     {
       "province": "인천광역시",
@@ -2374,7 +2492,8 @@
       "rstudent": 1.54,
       "cooksD": 0.005,
       "OR_pre": 1.3122,
-      "OR_day": 1.4584
+      "OR_day": 1.4584,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/incheon/39085/index.html"
     },
     {
       "province": "울산광역시",
@@ -2393,7 +2512,8 @@
       "rstudent": 0.749,
       "cooksD": 0.0011,
       "OR_pre": 1.3429,
-      "OR_day": 1.3338
+      "OR_day": 1.3338,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/ulsan/39107/index.html"
     },
     {
       "province": "울산광역시",
@@ -2412,7 +2532,8 @@
       "rstudent": 0.726,
       "cooksD": 0.0013,
       "OR_pre": 1.7368,
-      "OR_day": 1.4296
+      "OR_day": 1.4296,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/ulsan/39105/index.html"
     },
     {
       "province": "울산광역시",
@@ -2431,7 +2552,8 @@
       "rstudent": 0.248,
       "cooksD": 0.0002,
       "OR_pre": 1.4118,
-      "OR_day": 1.4137
+      "OR_day": 1.4137,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/ulsan/39106/index.html"
     },
     {
       "province": "울산광역시",
@@ -2450,7 +2572,8 @@
       "rstudent": 1.635,
       "cooksD": 0.0064,
       "OR_pre": 1.6506,
-      "OR_day": 1.4995
+      "OR_day": 1.4995,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/ulsan/39109/index.html"
     },
     {
       "province": "울산광역시",
@@ -2469,7 +2592,8 @@
       "rstudent": 1.721,
       "cooksD": 0.0059,
       "OR_pre": 1.5942,
-      "OR_day": 1.5111
+      "OR_day": 1.5111,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/ulsan/39108/index.html"
     },
     {
       "province": "서울특별시",
@@ -2488,7 +2612,8 @@
       "rstudent": -1.253,
       "cooksD": 0.0031,
       "OR_pre": 1.1933,
-      "OR_day": 1.2899
+      "OR_day": 1.2899,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39034/index.html"
     },
     {
       "province": "서울특별시",
@@ -2507,7 +2632,8 @@
       "rstudent": -0.96,
       "cooksD": 0.0018,
       "OR_pre": 1.484,
-      "OR_day": 1.1418
+      "OR_day": 1.1418,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39035/index.html"
     },
     {
       "province": "서울특별시",
@@ -2526,7 +2652,8 @@
       "rstudent": -1.872,
       "cooksD": 0.008,
       "OR_pre": 1.4855,
-      "OR_day": 1.0921
+      "OR_day": 1.0921,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/x662e9e/index.html"
     },
     {
       "province": "서울특별시",
@@ -2545,7 +2672,8 @@
       "rstudent": -0.8,
       "cooksD": 0.0013,
       "OR_pre": 1.1703,
-      "OR_day": 1.1208
+      "OR_day": 1.1208,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39041/index.html"
     },
     {
       "province": "서울특별시",
@@ -2564,7 +2692,8 @@
       "rstudent": -0.949,
       "cooksD": 0.0018,
       "OR_pre": 1.3787,
-      "OR_day": 1.292
+      "OR_day": 1.292,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39038/index.html"
     },
     {
       "province": "서울특별시",
@@ -2583,7 +2712,8 @@
       "rstudent": -0.97,
       "cooksD": 0.0019,
       "OR_pre": 1.321,
-      "OR_day": 1.2344
+      "OR_day": 1.2344,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39039/index.html"
     },
     {
       "province": "서울특별시",
@@ -2602,7 +2732,8 @@
       "rstudent": -0.123,
       "cooksD": 0.0,
       "OR_pre": 1.4011,
-      "OR_day": 1.333
+      "OR_day": 1.333,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39040/index.html"
     },
     {
       "province": "서울특별시",
@@ -2621,7 +2752,8 @@
       "rstudent": 0.143,
       "cooksD": 0.0,
       "OR_pre": 1.3986,
-      "OR_day": 1.2397
+      "OR_day": 1.2397,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39044/index.html"
     },
     {
       "province": "서울특별시",
@@ -2640,7 +2772,8 @@
       "rstudent": 1.034,
       "cooksD": 0.0022,
       "OR_pre": 2.0082,
-      "OR_day": 1.2782
+      "OR_day": 1.2782,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39042/index.html"
     },
     {
       "province": "서울특별시",
@@ -2659,7 +2792,8 @@
       "rstudent": -0.406,
       "cooksD": 0.0003,
       "OR_pre": 1.3235,
-      "OR_day": 1.284
+      "OR_day": 1.284,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39043/index.html"
     },
     {
       "province": "서울특별시",
@@ -2678,7 +2812,8 @@
       "rstudent": -0.254,
       "cooksD": 0.0001,
       "OR_pre": 1.3439,
-      "OR_day": 1.3007
+      "OR_day": 1.3007,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/x9738e2/index.html"
     },
     {
       "province": "서울특별시",
@@ -2697,7 +2832,8 @@
       "rstudent": -0.349,
       "cooksD": 0.0003,
       "OR_pre": 1.4603,
-      "OR_day": 1.2796
+      "OR_day": 1.2796,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39046/index.html"
     },
     {
       "province": "서울특별시",
@@ -2716,7 +2852,8 @@
       "rstudent": 0.121,
       "cooksD": 0.0,
       "OR_pre": 1.4544,
-      "OR_day": 1.3278
+      "OR_day": 1.3278,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39047/index.html"
     },
     {
       "province": "서울특별시",
@@ -2735,7 +2872,8 @@
       "rstudent": -0.783,
       "cooksD": 0.0012,
       "OR_pre": 1.2597,
-      "OR_day": 1.2438
+      "OR_day": 1.2438,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39048/index.html"
     },
     {
       "province": "서울특별시",
@@ -2754,7 +2892,8 @@
       "rstudent": -1.327,
       "cooksD": 0.0035,
       "OR_pre": 1.4468,
-      "OR_day": 1.2025
+      "OR_day": 1.2025,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39049/index.html"
     },
     {
       "province": "서울특별시",
@@ -2773,7 +2912,8 @@
       "rstudent": -0.169,
       "cooksD": 0.0001,
       "OR_pre": 1.4014,
-      "OR_day": 1.293
+      "OR_day": 1.293,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39050/index.html"
     },
     {
       "province": "서울특별시",
@@ -2792,7 +2932,8 @@
       "rstudent": -1.964,
       "cooksD": 0.0077,
       "OR_pre": 1.2196,
-      "OR_day": 1.2351
+      "OR_day": 1.2351,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39051/index.html"
     },
     {
       "province": "서울특별시",
@@ -2811,7 +2952,8 @@
       "rstudent": -0.159,
       "cooksD": 0.0001,
       "OR_pre": 1.3533,
-      "OR_day": 1.2782
+      "OR_day": 1.2782,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39052/index.html"
     },
     {
       "province": "서울특별시",
@@ -2830,7 +2972,8 @@
       "rstudent": -0.911,
       "cooksD": 0.0017,
       "OR_pre": 1.3085,
-      "OR_day": 1.2492
+      "OR_day": 1.2492,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39053/index.html"
     },
     {
       "province": "서울특별시",
@@ -2849,7 +2992,8 @@
       "rstudent": -1.537,
       "cooksD": 0.0047,
       "OR_pre": 1.2362,
-      "OR_day": 1.2429
+      "OR_day": 1.2429,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39054/index.html"
     },
     {
       "province": "서울특별시",
@@ -2868,7 +3012,8 @@
       "rstudent": -0.591,
       "cooksD": 0.0007,
       "OR_pre": 1.3226,
-      "OR_day": 1.1656
+      "OR_day": 1.1656,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/x524150/index.html"
     },
     {
       "province": "서울특별시",
@@ -2887,7 +3032,8 @@
       "rstudent": -2.576,
       "cooksD": 0.0217,
       "OR_pre": 1.3336,
-      "OR_day": 1.1506
+      "OR_day": 1.1506,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39056/index.html"
     },
     {
       "province": "서울특별시",
@@ -2906,7 +3052,8 @@
       "rstudent": -3.548,
       "cooksD": 0.0444,
       "OR_pre": 1.2396,
-      "OR_day": 1.2414
+      "OR_day": 1.2414,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39057/index.html"
     },
     {
       "province": "서울특별시",
@@ -2925,7 +3072,8 @@
       "rstudent": -2.127,
       "cooksD": 0.0099,
       "OR_pre": 1.2356,
-      "OR_day": 1.1761
+      "OR_day": 1.1761,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39058/index.html"
     },
     {
       "province": "서울특별시",
@@ -2944,7 +3092,8 @@
       "rstudent": -1.753,
       "cooksD": 0.0061,
       "OR_pre": 1.2109,
-      "OR_day": 1.0734
+      "OR_day": 1.0734,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/seoul/39059/index.html"
     },
     {
       "province": "경기도",
@@ -2963,7 +3112,8 @@
       "rstudent": 0.502,
       "cooksD": 0.0005,
       "OR_pre": 1.4688,
-      "OR_day": 1.4393
+      "OR_day": 1.4393,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39111/index.html"
     },
     {
       "province": "경기도",
@@ -2982,7 +3132,8 @@
       "rstudent": 0.876,
       "cooksD": 0.0016,
       "OR_pre": 1.4795,
-      "OR_day": 1.3296
+      "OR_day": 1.3296,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39112/index.html"
     },
     {
       "province": "경기도",
@@ -3001,7 +3152,8 @@
       "rstudent": -1.569,
       "cooksD": 0.0049,
       "OR_pre": 1.3996,
-      "OR_day": 1.4752
+      "OR_day": 1.4752,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39113/index.html"
     },
     {
       "province": "경기도",
@@ -3020,7 +3172,8 @@
       "rstudent": -0.438,
       "cooksD": 0.0004,
       "OR_pre": 1.3349,
-      "OR_day": 1.359
+      "OR_day": 1.359,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39114/index.html"
     },
     {
       "province": "경기도",
@@ -3039,7 +3192,8 @@
       "rstudent": -1.099,
       "cooksD": 0.0027,
       "OR_pre": 1.337,
-      "OR_day": 1.1552
+      "OR_day": 1.1552,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39115/index.html"
     },
     {
       "province": "경기도",
@@ -3058,7 +3212,8 @@
       "rstudent": -0.299,
       "cooksD": 0.0002,
       "OR_pre": 1.5308,
-      "OR_day": 1.0818
+      "OR_day": 1.0818,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39116/index.html"
     },
     {
       "province": "경기도",
@@ -3077,7 +3232,8 @@
       "rstudent": -2.108,
       "cooksD": 0.0092,
       "OR_pre": 1.3515,
-      "OR_day": 1.2489
+      "OR_day": 1.2489,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39117/index.html"
     },
     {
       "province": "경기도",
@@ -3096,7 +3252,8 @@
       "rstudent": 1.076,
       "cooksD": 0.0024,
       "OR_pre": 1.4771,
-      "OR_day": 1.2936
+      "OR_day": 1.2936,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/xb3fdb6/index.html"
     },
     {
       "province": "경기도",
@@ -3115,7 +3272,8 @@
       "rstudent": -0.623,
       "cooksD": 0.0008,
       "OR_pre": 1.2964,
-      "OR_day": 1.3871
+      "OR_day": 1.3871,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39119/index.html"
     },
     {
       "province": "경기도",
@@ -3134,7 +3292,8 @@
       "rstudent": -0.28,
       "cooksD": 0.0002,
       "OR_pre": 1.3361,
-      "OR_day": 1.3907
+      "OR_day": 1.3907,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39120/index.html"
     },
     {
       "province": "경기도",
@@ -3153,7 +3312,8 @@
       "rstudent": -0.105,
       "cooksD": 0.0,
       "OR_pre": 1.3106,
-      "OR_day": 1.2241
+      "OR_day": 1.2241,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39121/index.html"
     },
     {
       "province": "경기도",
@@ -3172,7 +3332,8 @@
       "rstudent": -0.415,
       "cooksD": 0.0004,
       "OR_pre": 1.4219,
-      "OR_day": 1.4174
+      "OR_day": 1.4174,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39122/index.html"
     },
     {
       "province": "경기도",
@@ -3191,7 +3352,8 @@
       "rstudent": 0.258,
       "cooksD": 0.0002,
       "OR_pre": 1.6813,
-      "OR_day": 1.1156
+      "OR_day": 1.1156,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39123/index.html"
     },
     {
       "province": "경기도",
@@ -3210,7 +3372,8 @@
       "rstudent": -0.872,
       "cooksD": 0.0016,
       "OR_pre": 1.4119,
-      "OR_day": 1.2741
+      "OR_day": 1.2741,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39124/index.html"
     },
     {
       "province": "경기도",
@@ -3229,7 +3392,8 @@
       "rstudent": 0.43,
       "cooksD": 0.0004,
       "OR_pre": 1.3298,
-      "OR_day": 1.324
+      "OR_day": 1.324,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39125/index.html"
     },
     {
       "province": "경기도",
@@ -3248,7 +3412,8 @@
       "rstudent": 0.937,
       "cooksD": 0.0019,
       "OR_pre": 1.6622,
-      "OR_day": 1.3959
+      "OR_day": 1.3959,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39126/index.html"
     },
     {
       "province": "경기도",
@@ -3267,7 +3432,8 @@
       "rstudent": 0.058,
       "cooksD": 0.0,
       "OR_pre": 1.3589,
-      "OR_day": 1.2957
+      "OR_day": 1.2957,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39127/index.html"
     },
     {
       "province": "경기도",
@@ -3286,7 +3452,8 @@
       "rstudent": -0.548,
       "cooksD": 0.0007,
       "OR_pre": 1.4185,
-      "OR_day": 1.2039
+      "OR_day": 1.2039,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39128/index.html"
     },
     {
       "province": "경기도",
@@ -3305,7 +3472,8 @@
       "rstudent": -0.682,
       "cooksD": 0.0011,
       "OR_pre": 1.3903,
-      "OR_day": 1.2353
+      "OR_day": 1.2353,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39130/index.html"
     },
     {
       "province": "경기도",
@@ -3324,7 +3492,8 @@
       "rstudent": 0.238,
       "cooksD": 0.0001,
       "OR_pre": 1.3212,
-      "OR_day": 1.4211
+      "OR_day": 1.4211,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39131/index.html"
     },
     {
       "province": "경기도",
@@ -3343,7 +3512,8 @@
       "rstudent": -0.243,
       "cooksD": 0.0001,
       "OR_pre": 1.402,
-      "OR_day": 1.3786
+      "OR_day": 1.3786,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39132/index.html"
     },
     {
       "province": "경기도",
@@ -3362,7 +3532,8 @@
       "rstudent": 0.034,
       "cooksD": 0.0,
       "OR_pre": 1.6513,
-      "OR_day": 1.268
+      "OR_day": 1.268,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39133/index.html"
     },
     {
       "province": "경기도",
@@ -3381,7 +3552,8 @@
       "rstudent": -2.659,
       "cooksD": 0.0151,
       "OR_pre": 1.4142,
-      "OR_day": 1.3714
+      "OR_day": 1.3714,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39153/index.html"
     },
     {
       "province": "경기도",
@@ -3400,7 +3572,8 @@
       "rstudent": -0.366,
       "cooksD": 0.0003,
       "OR_pre": 1.9342,
-      "OR_day": 1.278
+      "OR_day": 1.278,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39129/index.html"
     },
     {
       "province": "경기도",
@@ -3419,7 +3592,8 @@
       "rstudent": 0.538,
       "cooksD": 0.0006,
       "OR_pre": 1.8277,
-      "OR_day": 1.3174
+      "OR_day": 1.3174,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39154/index.html"
     },
     {
       "province": "경기도",
@@ -3438,7 +3612,8 @@
       "rstudent": 0.147,
       "cooksD": 0.0,
       "OR_pre": 1.498,
-      "OR_day": 1.3545
+      "OR_day": 1.3545,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39155/index.html"
     },
     {
       "province": "경기도",
@@ -3457,7 +3632,8 @@
       "rstudent": 0.304,
       "cooksD": 0.0002,
       "OR_pre": 1.444,
-      "OR_day": 1.3952
+      "OR_day": 1.3952,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39134/index.html"
     },
     {
       "province": "경기도",
@@ -3476,7 +3652,8 @@
       "rstudent": 1.078,
       "cooksD": 0.0025,
       "OR_pre": 1.4861,
-      "OR_day": 1.4212
+      "OR_day": 1.4212,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39135/index.html"
     },
     {
       "province": "경기도",
@@ -3495,7 +3672,8 @@
       "rstudent": -0.677,
       "cooksD": 0.0011,
       "OR_pre": 1.5886,
-      "OR_day": 1.3884
+      "OR_day": 1.3884,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39136/index.html"
     },
     {
       "province": "경기도",
@@ -3514,7 +3692,8 @@
       "rstudent": 0.479,
       "cooksD": 0.0006,
       "OR_pre": 1.3476,
-      "OR_day": 1.3069
+      "OR_day": 1.3069,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39137/index.html"
     },
     {
       "province": "경기도",
@@ -3533,7 +3712,8 @@
       "rstudent": -2.544,
       "cooksD": 0.0134,
       "OR_pre": 1.3813,
-      "OR_day": 1.2395
+      "OR_day": 1.2395,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39138/index.html"
     },
     {
       "province": "경기도",
@@ -3552,7 +3732,8 @@
       "rstudent": -0.944,
       "cooksD": 0.0018,
       "OR_pre": 1.4028,
-      "OR_day": 1.2549
+      "OR_day": 1.2549,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39139/index.html"
     },
     {
       "province": "경기도",
@@ -3571,7 +3752,8 @@
       "rstudent": 0.709,
       "cooksD": 0.0011,
       "OR_pre": 1.3219,
-      "OR_day": 1.4301
+      "OR_day": 1.4301,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39140/index.html"
     },
     {
       "province": "경기도",
@@ -3590,7 +3772,8 @@
       "rstudent": 1.042,
       "cooksD": 0.0023,
       "OR_pre": 1.606,
-      "OR_day": 1.3442
+      "OR_day": 1.3442,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39141/index.html"
     },
     {
       "province": "경기도",
@@ -3609,7 +3792,8 @@
       "rstudent": 0.932,
       "cooksD": 0.0017,
       "OR_pre": 1.5769,
-      "OR_day": 1.4276
+      "OR_day": 1.4276,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39142/index.html"
     },
     {
       "province": "경기도",
@@ -3628,7 +3812,8 @@
       "rstudent": 0.088,
       "cooksD": 0.0,
       "OR_pre": 1.4732,
-      "OR_day": 1.2063
+      "OR_day": 1.2063,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39143/index.html"
     },
     {
       "province": "경기도",
@@ -3647,7 +3832,8 @@
       "rstudent": 0.976,
       "cooksD": 0.002,
       "OR_pre": 1.5348,
-      "OR_day": 1.4376
+      "OR_day": 1.4376,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39144/index.html"
     },
     {
       "province": "경기도",
@@ -3666,7 +3852,8 @@
       "rstudent": -1.662,
       "cooksD": 0.0055,
       "OR_pre": 1.3843,
-      "OR_day": 1.4008
+      "OR_day": 1.4008,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39145/index.html"
     },
     {
       "province": "경기도",
@@ -3685,7 +3872,8 @@
       "rstudent": 0.141,
       "cooksD": 0.0,
       "OR_pre": 1.3924,
-      "OR_day": 1.3508
+      "OR_day": 1.3508,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39146/index.html"
     },
     {
       "province": "경기도",
@@ -3704,7 +3892,8 @@
       "rstudent": -0.762,
       "cooksD": 0.0012,
       "OR_pre": 1.4656,
-      "OR_day": 1.4806
+      "OR_day": 1.4806,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39147/index.html"
     },
     {
       "province": "경기도",
@@ -3723,7 +3912,8 @@
       "rstudent": 0.123,
       "cooksD": 0.0,
       "OR_pre": 1.3205,
-      "OR_day": 1.3107
+      "OR_day": 1.3107,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39148/index.html"
     },
     {
       "province": "경기도",
@@ -3742,7 +3932,8 @@
       "rstudent": 1.311,
       "cooksD": 0.0034,
       "OR_pre": 1.2972,
-      "OR_day": 1.4344
+      "OR_day": 1.4344,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39149/index.html"
     },
     {
       "province": "경기도",
@@ -3761,7 +3952,8 @@
       "rstudent": -1.673,
       "cooksD": 0.0063,
       "OR_pre": 1.431,
-      "OR_day": 1.0485
+      "OR_day": 1.0485,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39150/index.html"
     },
     {
       "province": "경기도",
@@ -3780,7 +3972,8 @@
       "rstudent": 0.979,
       "cooksD": 0.0021,
       "OR_pre": 1.5519,
-      "OR_day": 1.3551
+      "OR_day": 1.3551,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39151/index.html"
     },
     {
       "province": "경기도",
@@ -3799,7 +3992,8 @@
       "rstudent": -0.523,
       "cooksD": 0.0007,
       "OR_pre": 1.4604,
-      "OR_day": 1.0137
+      "OR_day": 1.0137,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeonggi/39152/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -3818,7 +4012,8 @@
       "rstudent": 1.135,
       "cooksD": 0.0026,
       "OR_pre": 1.6264,
-      "OR_day": 1.5243
+      "OR_day": 1.5243,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/x3eb6d0/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -3837,7 +4032,8 @@
       "rstudent": 1.087,
       "cooksD": 0.0024,
       "OR_pre": 1.7084,
-      "OR_day": 1.4244
+      "OR_day": 1.4244,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39157/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -3856,7 +4052,8 @@
       "rstudent": 1.141,
       "cooksD": 0.0031,
       "OR_pre": 1.6123,
-      "OR_day": 1.5277
+      "OR_day": 1.5277,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39158/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -3875,7 +4072,8 @@
       "rstudent": 0.721,
       "cooksD": 0.0012,
       "OR_pre": 1.7339,
-      "OR_day": 1.481
+      "OR_day": 1.481,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39159/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -3894,7 +4092,8 @@
       "rstudent": 0.914,
       "cooksD": 0.0022,
       "OR_pre": 1.5439,
-      "OR_day": 1.4579
+      "OR_day": 1.4579,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39166/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -3913,7 +4112,8 @@
       "rstudent": 1.067,
       "cooksD": 0.0027,
       "OR_pre": 1.7434,
-      "OR_day": 1.6111
+      "OR_day": 1.6111,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39160/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -3932,7 +4132,8 @@
       "rstudent": 1.582,
       "cooksD": 0.0058,
       "OR_pre": 1.8325,
-      "OR_day": 1.4374
+      "OR_day": 1.4374,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39161/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -3951,7 +4152,8 @@
       "rstudent": 1.56,
       "cooksD": 0.0052,
       "OR_pre": 1.9289,
-      "OR_day": 1.4939
+      "OR_day": 1.4939,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39162/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -3970,7 +4172,8 @@
       "rstudent": 0.166,
       "cooksD": 0.0001,
       "OR_pre": 1.5207,
-      "OR_day": 1.098
+      "OR_day": 1.098,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39163/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -3989,7 +4192,8 @@
       "rstudent": -0.046,
       "cooksD": 0.0,
       "OR_pre": 1.248,
-      "OR_day": 1.5408
+      "OR_day": 1.5408,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39164/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -4008,7 +4212,8 @@
       "rstudent": -0.036,
       "cooksD": 0.0,
       "OR_pre": 1.2572,
-      "OR_day": 1.0677
+      "OR_day": 1.0677,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39165/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -4027,7 +4232,8 @@
       "rstudent": -0.612,
       "cooksD": 0.0009,
       "OR_pre": 1.5014,
-      "OR_day": 1.0978
+      "OR_day": 1.0978,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39167/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -4046,7 +4252,8 @@
       "rstudent": -0.305,
       "cooksD": 0.0002,
       "OR_pre": 1.5753,
-      "OR_day": 1.0059
+      "OR_day": 1.0059,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39168/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -4065,7 +4272,8 @@
       "rstudent": 0.742,
       "cooksD": 0.0013,
       "OR_pre": 1.5198,
-      "OR_day": 1.389
+      "OR_day": 1.389,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39169/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -4084,7 +4292,8 @@
       "rstudent": 0.167,
       "cooksD": 0.0001,
       "OR_pre": 1.4319,
-      "OR_day": 1.2237
+      "OR_day": 1.2237,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39170/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -4103,7 +4312,8 @@
       "rstudent": 0.794,
       "cooksD": 0.0015,
       "OR_pre": 1.7297,
-      "OR_day": 1.4139
+      "OR_day": 1.4139,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39172/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -4122,7 +4332,8 @@
       "rstudent": 0.323,
       "cooksD": 0.0002,
       "OR_pre": 1.6865,
-      "OR_day": 1.0722
+      "OR_day": 1.0722,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39173/index.html"
     },
     {
       "province": "강원특별자치도",
@@ -4141,7 +4352,8 @@
       "rstudent": 0.276,
       "cooksD": 0.0002,
       "OR_pre": 1.4576,
-      "OR_day": 1.1392
+      "OR_day": 1.1392,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gangwon/39171/index.html"
     },
     {
       "province": "충청북도",
@@ -4160,7 +4372,8 @@
       "rstudent": 1.287,
       "cooksD": 0.0033,
       "OR_pre": 1.7666,
-      "OR_day": 1.3535
+      "OR_day": 1.3535,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39174/index.html"
     },
     {
       "province": "충청북도",
@@ -4179,7 +4392,8 @@
       "rstudent": 0.956,
       "cooksD": 0.0018,
       "OR_pre": 1.4199,
-      "OR_day": 1.4372
+      "OR_day": 1.4372,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39175/index.html"
     },
     {
       "province": "충청북도",
@@ -4198,7 +4412,8 @@
       "rstudent": 1.318,
       "cooksD": 0.0035,
       "OR_pre": 1.5869,
-      "OR_day": 1.3314
+      "OR_day": 1.3314,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39176/index.html"
     },
     {
       "province": "충청북도",
@@ -4217,7 +4432,8 @@
       "rstudent": 1.92,
       "cooksD": 0.0074,
       "OR_pre": 1.6363,
-      "OR_day": 1.4463
+      "OR_day": 1.4463,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39177/index.html"
     },
     {
       "province": "충청북도",
@@ -4236,7 +4452,8 @@
       "rstudent": 0.356,
       "cooksD": 0.0003,
       "OR_pre": 1.6136,
-      "OR_day": 1.2425
+      "OR_day": 1.2425,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39178/index.html"
     },
     {
       "province": "충청북도",
@@ -4255,7 +4472,8 @@
       "rstudent": 1.642,
       "cooksD": 0.0058,
       "OR_pre": 1.6762,
-      "OR_day": 1.4442
+      "OR_day": 1.4442,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39179/index.html"
     },
     {
       "province": "충청북도",
@@ -4274,7 +4492,8 @@
       "rstudent": 0.696,
       "cooksD": 0.0014,
       "OR_pre": 1.7266,
-      "OR_day": 1.0901
+      "OR_day": 1.0901,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39180/index.html"
     },
     {
       "province": "충청북도",
@@ -4293,7 +4512,8 @@
       "rstudent": 0.644,
       "cooksD": 0.0011,
       "OR_pre": 2.4376,
-      "OR_day": 1.1505
+      "OR_day": 1.1505,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39181/index.html"
     },
     {
       "province": "충청북도",
@@ -4312,7 +4532,8 @@
       "rstudent": 0.2,
       "cooksD": 0.0001,
       "OR_pre": 1.3576,
-      "OR_day": 1.1808
+      "OR_day": 1.1808,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39182/index.html"
     },
     {
       "province": "충청북도",
@@ -4331,7 +4552,8 @@
       "rstudent": 1.228,
       "cooksD": 0.0033,
       "OR_pre": 1.508,
-      "OR_day": 1.3561
+      "OR_day": 1.3561,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39183/index.html"
     },
     {
       "province": "충청북도",
@@ -4350,7 +4572,8 @@
       "rstudent": 0.372,
       "cooksD": 0.0003,
       "OR_pre": 1.2604,
-      "OR_day": 1.2687
+      "OR_day": 1.2687,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39184/index.html"
     },
     {
       "province": "충청북도",
@@ -4369,7 +4592,8 @@
       "rstudent": -0.169,
       "cooksD": 0.0001,
       "OR_pre": 1.4209,
-      "OR_day": 1.3938
+      "OR_day": 1.3938,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39185/index.html"
     },
     {
       "province": "충청북도",
@@ -4388,7 +4612,8 @@
       "rstudent": -0.212,
       "cooksD": 0.0001,
       "OR_pre": 1.3364,
-      "OR_day": 1.1104
+      "OR_day": 1.1104,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39186/index.html"
     },
     {
       "province": "충청북도",
@@ -4407,7 +4632,8 @@
       "rstudent": 2.397,
       "cooksD": 0.0113,
       "OR_pre": 1.7961,
-      "OR_day": 1.5034
+      "OR_day": 1.5034,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungbuk/39187/index.html"
     },
     {
       "province": "대구광역시",
@@ -4426,7 +4652,8 @@
       "rstudent": 0.382,
       "cooksD": 0.0009,
       "OR_pre": 1.8002,
-      "OR_day": 1.5565
+      "OR_day": 1.5565,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daegu/39076/index.html"
     },
     {
       "province": "대구광역시",
@@ -4445,7 +4672,8 @@
       "rstudent": -1.188,
       "cooksD": 0.0091,
       "OR_pre": 1.8118,
-      "OR_day": 1.3036
+      "OR_day": 1.3036,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daegu/39077/index.html"
     },
     {
       "province": "대구광역시",
@@ -4464,7 +4692,8 @@
       "rstudent": -1.436,
       "cooksD": 0.0161,
       "OR_pre": 1.6744,
-      "OR_day": 1.3204
+      "OR_day": 1.3204,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daegu/39078/index.html"
     },
     {
       "province": "대구광역시",
@@ -4483,7 +4712,8 @@
       "rstudent": -1.112,
       "cooksD": 0.0084,
       "OR_pre": 1.4775,
-      "OR_day": 1.4034
+      "OR_day": 1.4034,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daegu/39079/index.html"
     },
     {
       "province": "대구광역시",
@@ -4502,7 +4732,8 @@
       "rstudent": -0.834,
       "cooksD": 0.0041,
       "OR_pre": 1.6457,
-      "OR_day": 1.3855
+      "OR_day": 1.3855,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daegu/39080/index.html"
     },
     {
       "province": "대구광역시",
@@ -4521,7 +4752,8 @@
       "rstudent": -0.93,
       "cooksD": 0.0054,
       "OR_pre": 1.6701,
-      "OR_day": 1.6446
+      "OR_day": 1.6446,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daegu/39081/index.html"
     },
     {
       "province": "대구광역시",
@@ -4540,7 +4772,8 @@
       "rstudent": -0.894,
       "cooksD": 0.0051,
       "OR_pre": 1.5647,
-      "OR_day": 1.5402
+      "OR_day": 1.5402,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daegu/xc54bc7/index.html"
     },
     {
       "province": "대구광역시",
@@ -4559,7 +4792,8 @@
       "rstudent": -0.306,
       "cooksD": 0.0005,
       "OR_pre": 1.4792,
-      "OR_day": 1.4509
+      "OR_day": 1.4509,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daegu/39083/index.html"
     },
     {
       "province": "대구광역시",
@@ -4578,7 +4812,8 @@
       "rstudent": -3.078,
       "cooksD": 0.0911,
       "OR_pre": 1.1754,
-      "OR_day": 1.2488
+      "OR_day": 1.2488,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/daegu/39084/index.html"
     },
     {
       "province": "충청남도",
@@ -4597,7 +4832,8 @@
       "rstudent": 0.247,
       "cooksD": 0.0001,
       "OR_pre": 1.3361,
-      "OR_day": 1.4907
+      "OR_day": 1.4907,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39188/index.html"
     },
     {
       "province": "충청남도",
@@ -4616,7 +4852,8 @@
       "rstudent": -0.999,
       "cooksD": 0.002,
       "OR_pre": 1.2058,
-      "OR_day": 1.4988
+      "OR_day": 1.4988,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39189/index.html"
     },
     {
       "province": "충청남도",
@@ -4635,7 +4872,8 @@
       "rstudent": 1.207,
       "cooksD": 0.0031,
       "OR_pre": 1.6265,
-      "OR_day": 1.2206
+      "OR_day": 1.2206,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39190/index.html"
     },
     {
       "province": "충청남도",
@@ -4654,7 +4892,8 @@
       "rstudent": 1.067,
       "cooksD": 0.0026,
       "OR_pre": 1.5993,
-      "OR_day": 1.1244
+      "OR_day": 1.1244,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39191/index.html"
     },
     {
       "province": "충청남도",
@@ -4673,7 +4912,8 @@
       "rstudent": 0.711,
       "cooksD": 0.001,
       "OR_pre": 1.5338,
-      "OR_day": 1.464
+      "OR_day": 1.464,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39192/index.html"
     },
     {
       "province": "충청남도",
@@ -4692,7 +4932,8 @@
       "rstudent": 1.871,
       "cooksD": 0.0069,
       "OR_pre": 1.7104,
-      "OR_day": 1.4451
+      "OR_day": 1.4451,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39193/index.html"
     },
     {
       "province": "충청남도",
@@ -4711,7 +4952,8 @@
       "rstudent": -0.008,
       "cooksD": 0.0,
       "OR_pre": 1.4707,
-      "OR_day": 0.9902
+      "OR_day": 0.9902,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39194/index.html"
     },
     {
       "province": "충청남도",
@@ -4730,7 +4972,8 @@
       "rstudent": 0.426,
       "cooksD": 0.0004,
       "OR_pre": 1.4828,
-      "OR_day": 1.1522
+      "OR_day": 1.1522,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39195/index.html"
     },
     {
       "province": "충청남도",
@@ -4749,7 +4992,8 @@
       "rstudent": 0.192,
       "cooksD": 0.0001,
       "OR_pre": 1.3431,
-      "OR_day": 1.2468
+      "OR_day": 1.2468,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39196/index.html"
     },
     {
       "province": "충청남도",
@@ -4768,7 +5012,8 @@
       "rstudent": 2.096,
       "cooksD": 0.0087,
       "OR_pre": 1.5594,
-      "OR_day": 1.3931
+      "OR_day": 1.3931,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39197/index.html"
     },
     {
       "province": "충청남도",
@@ -4787,7 +5032,8 @@
       "rstudent": 1.516,
       "cooksD": 0.0046,
       "OR_pre": 1.5185,
-      "OR_day": 1.4236
+      "OR_day": 1.4236,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39198/index.html"
     },
     {
       "province": "충청남도",
@@ -4806,7 +5052,8 @@
       "rstudent": 0.763,
       "cooksD": 0.0014,
       "OR_pre": 1.7203,
-      "OR_day": 1.1518
+      "OR_day": 1.1518,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/xde63a9/index.html"
     },
     {
       "province": "충청남도",
@@ -4825,7 +5072,8 @@
       "rstudent": 0.653,
       "cooksD": 0.0009,
       "OR_pre": 1.4808,
-      "OR_day": 1.0999
+      "OR_day": 1.0999,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39200/index.html"
     },
     {
       "province": "충청남도",
@@ -4844,7 +5092,8 @@
       "rstudent": 0.647,
       "cooksD": 0.0009,
       "OR_pre": 1.7682,
-      "OR_day": 1.3856
+      "OR_day": 1.3856,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39201/index.html"
     },
     {
       "province": "충청남도",
@@ -4863,7 +5112,8 @@
       "rstudent": -0.445,
       "cooksD": 0.0005,
       "OR_pre": 1.4237,
-      "OR_day": 1.0154
+      "OR_day": 1.0154,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39202/index.html"
     },
     {
       "province": "충청남도",
@@ -4882,7 +5132,8 @@
       "rstudent": 0.391,
       "cooksD": 0.0004,
       "OR_pre": 1.5742,
-      "OR_day": 1.2789
+      "OR_day": 1.2789,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/chungnam/39203/index.html"
     },
     {
       "province": "전라남도",
@@ -4901,7 +5152,8 @@
       "rstudent": 0.006,
       "cooksD": 0.0,
       "OR_pre": 1.2504,
-      "OR_day": 1.0042
+      "OR_day": 1.0042,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39219/index.html"
     },
     {
       "province": "전라남도",
@@ -4920,7 +5172,8 @@
       "rstudent": -0.735,
       "cooksD": 0.005,
       "OR_pre": 1.0535,
-      "OR_day": 0.8633
+      "OR_day": 0.8633,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39220/index.html"
     },
     {
       "province": "전라남도",
@@ -4939,7 +5192,8 @@
       "rstudent": -0.251,
       "cooksD": 0.0006,
       "OR_pre": 1.3772,
-      "OR_day": 0.9776
+      "OR_day": 0.9776,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39221/index.html"
     },
     {
       "province": "전라남도",
@@ -4958,7 +5212,8 @@
       "rstudent": -0.301,
       "cooksD": 0.0009,
       "OR_pre": 1.3143,
-      "OR_day": 0.8445
+      "OR_day": 0.8445,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39222/index.html"
     },
     {
       "province": "전라남도",
@@ -4977,7 +5232,8 @@
       "rstudent": -0.3,
       "cooksD": 0.0007,
       "OR_pre": 1.1359,
-      "OR_day": 0.9842
+      "OR_day": 0.9842,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39223/index.html"
     },
     {
       "province": "전라남도",
@@ -4996,7 +5252,8 @@
       "rstudent": -0.544,
       "cooksD": 0.003,
       "OR_pre": 0.9841,
-      "OR_day": 1.0357
+      "OR_day": 1.0357,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39224/index.html"
     },
     {
       "province": "전라남도",
@@ -5015,7 +5272,8 @@
       "rstudent": -0.358,
       "cooksD": 0.0012,
       "OR_pre": 1.0141,
-      "OR_day": 0.8083
+      "OR_day": 0.8083,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39225/index.html"
     },
     {
       "province": "전라남도",
@@ -5034,7 +5292,8 @@
       "rstudent": -0.622,
       "cooksD": 0.0036,
       "OR_pre": 1.0606,
-      "OR_day": 0.8223
+      "OR_day": 0.8223,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39226/index.html"
     },
     {
       "province": "전라남도",
@@ -5053,7 +5312,8 @@
       "rstudent": -0.888,
       "cooksD": 0.0069,
       "OR_pre": 0.8722,
-      "OR_day": 0.7067
+      "OR_day": 0.7067,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39227/index.html"
     },
     {
       "province": "전라남도",
@@ -5072,7 +5332,8 @@
       "rstudent": -0.789,
       "cooksD": 0.0059,
       "OR_pre": 0.9784,
-      "OR_day": 0.6535
+      "OR_day": 0.6535,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/x8665b7/index.html"
     },
     {
       "province": "전라남도",
@@ -5091,7 +5352,8 @@
       "rstudent": -0.256,
       "cooksD": 0.0006,
       "OR_pre": 1.0373,
-      "OR_day": 0.8728
+      "OR_day": 0.8728,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39229/index.html"
     },
     {
       "province": "전라남도",
@@ -5110,7 +5372,8 @@
       "rstudent": 0.205,
       "cooksD": 0.0004,
       "OR_pre": 1.332,
-      "OR_day": 0.9668
+      "OR_day": 0.9668,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39230/index.html"
     },
     {
       "province": "전라남도",
@@ -5129,7 +5392,8 @@
       "rstudent": -0.473,
       "cooksD": 0.0022,
       "OR_pre": 1.1303,
-      "OR_day": 0.7972
+      "OR_day": 0.7972,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39231/index.html"
     },
     {
       "province": "전라남도",
@@ -5148,7 +5412,8 @@
       "rstudent": -0.483,
       "cooksD": 0.0021,
       "OR_pre": 1.0042,
-      "OR_day": 0.8783
+      "OR_day": 0.8783,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39232/index.html"
     },
     {
       "province": "전라남도",
@@ -5167,7 +5432,8 @@
       "rstudent": -0.069,
       "cooksD": 0.0,
       "OR_pre": 1.6273,
-      "OR_day": 0.7454
+      "OR_day": 0.7454,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39233/index.html"
     },
     {
       "province": "전라남도",
@@ -5186,7 +5452,8 @@
       "rstudent": -0.192,
       "cooksD": 0.0004,
       "OR_pre": 1.0195,
-      "OR_day": 0.8938
+      "OR_day": 0.8938,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39234/index.html"
     },
     {
       "province": "전라남도",
@@ -5205,7 +5472,8 @@
       "rstudent": -1.123,
       "cooksD": 0.0122,
       "OR_pre": 0.7996,
-      "OR_day": 0.6549
+      "OR_day": 0.6549,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39235/index.html"
     },
     {
       "province": "전라남도",
@@ -5224,7 +5492,8 @@
       "rstudent": 0.147,
       "cooksD": 0.0002,
       "OR_pre": 1.4016,
-      "OR_day": 0.9174
+      "OR_day": 0.9174,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39236/index.html"
     },
     {
       "province": "전라남도",
@@ -5243,7 +5512,8 @@
       "rstudent": -0.553,
       "cooksD": 0.003,
       "OR_pre": 1.0132,
-      "OR_day": 1.0244
+      "OR_day": 1.0244,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39237/index.html"
     },
     {
       "province": "전라남도",
@@ -5262,7 +5532,8 @@
       "rstudent": -0.329,
       "cooksD": 0.001,
       "OR_pre": 1.308,
-      "OR_day": 0.8181
+      "OR_day": 0.8181,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39238/index.html"
     },
     {
       "province": "전라남도",
@@ -5281,7 +5552,8 @@
       "rstudent": -0.56,
       "cooksD": 0.0032,
       "OR_pre": 0.7538,
-      "OR_day": 0.8579
+      "OR_day": 0.8579,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39239/index.html"
     },
     {
       "province": "전라남도",
@@ -5300,7 +5572,8 @@
       "rstudent": -0.786,
       "cooksD": 0.0062,
       "OR_pre": 1.2507,
-      "OR_day": 0.4686
+      "OR_day": 0.4686,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/jeonnam/39240/index.html"
     },
     {
       "province": "경상남도",
@@ -5319,7 +5592,8 @@
       "rstudent": 0.951,
       "cooksD": 0.0024,
       "OR_pre": 1.5945,
-      "OR_day": 1.4608
+      "OR_day": 1.4608,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/xd6afaa/index.html"
     },
     {
       "province": "경상남도",
@@ -5338,7 +5612,8 @@
       "rstudent": 0.885,
       "cooksD": 0.0018,
       "OR_pre": 1.5531,
-      "OR_day": 1.3694
+      "OR_day": 1.3694,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39266/index.html"
     },
     {
       "province": "경상남도",
@@ -5357,7 +5632,8 @@
       "rstudent": 1.029,
       "cooksD": 0.0038,
       "OR_pre": 1.9464,
-      "OR_day": 1.4886
+      "OR_day": 1.4886,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39267/index.html"
     },
     {
       "province": "경상남도",
@@ -5376,7 +5652,8 @@
       "rstudent": -0.003,
       "cooksD": 0.0,
       "OR_pre": 1.3882,
-      "OR_day": 1.3955
+      "OR_day": 1.3955,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/xd3adb6/index.html"
     },
     {
       "province": "경상남도",
@@ -5395,7 +5672,8 @@
       "rstudent": 1.328,
       "cooksD": 0.0042,
       "OR_pre": 2.0832,
-      "OR_day": 1.2367
+      "OR_day": 1.2367,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39269/index.html"
     },
     {
       "province": "경상남도",
@@ -5414,7 +5692,8 @@
       "rstudent": 0.833,
       "cooksD": 0.0022,
       "OR_pre": 1.8812,
-      "OR_day": 1.421
+      "OR_day": 1.421,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/x77f3c4/index.html"
     },
     {
       "province": "경상남도",
@@ -5433,7 +5712,8 @@
       "rstudent": 1.479,
       "cooksD": 0.007,
       "OR_pre": 1.8037,
-      "OR_day": 1.6454
+      "OR_day": 1.6454,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/xa7814f/index.html"
     },
     {
       "province": "경상남도",
@@ -5452,7 +5732,8 @@
       "rstudent": 0.919,
       "cooksD": 0.0034,
       "OR_pre": 2.1049,
-      "OR_day": 1.327
+      "OR_day": 1.327,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39272/index.html"
     },
     {
       "province": "경상남도",
@@ -5471,7 +5752,8 @@
       "rstudent": 1.59,
       "cooksD": 0.0083,
       "OR_pre": 2.1999,
-      "OR_day": 1.7869
+      "OR_day": 1.7869,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39273/index.html"
     },
     {
       "province": "경상남도",
@@ -5490,7 +5772,8 @@
       "rstudent": 1.236,
       "cooksD": 0.003,
       "OR_pre": 1.5642,
-      "OR_day": 1.4643
+      "OR_day": 1.4643,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39274/index.html"
     },
     {
       "province": "경상남도",
@@ -5509,7 +5792,8 @@
       "rstudent": 0.414,
       "cooksD": 0.0006,
       "OR_pre": 1.6071,
-      "OR_day": 1.2795
+      "OR_day": 1.2795,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39275/index.html"
     },
     {
       "province": "경상남도",
@@ -5528,7 +5812,8 @@
       "rstudent": 1.974,
       "cooksD": 0.0077,
       "OR_pre": 1.6022,
-      "OR_day": 1.5613
+      "OR_day": 1.5613,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39276/index.html"
     },
     {
       "province": "경상남도",
@@ -5547,7 +5832,8 @@
       "rstudent": 0.57,
       "cooksD": 0.0015,
       "OR_pre": 1.7751,
-      "OR_day": 1.2141
+      "OR_day": 1.2141,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/x5aa387/index.html"
     },
     {
       "province": "경상남도",
@@ -5566,7 +5852,8 @@
       "rstudent": 0.341,
       "cooksD": 0.0004,
       "OR_pre": 1.7782,
-      "OR_day": 1.2956
+      "OR_day": 1.2956,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39278/index.html"
     },
     {
       "province": "경상남도",
@@ -5585,7 +5872,8 @@
       "rstudent": -0.76,
       "cooksD": 0.0028,
       "OR_pre": 1.6812,
-      "OR_day": 1.1072
+      "OR_day": 1.1072,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39279/index.html"
     },
     {
       "province": "경상남도",
@@ -5604,7 +5892,8 @@
       "rstudent": -0.058,
       "cooksD": 0.0,
       "OR_pre": 1.6038,
-      "OR_day": 1.4063
+      "OR_day": 1.4063,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/x4e5161/index.html"
     },
     {
       "province": "경상남도",
@@ -5623,7 +5912,8 @@
       "rstudent": 0.746,
       "cooksD": 0.0017,
       "OR_pre": 1.5544,
-      "OR_day": 1.4254
+      "OR_day": 1.4254,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39281/index.html"
     },
     {
       "province": "경상남도",
@@ -5642,7 +5932,8 @@
       "rstudent": 0.109,
       "cooksD": 0.0,
       "OR_pre": 1.5621,
-      "OR_day": 1.1472
+      "OR_day": 1.1472,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39282/index.html"
     },
     {
       "province": "경상남도",
@@ -5661,7 +5952,8 @@
       "rstudent": 0.453,
       "cooksD": 0.0008,
       "OR_pre": 2.191,
-      "OR_day": 1.0703
+      "OR_day": 1.0703,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39283/index.html"
     },
     {
       "province": "경상남도",
@@ -5680,7 +5972,8 @@
       "rstudent": 0.603,
       "cooksD": 0.0016,
       "OR_pre": 1.6141,
-      "OR_day": 1.5068
+      "OR_day": 1.5068,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39284/index.html"
     },
     {
       "province": "경상남도",
@@ -5699,7 +5992,8 @@
       "rstudent": 0.873,
       "cooksD": 0.0032,
       "OR_pre": 2.1107,
-      "OR_day": 1.5047
+      "OR_day": 1.5047,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39285/index.html"
     },
     {
       "province": "경상남도",
@@ -5718,7 +6012,8 @@
       "rstudent": -0.225,
       "cooksD": 0.0003,
       "OR_pre": 2.1157,
-      "OR_day": 1.1191
+      "OR_day": 1.1191,
+      "archive_url": "https://storage.googleapis.com/k21-tally-archive/gyeongnam/39286/index.html"
     }
   ],
   "regression": {
